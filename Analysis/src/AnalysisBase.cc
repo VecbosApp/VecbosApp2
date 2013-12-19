@@ -8,6 +8,7 @@
 #include "DataFormats/include/Track.hh"
 
 #include "Tools/include/VertexSelector.hh"
+#include "Math/include/Constants.h"
 
 using namespace std;
 using namespace vecbos;
@@ -52,6 +53,9 @@ int AnalysisBase::loadTree(Long64_t entry) {
   loadGlobalMuonTracks();
   loadStandaloneMuonTracks();
 
+  // load the GSF Electron collection
+  //  loadElectronCollection();
+  
   return centry;
 }
 
@@ -398,4 +402,39 @@ void AnalysisBase::loadStandaloneMuonTracks() {
     StandaloneMuonTracks.push_back(track);
 
     }
+}
+
+void AnalysisBase::loadElectronCollection() {
+
+  ElectronCollection.clear();
+
+  math::PhysConstants constants;
+
+  for(int i=0; i<nEle; ++i) {
+    int charge=chargeEle[i];
+
+    TVector3 momentum3D(pxEle[i],pyEle[i],pzEle[i]);
+    TLorentzVector p4Ele;
+    p4Ele.SetVectM(momentum3D,constants.electron_mass);
+
+    Vertex::Point vtx(vertexXEle[i],vertexYEle[i],vertexZEle[i]);
+
+    int indexSC = superClusterIndexEle[i];
+    SuperCluster sclu = (indexSC>0) ? SuperClusters[indexSC] : SuperCluster();
+    int indexPFSC = PFsuperClusterIndexEle[i];
+    SuperCluster pfsclu = (indexPFSC>0) ? PFSuperClusters[indexSC] : SuperCluster();
+
+    int indexGsfTrack = gsfTrackIndexEle[i];
+    Track gsfTrack = GsfTracks[indexGsfTrack]; // there is always a GsfTrack associated to an electron
+    int indexCtfTrack = trackIndexEle[i];
+    Track ctfTrack = (indexCtfTrack>0) ? GeneralTracks[indexCtfTrack] : Track();
+
+    Electron electron(charge,p4Ele,vtx,sclu,pfsclu,gsfTrack,ctfTrack);
+
+    cout << "GsfTrack chi2 = " << electron.track().normalizedChi2() << endl;
+    if(sclu.isValid()) cout << "clu sigmaieie = " << sclu.sigmaIetaIeta() << endl;
+    if(pfsclu.isValid()) cout << "pf sclu sieie = " << pfsclu.sigmaIetaIeta() << endl;
+    
+  }
+
 }
