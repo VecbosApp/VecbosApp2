@@ -13,7 +13,7 @@ while getopts "s:t:d:h" opt; do
       maindir=$OPTARG
       ;;
       h)
-      echo "USAGE: createLists.sh -s <site (UCSD,Caltech,CERN)> -t <T2 mount directory (the one containing one folder/dataset)> -d <dir where to put lists> "
+      echo "USAGE: createLists.sh -s <site (UCSD,Caltech,CERN,Rome)> -t <T2 mount directory (the one containing one folder/dataset)> -d <dir where to put lists> "
       echo example: createListsEOS.sh -s UCSD -t /hadoop/cms/store/user/emanuele/VECBOS_2_53X_V3 -d lists
       exit 0
       ;;
@@ -22,6 +22,12 @@ done
 
 if [ "$site" == 'UCSD' ]; then 
     echo "listing $t2dir"
+    ls -l $t2dir | awk '{print $9}' > datasets.txt
+    ls -l $t2dir | awk '{print "'"$t2dir"'" "/" $9}' | xargs -i echo "ls -l " {} " | grep -v \" 0 \" | awk '{print \"{}/\" \$9}'" > commands.txt 
+fi
+
+if [ "$site" == 'Rome' ]; then 
+    echo "listing /pnfs/roma1.infn.it/data/cms/$t2dir"
     ls -l $t2dir | awk '{print $9}' > datasets.txt
     ls -l $t2dir | awk '{print "'"$t2dir"'" "/" $9}' | xargs -i echo "ls -l " {} " | grep -v \" 0 \" | awk '{print \"{}/\" \$9}'" > commands.txt 
 fi
@@ -54,6 +60,12 @@ if [ "$site" == 'UCSD' ]; then
     for ((i=1;i<$N+1;i++)); do
 	echo ${namescommand[${i}]} " | grep default | awk '{print \"root://xrootd.t2.ucsd.edu/\" \$1}' >" $maindir"/"${names[${i}]}".list" >> finalcommand.sh
     done
+fi
+
+if [ "$site" == 'Rome' ]; then
+    for ((i=1;i<$N+1;i++)); do
+	echo ${namescommand[${i}]} " | grep default | awk '{print \"root://cmsrm-xrootd02.roma1.infn.it:7070//\" \$1}' >" $maindir"/"${names[${i}]}".list" >> finalcommand.sh
+    done	
 fi
 
 if [ "$site" == 'CERN' ]; then
