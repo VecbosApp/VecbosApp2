@@ -14,12 +14,16 @@ namespace vecbos {
     /// container of the cluster shapes
     struct ClusterShapes;
       
+    /// default constructor (empty)
+    SuperCluster();
     /// constructor from the energy and position
     SuperCluster( float energy, const Point& position, const TVector3& direction, ClusterShapes shapes ) :
       energy_(energy), position_(position), direction_(direction), shape_(shapes) { };
     /// destructor
     ~SuperCluster();
     
+    /// energy with basic calibrations
+    float energy() const { return energy_; }
 
     /// raw uncorrected energy (sum of energies of component BasicClusters)
     float rawEnergy() const { return rawEnergy_; }
