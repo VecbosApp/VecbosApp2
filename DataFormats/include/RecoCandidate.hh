@@ -5,8 +5,7 @@
 
 #include "DataFormats/include/Candidate.hh"
 #include "DataFormats/include/TrackFwd.hh"
-//#include "DataFormats/include/GsfTrackFwd.h"
-//#include "DataFormats/include/SuperClusterFwd.h"
+#include "DataFormats/include/SuperClusterFwd.hh"
 
 namespace vecbos {
 
@@ -26,13 +25,13 @@ namespace vecbos {
     /// reference to a Track
     virtual vecbos::Track track() const;
     /// reference to a GsfTrack
-    //  virtual vecbos::GsfTrack* gsfTrack() const;
+    virtual vecbos::Track gsfTrack() const;
     /// reference to a stand-alone muon Track
     virtual vecbos::Track standAloneMuon() const;
     /// reference to a stand-alone muon Track
     virtual vecbos::Track combinedMuon() const;
     /// reference to a SuperCluster
-    //    virtual vecbos::SuperCluster* superCluster() const;
+    virtual vecbos::SuperCluster superCluster() const;
 
   protected:
   
