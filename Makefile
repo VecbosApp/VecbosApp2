@@ -44,11 +44,16 @@ $(OUTLIB)DataFormatsTrack.o: $(INCLUDEDIR)/DataFormats/src/Track.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsTrack.o $<
 $(OUTLIB)DataFormatsSuperCluster.o: $(INCLUDEDIR)/DataFormats/src/SuperCluster.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsSuperCluster.o $<
+$(OUTLIB)DataFormatsElectron.o: $(INCLUDEDIR)/DataFormats/src/Electron.cc \
+	$(OUTLIB)DataFormatsTrack.o \
+	$(OUTLIB)DataFormatsSuperCluster.o \
+	$(OUTLIB)DataFormatsCandidate.o \
+	$(OUTLIB)DataFormatsRecoCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsElectron.o $<
 $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsEventHeader.o \
 	$(OUTLIB)DataFormatsVertex.o \
-	$(OUTLIB)DataFormatsTrack.o \
-	$(OUTLIB)DataFormatsSuperCluster.o
+	$(OUTLIB)DataFormatsElectron.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 
 # Analysis Tools libs
