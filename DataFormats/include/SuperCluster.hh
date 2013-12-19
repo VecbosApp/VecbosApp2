@@ -18,7 +18,7 @@ namespace vecbos {
     SuperCluster();
     /// constructor from the energy and position
     SuperCluster( float energy, const Point& position, const TVector3& direction, ClusterShapes shapes ) :
-      energy_(energy), position_(position), direction_(direction), shape_(shapes) { };
+      energy_(energy), position_(position), direction_(direction), shape_(shapes) { isValid_=true; };
     /// destructor
     ~SuperCluster();
     
@@ -100,6 +100,9 @@ namespace vecbos {
 
     void setClustersSize(int numberOfSubClusters) { numberOfSubClusters_ = numberOfSubClusters; }
 
+    /// validity of the super cluster
+    bool isValid() { return isValid_; }
+
   private:
 
     Point position_;
@@ -114,6 +117,8 @@ namespace vecbos {
 
     float preshowerEnergy1_;
     float preshowerEnergy2_;
+
+    bool isValid_;
   };
 
 }

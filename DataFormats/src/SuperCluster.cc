@@ -10,6 +10,7 @@ SuperCluster::SuperCluster() :
   position_=zero;
   direction_=nulldir;
   shape_=shapes;
+  isValid_=false;
 }
 
 SuperCluster::~SuperCluster() { }

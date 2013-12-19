@@ -29,7 +29,7 @@ namespace vecbos {
     struct ClassificationVariables ;
 
     /// constructor from constituents
-    Electron( int charge, SuperCluster supercluster, SuperCluster pfsupercluster, Track gsfTrack, Track ctfTrack, Point vertexPosition);
+    Electron( int charge, const LorentzVector & p4, const Point & vertexPosition, SuperCluster supercluster, SuperCluster pfsupercluster, Track gsfTrack, Track ctfTrack);
     /// destructor
     ~Electron() { };
 
@@ -38,7 +38,6 @@ namespace vecbos {
     SuperCluster pfSuperCluster_;
     Track gsfTrack_;
     Track ctfTrack_;
-    int charge_;
 
   public:
     struct ChargeInfo

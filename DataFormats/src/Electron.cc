@@ -4,9 +4,24 @@
 using namespace vecbos;
 using namespace std;
 
-Electron::Electron( int charge, SuperCluster supercluster, SuperCluster pfsupercluster, Track gsfTrack, Track ctfTrack, Point vertexPosition) :
-  charge_(charge), superCluster_(supercluster), pfSuperCluster_(supercluster), gsfTrack_(gsfTrack), ctfTrack_(ctfTrack) {
+Electron::Electron( int charge,  const LorentzVector & p4, const Point & vertexPosition,
+		    SuperCluster supercluster, SuperCluster pfsupercluster, 
+		    Track gsfTrack, Track ctfTrack) :
+  superCluster_(supercluster), pfSuperCluster_(supercluster), gsfTrack_(gsfTrack), ctfTrack_(ctfTrack) {
   
+  // candidate generic variables
+  charge_ = charge;
+  pt_  = p4.Pt();
+  eta_ = p4.Eta();
+  phi_ = p4.Phi();
+  math::PhysConstants constants;
+  mass_ = constants.electron_mass;
+  vertex_ = vertexPosition;
+  pdgId_ = (charge<0) ? 11 : -11;
+  status_ = 0;
+  cacheCartesianFixed_ = false;
+  
+  // electron specific variables
   trackExtrapolations_.positionAtVtx = vertexPosition;
   trackExtrapolations_.momentumAtVtx = gsfTrack_.momentum();
 
