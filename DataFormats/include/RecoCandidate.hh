@@ -19,8 +19,6 @@ namespace vecbos {
       Candidate( charge, p4, vtx, pdgId, status ) { }
     /// destructor
     virtual ~RecoCandidate();
-    /// check overlap with another candidate
-    virtual bool overlap( const Candidate & ) const = 0;
 
     /// reference to a Track
     virtual vecbos::Track track() const;
