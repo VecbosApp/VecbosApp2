@@ -6,6 +6,7 @@
 #include "DataFormats/include/VertexFwd.hh"
 #include "DataFormats/include/SuperClusterFwd.hh"
 #include "DataFormats/include/TrackFwd.hh"
+#include "DataFormats/include/ElectronFwd.hh"
 
 #include "TTree.h"
 
@@ -30,7 +31,7 @@ namespace vecbos {
     vecbos::TrackCollection GsfTracks;
     vecbos::TrackCollection GlobalMuonTracks;
     vecbos::TrackCollection StandaloneMuonTracks;
-
+    vecbos::ElectronCollection ElectronCollection;
 
   private:
     void loadEventHeader();
@@ -41,6 +42,7 @@ namespace vecbos {
     void loadGsfTracks();
     void loadGlobalMuonTracks();
     void loadStandaloneMuonTracks();
+    void loadElectronCollection();
 
   };
 
