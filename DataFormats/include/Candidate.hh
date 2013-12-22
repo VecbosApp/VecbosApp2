@@ -111,17 +111,6 @@ namespace vecbos {
     /// set status word                                                                   
     virtual void setStatus( int status ) { status_ = status; }    
 
-    /// chi-squares
-    virtual double vertexChi2() const = 0;
-    /** Number of degrees of freedom
-     *  Meant to be Double32_t for soft-assignment fitters: 
-     *  tracks may contribute to the vertex with fractional weights.
-     *  The ndof is then = to the sum of the track weights.
-     *  see e.g. CMS NOTE-2006/032, CMS NOTE-2004/002
-     */
-    virtual double vertexNdof() const = 0;
-    /// chi-squared divided by n.d.o.f.
-    virtual double vertexNormalizedChi2() const = 0;
 
   protected:
     /// electric charge                                                                   
@@ -138,8 +127,6 @@ namespace vecbos {
     LorentzVector p4_;
     /// has cache been set?                                                               
     mutable  bool cacheCartesianFixed_;
-    /// check overlap with another Candidate
-    virtual bool overlap( const Candidate & ) const = 0;
     /// fill the p4 LorentzVector
     inline void cacheP4() { 
       if(cacheCartesianFixed_) return;

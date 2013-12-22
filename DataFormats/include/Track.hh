@@ -84,6 +84,9 @@ namespace vecbos {
       return (vz()-myBeamSpot.z()) - ((vx()-myBeamSpot.x())*px()+(vy()-myBeamSpot.y())*py())/pt() * pz()/pt(); 
     }
 
+    /// validity of the track
+    bool isValid() { return isValid_; }
+
    
     /// get the track vertex
     Point getVertex() { return vertex_; }
@@ -158,6 +161,8 @@ namespace vecbos {
     HitPattern hitPattern_;
     /// impact parameters
     ImpactParameters ips_;
+    /// is a valid track
+    bool isValid_;
     
   };
 
