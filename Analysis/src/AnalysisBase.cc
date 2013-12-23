@@ -54,7 +54,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   loadStandaloneMuonTracks();
 
   // load the GSF Electron collection
-  //  loadElectronCollection();
+  loadElectronCollection();
   
   return centry;
 }
@@ -420,21 +420,40 @@ void AnalysisBase::loadElectronCollection() {
     Vertex::Point vtx(vertexXEle[i],vertexYEle[i],vertexZEle[i]);
 
     int indexSC = superClusterIndexEle[i];
-    SuperCluster sclu = (indexSC>0) ? SuperClusters[indexSC] : SuperCluster();
+    SuperCluster sclu = (indexSC>=0) ? SuperClusters[indexSC] : SuperCluster();
     int indexPFSC = PFsuperClusterIndexEle[i];
-    SuperCluster pfsclu = (indexPFSC>0) ? PFSuperClusters[indexSC] : SuperCluster();
+    SuperCluster pfsclu = (indexPFSC>=0) ? PFSuperClusters[indexSC] : SuperCluster();
 
     int indexGsfTrack = gsfTrackIndexEle[i];
     Track gsfTrack = GsfTracks[indexGsfTrack]; // there is always a GsfTrack associated to an electron
     int indexCtfTrack = trackIndexEle[i];
-    Track ctfTrack = (indexCtfTrack>0) ? GeneralTracks[indexCtfTrack] : Track();
+    Track ctfTrack = (indexCtfTrack>=0) ? GeneralTracks[indexCtfTrack] : Track();
 
     Electron electron(charge,p4Ele,vtx,sclu,pfsclu,gsfTrack,ctfTrack);
-
-    cout << "GsfTrack chi2 = " << electron.track().normalizedChi2() << endl;
-    if(sclu.isValid()) cout << "clu sigmaieie = " << sclu.sigmaIetaIeta() << endl;
-    if(pfsclu.isValid()) cout << "pf sclu sieie = " << pfsclu.sigmaIetaIeta() << endl;
     
+    electron.setRecoFlags(recoFlagsEle[i]);
+    electron.setFiducialFlags(fiducialFlagsEle[i]);
+    electron.setScPixCharge(scPixChargeEle[i]);
+
+    electron.setFbrem(fbremEle[i]);
+    electron.setNbrem(nbremsEle[i]);
+    electron.setClassification(classificationEle[i]);
+
+    Electron::TrackClusterMatching trkclu;
+    trkclu.eSuperClusterOverP   = eSuperClusterOverPEle[i];
+    trkclu.eSeedClusterOverPout = eSeedOverPoutEle[i];
+    trkclu.eSeedClusterOverP    = trkclu.eSeedClusterOverPout * electron.trackPAtOuter() / gsfTrack.p();
+    trkclu.eEleClusterOverPout  = eEleClusterOverPoutEle[i];
+    trkclu.deltaEtaSuperClusterAtVtx = deltaEtaAtVtxEle[i];
+    trkclu.deltaPhiSuperClusterAtVtx = deltaPhiAtVtxEle[i];
+    trkclu.deltaEtaSeedClusterAtCalo = deltaEtaAtCaloEle[i];
+    trkclu.deltaPhiSeedClusterAtCalo = deltaPhiAtCaloEle[i];
+    trkclu.deltaEtaEleClusterAtCalo = deltaEtaEleClusterTrackAtCaloEle[i];
+    trkclu.deltaPhiEleClusterAtCalo = deltaPhiEleClusterTrackAtCaloEle[i];
+    electron.setTrackClusterMatching(trkclu);
+
+    electron.setHcalOverEcal(hOverEEle[i]);
+
   }
 
 }
