@@ -29,7 +29,6 @@ void DYToEESelection::Loop() {
      cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
 	  << "\t evt = " << header.event() << endl;
 
-     cout << "this event has " << SuperClusters.size() << " SCs and " << PFSuperClusters.size() << " PF SCs " << endl;
    }
 
 }
