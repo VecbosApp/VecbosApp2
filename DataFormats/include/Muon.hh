@@ -84,28 +84,27 @@ namespace vecbos {
       {}
     } ;
 
-    // DeltaR = 03 accessors
+    // detector isolation accessors
     float dr03Isolation() const { return dr03_.tkSumPt + dr03_.emSumEt + dr03_.hcalSumEt; }
     float dr03TkSumPt() const { return dr03_.tkSumPt; }
     float dr03EmSumPt() const { return dr03_.emSumEt; }
     float dr03HcalSumPt() const { return dr03_.hcalSumEt; }
+    const DetectorIsolationVariables & dr03DetectorIsolationVariables() const { return dr03_ ; }
 
+    float dr05Isolation() const { return dr05_.tkSumPt + dr05_.emSumEt + dr05_.hcalSumEt; }
+    float dr05TkSumPt() const { return dr05_.tkSumPt; }
+    float dr05EmSumPt() const { return dr05_.emSumEt; }
+    float dr05HcalSumPt() const { return dr05_.hcalSumEt; }
+    const DetectorIsolationVariables & dr05DetectorIsolationVariables() const { return dr05_ ; }
+
+    // PF isolation
     float dr03pfIsolation() const { return dr03PF_.chargedSumPt +  dr03PF_.photonSumPt + dr03PF_.neutralHadronSumPt ; }
     float dr03pfIsolationDeltaBetaCorr() const { return  dr03PF_.chargedSumPt + fmax(dr03PF_.photonSumPt + dr03PF_.neutralHadronSumPt - 0.5*dr03PF_.sumPUPt, 0.); }
     float dr03pfChargedSumPt() const { return dr03PF_.chargedSumPt; }
     float dr03pfPhotonSumPt() const { return dr03PF_.photonSumPt; }
     float dr03pfNeutralHadronSumPt() const { return dr03PF_.neutralHadronSumPt; }
     float dr03pfPUPt() const { return dr03PF_.sumPUPt; }
-    
-    const DetectorIsolationVariables & dr03DetectorIsolationVariables() const { return dr03_ ; }
     const PFIsolationVariables & dr03PFIsolationVariables() const { return dr03PF_ ; }
-
-
-    // DeltaR = 04 accessors
-    float dr04Isolation() const { return dr04_.tkSumPt + dr04_.emSumEt + dr04_.hcalSumEt; }
-    float dr04TkSumPt() const { return dr04_.tkSumPt; }
-    float dr04EmSumPt() const { return dr04_.emSumEt; }
-    float dr04HcalSumPt() const { return dr04_.hcalSumEt; }
 
     float dr04pfIsolation() const { return dr04PF_.chargedSumPt +  dr04PF_.photonSumPt + dr04PF_.neutralHadronSumPt ; }
     float dr04pfIsolationDeltaBetaCorr() const { return  dr04PF_.chargedSumPt + fmax(dr04PF_.photonSumPt + dr04PF_.neutralHadronSumPt - 0.5*dr04PF_.sumPUPt, 0.); }
@@ -113,13 +112,11 @@ namespace vecbos {
     float dr04pfPhotonSumPt() const { return dr04PF_.photonSumPt; }
     float dr04pfNeutralHadronSumPt() const { return dr04PF_.neutralHadronSumPt; }
     float dr04pfPUPt() const { return dr04PF_.sumPUPt; }
-
-    const DetectorIsolationVariables & dr04DetectorIsolationVariables() const { return dr04_ ; }
     const PFIsolationVariables & dr04PFIsolationVariables() const { return dr04PF_ ; }
     
     /// setters
     void setDr03DetectorIsolation( const DetectorIsolationVariables & dr03 ) { dr03_ = dr03 ; }
-    void setDr04DetectorIsolation( const DetectorIsolationVariables & dr04 ) { dr04_ = dr04 ; }
+    void setDr05DetectorIsolation( const DetectorIsolationVariables & dr05 ) { dr05_ = dr05 ; }
     void setDr03PFIsolation( const PFIsolationVariables & dr03 ) { dr03PF_ = dr03 ; }
     void setDr04PFIsolation( const PFIsolationVariables & dr04 ) { dr04PF_ = dr04 ; }
     
@@ -128,7 +125,7 @@ namespace vecbos {
     
     // attributes
     DetectorIsolationVariables dr03_ ;
-    DetectorIsolationVariables dr04_ ;
+    DetectorIsolationVariables dr05_ ;
     PFIsolationVariables dr03PF_ ;
     PFIsolationVariables dr04PF_ ;
 
