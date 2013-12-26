@@ -32,8 +32,8 @@ namespace vecbos {
     vecbos::TrackCollection GsfTracks;
     vecbos::TrackCollection GlobalMuonTracks;
     vecbos::TrackCollection StandaloneMuonTracks;
-    vecbos::ElectronCollection ElectronCollection;
-    vecbos::MuonCollection MuonCollection;
+    vecbos::ElectronCollection Electrons;
+    vecbos::MuonCollection Muons;
 
   private:
     void loadEventHeader();

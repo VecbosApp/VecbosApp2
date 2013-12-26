@@ -406,7 +406,7 @@ void AnalysisBase::loadStandaloneMuonTracks() {
 
 void AnalysisBase::loadElectronCollection() {
 
-  ElectronCollection.clear();
+  Electrons.clear();
 
   math::PhysConstants constants;
 
@@ -507,13 +507,14 @@ void AnalysisBase::loadElectronCollection() {
     electron.setCalibratedEnergyError(calibEnergyErrorEle[i]);
     electron.setTrackMomentumError(trackMomentumErrorEle[i]);
 
+    Electrons.push_back(electron);
   }
 
 }
 
 void AnalysisBase::loadMuonCollection() {
 
-  MuonCollection.clear();
+  Muons.clear();
 
   math::PhysConstants constants;
 
@@ -536,6 +537,41 @@ void AnalysisBase::loadMuonCollection() {
     Track combTrack = GlobalMuonTracks[indexCombinedTrack];
 
     Muon muon(charge,p4Muon,vtx,innerTrack,staTrack,combTrack);
+
+    muon.setPFId(pfmuonIdMuon[i]);
+    muon.setType(typeMuon[i]);
+    
+    Muon::DetectorIsolationVariables detIso03;
+    detIso03.tkSumPt = sumPt03Muon[i];
+    detIso03.emSumEt = emEt03Muon[i];
+    detIso03.hcalSumEt = hadEt03Muon[i];
+
+    Muon::DetectorIsolationVariables detIso05;
+    detIso05.tkSumPt = sumPt05Muon[i];
+    detIso05.emSumEt = emEt05Muon[i];
+    detIso05.hcalSumEt = hadEt05Muon[i];
+
+    Muon::PFIsolationVariables pfIso03;
+    pfIso03.chargedSumPt = pfCandChargedIso03Muon[i];
+    pfIso03.photonSumPt = pfCandPhotonIso03Muon[i];
+    pfIso03.neutralHadronSumPt = pfCandNeutralIso03Muon[i];
+    pfIso03.sumPUPt = pfIsolationSumPUPtR03Muon[i];
+
+    Muon::PFIsolationVariables pfIso04;
+    pfIso04.chargedSumPt = pfCandChargedIso04Muon[i];
+    pfIso04.photonSumPt = pfCandPhotonIso04Muon[i];
+    pfIso04.neutralHadronSumPt = pfCandNeutralIso04Muon[i];
+    pfIso04.sumPUPt = pfIsolationSumPUPtR04Muon[i];
+
+    muon.setDr03DetectorIsolation(detIso03);
+    muon.setDr05DetectorIsolation(detIso05);
+    muon.setDr03PFIsolation(pfIso03);
+    muon.setDr04PFIsolation(pfIso04);
+
+    muon.setNumberOfMatches(numberOfMatchesMuon[i]);
+    muon.setCalibrateMomentum(scaledMomentumMuon[i]);
+
+    Muons.push_back(muon);
   }
 
 }
