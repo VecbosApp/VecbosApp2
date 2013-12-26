@@ -510,3 +510,32 @@ void AnalysisBase::loadElectronCollection() {
   }
 
 }
+
+void AnalysisBase::loadMuonCollection() {
+
+  MuonCollection.clear();
+
+  math::PhysConstants constants;
+
+  for(int i=0; i<nMuon; ++i) {
+    int charge=chargeMuon[i];
+
+    TVector3 momentum3D(pxMuon[i],pyMuon[i],pzMuon[i]);
+    TLorentzVector p4Muon;
+    p4Muon.SetVectM(momentum3D,constants.muon_mass);
+
+    Vertex::Point vtx(vertexXMuon[i],vertexYMuon[i],vertexZMuon[i]);
+
+    int indexInnerTrack = trackIndexMuon[i];
+    Track innerTrack = GeneralTracks[indexInnerTrack];
+
+    int indexStandaloneMuonTrack = standAloneTrackIndexMuon[i];
+    Track staTrack = StandaloneMuonTracks[indexStandaloneMuonTrack];
+
+    int indexCombinedTrack = combinedTrackIndexMuon[i];
+    Track combTrack = GlobalMuonTracks[indexCombinedTrack];
+
+    Muon muon(charge,p4Muon,vtx,innerTrack,staTrack,combTrack);
+  }
+
+}
