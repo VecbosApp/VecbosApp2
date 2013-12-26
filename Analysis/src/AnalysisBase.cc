@@ -454,6 +454,59 @@ void AnalysisBase::loadElectronCollection() {
 
     electron.setHcalOverEcal(hOverEEle[i]);
 
+    Electron::DetectorIsolationVariables detectorIso03;
+    detectorIso03.tkSumPt = dr03TkSumPtEle[i];
+    detectorIso03.ecalRecHitSumEt = dr03EcalRecHitSumEtEle[i];
+    detectorIso03.hcalTowerSumEt = dr03HcalTowerSumEtEle[i];
+    detectorIso03.hcalTowerFullConeSumEt = dr03HcalTowerSumEtFullConeEle[i];
+
+    Electron::DetectorIsolationVariables detectorIso04;
+    detectorIso04.tkSumPt = dr04TkSumPtEle[i];
+    detectorIso04.ecalRecHitSumEt = dr04EcalRecHitSumEtEle[i];
+    detectorIso04.hcalTowerSumEt = dr04HcalTowerSumEtEle[i];
+    detectorIso04.hcalTowerFullConeSumEt = dr04HcalTowerSumEtFullConeEle[i];
+    
+    Electron::PFIsolationVariables pfIso03;
+    pfIso03.chargedSumPt = pfCandChargedIso03Ele[i];
+    pfIso03.photonSumPt = pfCandPhotonIso03Ele[i];
+    pfIso03.neutralHadronSumPt = pfCandNeutralIso03Ele[i];
+    pfIso03.sumPUPt = pfCandChargedPUIso03Ele[i];
+    pfIso03.directionalChargedSumPt = -999.;
+    pfIso03.directionalPhotonSumPt = -999.;
+    pfIso03.directionalNeutralHadronSumPt = -999.;
+
+    Electron::PFIsolationVariables pfIso04;
+    pfIso04.chargedSumPt = pfCandChargedIso04Ele[i];
+    pfIso04.photonSumPt = pfCandPhotonIso04Ele[i];
+    pfIso04.neutralHadronSumPt = pfCandNeutralIso04Ele[i];
+    pfIso04.sumPUPt = pfCandChargedPUIso04Ele[i];
+    pfIso04.directionalChargedSumPt = pfCandChargedDirIso04Ele[i];
+    pfIso04.directionalPhotonSumPt = pfCandPhotonDirIso04Ele[i];
+    pfIso04.directionalNeutralHadronSumPt = pfCandNeutralDirIso04Ele[i];
+
+    electron.setDr03DetectorIsolation(detectorIso03);
+    electron.setDr04DetectorIsolation(detectorIso04);
+    electron.setDr03PFIsolation(pfIso03);
+    electron.setDr04PFIsolation(pfIso04);
+
+    Electron::ConversionRejection cr;
+    cr.dist = convDistEle[i];
+    cr.dcot = convDcotEle[i];
+    cr.radius = convRadiusEle[i];
+    cr.hasMatchedConv = hasMatchedConversionEle[i];
+
+    electron.setConversionVariables(cr);
+
+    Electron::IDMvaOutput mvas;
+    mvas.mvaTriggering = mvaidtrigEle[i];
+    mvas.mvaNonTriggering = mvaidnontrigEle[i];
+
+    electron.setIDMVAs(mvas);
+
+    electron.setCalibratedEnergy(calibEnergyEle[i]);
+    electron.setCalibratedEnergyError(calibEnergyErrorEle[i]);
+    electron.setTrackMomentumError(trackMomentumErrorEle[i]);
+
   }
 
 }
