@@ -4,6 +4,7 @@
 #include "DataFormats/include/RecoCandidate.hh"
 #include "DataFormats/include/Track.hh"
 #include "DataFormats/include/SuperCluster.hh"
+#include "DataFormats/include/ElectronFlags.hh"
 
 namespace vecbos {
 
@@ -72,16 +73,15 @@ namespace vecbos {
     Track gsfTrack() const { return gsfTrack_; }
     Track closestTrack() const { return ctfTrack_; }
     Track track() const { return gsfTrack_; }
-    bool ecalDrivenSeed() const { return ecalDrivenSeed_; }
-    bool trackerDrivenSeed() const { return trackerDrivenSeed_; }
+    bool ecalDrivenSeed() const;
+    bool trackerDrivenSeed() const;
     SuperCluster pfSuperCluster() const { return pfSuperCluster_ ; }
     
     // setters
-    void setEcalDrivenSeed(bool isEcDr) { ecalDrivenSeed_ = isEcDr ; }
-    void setTrackerDrivenSeed(bool isTkDr) { trackerDrivenSeed_ = isTkDr ; }
+    void setRecoFlags(int flags) { recoflags_ = flags; }
 
   private:
-    bool ecalDrivenSeed_, trackerDrivenSeed_;
+    int recoflags_;
 
   //=======================================================
   // Track-Cluster Matching Attributes
@@ -192,12 +192,17 @@ namespace vecbos {
     bool isEEGap() const { return (isEEDeeGap()||isEERingGap()) ; }
     bool isEEDeeGap() const { return fiducialFlags_.isEEDeeGap ; }
     bool isEERingGap() const { return fiducialFlags_.isEERingGap ; }
+    bool isInFiducialRegion();
     const FiducialFlags & fiducialFlags() const { return fiducialFlags_ ; }
+
+    // setter from the multibit word
+    void setFiducialFlags(int flags);
 
   private:
 
     // attributes
     FiducialFlags fiducialFlags_ ;
+    int fiducialflags_;
 
   //=======================================================
   // Shower Shape Variables
@@ -376,15 +381,16 @@ namespace vecbos {
     float mvaTriggering() const { return idMvaOutput_.mvaTriggering ; }
     float mvaNonTriggering() const { return idMvaOutput_.mvaNonTriggering ; }
     
+    // setter
+    void setIDMVAs( const IDMvaOutput & mvas ) { idMvaOutput_ = mvas; }
+
   private:
     IDMvaOutput idMvaOutput_;
 
   public :
     
-    enum Classification { UNKNOWN=-1, GOLDEN=0, BIGBREM=1, BADTRACK=2, SHOWERING=3, GAP=4 } ;
-    
     // setters
-    void setClassification( Classification myclass ) { class_ = myclass ; }
+    void setClassification( int myclass ) { class_ = myclass ; }
     void setFbrem( float fbrem ) { trackFbrem_ = fbrem ; }
     void setNbrem( float nbrem ) { numberOfBrems_ = nbrem ; }
 
@@ -396,7 +402,7 @@ namespace vecbos {
     int numberOfBrems() const { return numberOfBrems_; }
 
   private:
-    Classification class_ ; // fbrem and number of clusters based electron classification
+    int class_ ; // fbrem and number of clusters based electron classification
     float trackFbrem_;
     int numberOfBrems_;
 

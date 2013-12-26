@@ -32,7 +32,11 @@ Electron::Electron( int charge,  const LorentzVector & p4, const Point & vertexP
   showerShape_.e5x5 = superCluster_.e5x5();
   showerShape_.r9 = superCluster_.e3x3() / superCluster_.energy();
 
- }
+  // reconstruction and ECAL fiducial flags
+  recoflags_ = -1;
+  fiducialflags_ = -1;
+
+}
 
 void Electron::setScPixCharge(int charge) {
 
@@ -66,3 +70,29 @@ Electron::LorentzVector Electron::calibratedMomentum() {
 
   return calibratedP4;
 }
+
+bool Electron::ecalDrivenSeed() const {
+  return (recoflags_ >> vecbosflags::isEcalDriven)%2;
+}
+
+bool Electron::trackerDrivenSeed() const {
+  return (recoflags_ >> vecbosflags::isTrackerDriven)%2;
+}
+
+void Electron::setFiducialFlags(int flags) { 
+  fiducialflags_ = flags; 
+  fiducialFlags_.isEB = (fiducialflags_ >> vecbosflags::isEB)%2;
+  fiducialFlags_.isEE = (fiducialflags_ >> vecbosflags::isEE)%2;
+  fiducialFlags_.isEBEEGap = (fiducialflags_ >> vecbosflags::isEBEEGap)%2;
+  fiducialFlags_.isEBEtaGap = (fiducialflags_ >> vecbosflags::isEBEtaGap)%2;
+  fiducialFlags_.isEBPhiGap = (fiducialflags_ >> vecbosflags::isEBPhiGap)%2;
+  fiducialFlags_.isEEDeeGap = (fiducialflags_ >> vecbosflags::isEEDeeGap)%2;
+  fiducialFlags_.isEERingGap = (fiducialflags_ >> vecbosflags::isEERingGap)%2;
+}
+
+bool Electron::isInFiducialRegion() {
+  return ( fabs(eta()) < 1.4442 || // EB
+           (fabs(eta()) > 1.560 && fabs(eta()) < 2.5 ) // EE
+           );
+}
+

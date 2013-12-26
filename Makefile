@@ -28,6 +28,14 @@ OUTLIB               = ./lib/
 .SUFFIXES: .cc,.C,.hh,.h
 .PREFIXES: ./lib/
 
+# the main executable
+VecbosApp: $(INCLUDEDIR)/Analysis/src/VecbosApp.cc \
+	$(OUTLIB)AnalysisVecbosEventContent.o \
+	$(OUTLIB)AnalysisAnalysisBase.o \
+	$(OUTLIB)DataFormatsEvent.o \
+	$(OUTLIB)AnalysisDYToEESelection.o
+	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o VecbosApp $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
+
 # DataFormats libs
 $(OUTLIB)DataFormatsEventHeader.o: $(INCLUDEDIR)/DataFormats/src/EventHeader.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEventHeader.o $<
@@ -73,12 +81,7 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 $(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisDYToEESelection.o $<
 
-VecbosApp: $(INCLUDEDIR)/Analysis/src/VecbosApp.cc \
-	$(OUTLIB)AnalysisVecbosEventContent.o \
-	$(OUTLIB)AnalysisAnalysisBase.o \
-	$(OUTLIB)DataFormatsEvent.o \
-	$(OUTLIB)AnalysisDYToEESelection.o
-	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o VecbosApp $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
 
 clean:
 	rm -f lib/*o
+	rm -f VecbosApp

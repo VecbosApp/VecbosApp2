@@ -54,7 +54,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   loadStandaloneMuonTracks();
 
   // load the GSF Electron collection
-  //  loadElectronCollection();
+  loadElectronCollection();
   
   return centry;
 }
@@ -420,21 +420,93 @@ void AnalysisBase::loadElectronCollection() {
     Vertex::Point vtx(vertexXEle[i],vertexYEle[i],vertexZEle[i]);
 
     int indexSC = superClusterIndexEle[i];
-    SuperCluster sclu = (indexSC>0) ? SuperClusters[indexSC] : SuperCluster();
+    SuperCluster sclu = (indexSC>=0) ? SuperClusters[indexSC] : SuperCluster();
     int indexPFSC = PFsuperClusterIndexEle[i];
-    SuperCluster pfsclu = (indexPFSC>0) ? PFSuperClusters[indexSC] : SuperCluster();
+    SuperCluster pfsclu = (indexPFSC>=0) ? PFSuperClusters[indexSC] : SuperCluster();
 
     int indexGsfTrack = gsfTrackIndexEle[i];
     Track gsfTrack = GsfTracks[indexGsfTrack]; // there is always a GsfTrack associated to an electron
     int indexCtfTrack = trackIndexEle[i];
-    Track ctfTrack = (indexCtfTrack>0) ? GeneralTracks[indexCtfTrack] : Track();
+    Track ctfTrack = (indexCtfTrack>=0) ? GeneralTracks[indexCtfTrack] : Track();
 
     Electron electron(charge,p4Ele,vtx,sclu,pfsclu,gsfTrack,ctfTrack);
-
-    cout << "GsfTrack chi2 = " << electron.track().normalizedChi2() << endl;
-    if(sclu.isValid()) cout << "clu sigmaieie = " << sclu.sigmaIetaIeta() << endl;
-    if(pfsclu.isValid()) cout << "pf sclu sieie = " << pfsclu.sigmaIetaIeta() << endl;
     
+    electron.setRecoFlags(recoFlagsEle[i]);
+    electron.setFiducialFlags(fiducialFlagsEle[i]);
+    electron.setScPixCharge(scPixChargeEle[i]);
+
+    electron.setFbrem(fbremEle[i]);
+    electron.setNbrem(nbremsEle[i]);
+    electron.setClassification(classificationEle[i]);
+
+    Electron::TrackClusterMatching trkclu;
+    trkclu.eSuperClusterOverP   = eSuperClusterOverPEle[i];
+    trkclu.eSeedClusterOverPout = eSeedOverPoutEle[i];
+    trkclu.eSeedClusterOverP    = trkclu.eSeedClusterOverPout * electron.trackPAtOuter() / gsfTrack.p();
+    trkclu.eEleClusterOverPout  = eEleClusterOverPoutEle[i];
+    trkclu.deltaEtaSuperClusterAtVtx = deltaEtaAtVtxEle[i];
+    trkclu.deltaPhiSuperClusterAtVtx = deltaPhiAtVtxEle[i];
+    trkclu.deltaEtaSeedClusterAtCalo = deltaEtaAtCaloEle[i];
+    trkclu.deltaPhiSeedClusterAtCalo = deltaPhiAtCaloEle[i];
+    trkclu.deltaEtaEleClusterAtCalo = deltaEtaEleClusterTrackAtCaloEle[i];
+    trkclu.deltaPhiEleClusterAtCalo = deltaPhiEleClusterTrackAtCaloEle[i];
+    electron.setTrackClusterMatching(trkclu);
+
+    electron.setHcalOverEcal(hOverEEle[i]);
+
+    Electron::DetectorIsolationVariables detectorIso03;
+    detectorIso03.tkSumPt = dr03TkSumPtEle[i];
+    detectorIso03.ecalRecHitSumEt = dr03EcalRecHitSumEtEle[i];
+    detectorIso03.hcalTowerSumEt = dr03HcalTowerSumEtEle[i];
+    detectorIso03.hcalTowerFullConeSumEt = dr03HcalTowerSumEtFullConeEle[i];
+
+    Electron::DetectorIsolationVariables detectorIso04;
+    detectorIso04.tkSumPt = dr04TkSumPtEle[i];
+    detectorIso04.ecalRecHitSumEt = dr04EcalRecHitSumEtEle[i];
+    detectorIso04.hcalTowerSumEt = dr04HcalTowerSumEtEle[i];
+    detectorIso04.hcalTowerFullConeSumEt = dr04HcalTowerSumEtFullConeEle[i];
+    
+    Electron::PFIsolationVariables pfIso03;
+    pfIso03.chargedSumPt = pfCandChargedIso03Ele[i];
+    pfIso03.photonSumPt = pfCandPhotonIso03Ele[i];
+    pfIso03.neutralHadronSumPt = pfCandNeutralIso03Ele[i];
+    pfIso03.sumPUPt = pfCandChargedPUIso03Ele[i];
+    pfIso03.directionalChargedSumPt = -999.;
+    pfIso03.directionalPhotonSumPt = -999.;
+    pfIso03.directionalNeutralHadronSumPt = -999.;
+
+    Electron::PFIsolationVariables pfIso04;
+    pfIso04.chargedSumPt = pfCandChargedIso04Ele[i];
+    pfIso04.photonSumPt = pfCandPhotonIso04Ele[i];
+    pfIso04.neutralHadronSumPt = pfCandNeutralIso04Ele[i];
+    pfIso04.sumPUPt = pfCandChargedPUIso04Ele[i];
+    pfIso04.directionalChargedSumPt = pfCandChargedDirIso04Ele[i];
+    pfIso04.directionalPhotonSumPt = pfCandPhotonDirIso04Ele[i];
+    pfIso04.directionalNeutralHadronSumPt = pfCandNeutralDirIso04Ele[i];
+
+    electron.setDr03DetectorIsolation(detectorIso03);
+    electron.setDr04DetectorIsolation(detectorIso04);
+    electron.setDr03PFIsolation(pfIso03);
+    electron.setDr04PFIsolation(pfIso04);
+
+    Electron::ConversionRejection cr;
+    cr.dist = convDistEle[i];
+    cr.dcot = convDcotEle[i];
+    cr.radius = convRadiusEle[i];
+    cr.hasMatchedConv = hasMatchedConversionEle[i];
+
+    electron.setConversionVariables(cr);
+
+    Electron::IDMvaOutput mvas;
+    mvas.mvaTriggering = mvaidtrigEle[i];
+    mvas.mvaNonTriggering = mvaidnontrigEle[i];
+
+    electron.setIDMVAs(mvas);
+
+    electron.setCalibratedEnergy(calibEnergyEle[i]);
+    electron.setCalibratedEnergyError(calibEnergyErrorEle[i]);
+    electron.setTrackMomentumError(trackMomentumErrorEle[i]);
+
   }
 
 }
