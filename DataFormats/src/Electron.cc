@@ -60,7 +60,7 @@ float Electron::pfSuperClusterFbrem() const {
   return (pfSuperCluster_.energy() - electronClusterEnergy)/pfSuperCluster_.energy() ;
 }
 
-Electron::LorentzVector Electron::calibratedMomentum() {
+Electron::LorentzVector Electron::calibratedP4() {
   Vector direction=momentum().Unit();
   Vector scaledMomentum = direction*calibratedEnergy_;
   
