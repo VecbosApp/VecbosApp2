@@ -381,6 +381,9 @@ namespace vecbos {
     float mvaTriggering() const { return idMvaOutput_.mvaTriggering ; }
     float mvaNonTriggering() const { return idMvaOutput_.mvaNonTriggering ; }
     
+    // setter
+    void setIDMVAs( const IDMvaOutput & mvas ) { idMvaOutput_ = mvas; }
+
   private:
     IDMvaOutput idMvaOutput_;
 
