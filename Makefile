@@ -58,10 +58,16 @@ $(OUTLIB)DataFormatsElectron.o: $(INCLUDEDIR)/DataFormats/src/Electron.cc \
 	$(OUTLIB)DataFormatsCandidate.o \
 	$(OUTLIB)DataFormatsRecoCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsElectron.o $<
+$(OUTLIB)DataFormatsMuon.o: $(INCLUDEDIR)/DataFormats/src/Muon.cc \
+	$(OUTLIB)DataFormatsTrack.o \
+	$(OUTLIB)DataFormatsCandidate.o \
+	$(OUTLIB)DataFormatsRecoCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsMuon.o $<
 $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsEventHeader.o \
 	$(OUTLIB)DataFormatsVertex.o \
-	$(OUTLIB)DataFormatsElectron.o
+	$(OUTLIB)DataFormatsElectron.o \
+	$(OUTLIB)DataFormatsMuon.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 
 # Analysis Tools libs
