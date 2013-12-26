@@ -52,6 +52,10 @@ namespace vecbos {
     /// get the EA from the electron
     double GetElectronEffectiveArea(Electron electron) { return GetElectronEffectiveArea(electron.superCluster().eta()); }
 
+    /// get the rho corrected isolation for electron
+    double getRhoCorrectedIsolation03(Electron electron, float rho);
+    double getRhoCorrectedIsolation04(Electron electron, float rho);
+
   private:
     ElectronEffectiveAreaType type_;
     ElectronEffectiveAreaTarget target_;

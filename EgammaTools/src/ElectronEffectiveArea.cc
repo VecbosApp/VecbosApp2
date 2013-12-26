@@ -7,6 +7,14 @@ ElectronEffectiveArea::ElectronEffectiveArea(ElectronEffectiveAreaType type, Ele
   type_(type), target_(EffectiveAreaTarget)
 { }
 
+double ElectronEffectiveArea::getRhoCorrectedIsolation03(Electron electron, float rho) {
+  return electron.dr03pfChargedSumPt() + fmax(0.,electron.dr03pfPhotonSumEt() + electron.dr03pfNeutralHadronSumEt() - rho*GetElectronEffectiveArea(electron));
+}
+
+double ElectronEffectiveArea::getRhoCorrectedIsolation04(Electron electron, float rho) {
+  return electron.dr04pfChargedSumPt() + fmax(0.,electron.dr04pfPhotonSumEt() + electron.dr04pfNeutralHadronSumEt() - rho*GetElectronEffectiveArea(electron));
+}
+
 double ElectronEffectiveArea::GetElectronEffectiveArea(double SCEta) {
       
   double EffectiveArea = 0;
