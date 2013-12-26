@@ -1,13 +1,13 @@
 #ifndef ElectronEffectiveArea_H
 #define ElectronEffectiveArea_H
 
+#include "DataFormats/include/Electron.hh"
+
 namespace vecbos {
 
   class ElectronEffectiveArea{
   public:
-    ElectronEffectiveArea() { };
-    ~ElectronEffectiveArea() { };
-  
+
     enum ElectronEffectiveAreaType {
       kEleTrkIso03, 
       kEleEcalIso03, 
@@ -43,7 +43,19 @@ namespace vecbos {
       kEleEAData2012
     };
 
-    double GetElectronEffectiveArea(ElectronEffectiveAreaType type, double SCEta, ElectronEffectiveAreaTarget EffectiveAreaTarget = kEleEAData2011);
+    /// empty constructor (used to use just the standalone function)
+    ElectronEffectiveArea(ElectronEffectiveAreaType type = kEleGammaAndNeutralHadronIso03, ElectronEffectiveAreaTarget EffectiveAreaTarget = kEleEAData2012);
+    ~ElectronEffectiveArea() { };
+  
+    /// get the EA from eta
+    double GetElectronEffectiveArea(double SCEta);
+    /// get the EA from the electron
+    double GetElectronEffectiveArea(Electron electron) { return GetElectronEffectiveArea(electron.superCluster().eta()); }
+
+  private:
+    ElectronEffectiveAreaType type_;
+    ElectronEffectiveAreaTarget target_;
+    
 
   };
 
