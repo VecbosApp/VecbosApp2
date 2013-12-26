@@ -4,8 +4,8 @@
 using namespace vecbos;
 
 Muon::Muon( int charge, const LorentzVector & p4, const Point & vertexPosition,
-	    Track innerTrack, Track staTrack, Track gblTrack, Track combTrack) :
-  innerTrack_(innerTrack), standaloneTrack_(staTrack), globalMuonTrack_(gblTrack), combinedTrack_(combTrack) {
+	    Track innerTrack, Track staTrack, Track gblTrack) :
+  innerTrack_(innerTrack), standaloneTrack_(staTrack), globalMuonTrack_(gblTrack) {
 
   // candidate generic variables
   charge_ = charge;

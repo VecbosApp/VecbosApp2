@@ -18,12 +18,12 @@ namespace vecbos {
 
     /// constructor from constituents
     Muon( int charge, const LorentzVector & p4, const Point & vertexPosition,
-	  Track innerTrack, Track staTrack, Track gblTrack, Track combTrack);
+	  Track innerTrack, Track staTrack, Track gblTrack);
     /// destructor
     ~Muon() { };
 
   private:
-    Track innerTrack_, standaloneTrack_, globalMuonTrack_, combinedTrack_;
+    Track innerTrack_, standaloneTrack_, globalMuonTrack_;
     
   public:
 
