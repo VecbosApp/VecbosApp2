@@ -284,32 +284,34 @@ namespace vecbos {
     } ;
 
     // 03 accessors
+    float dr03Isolation() const { return dr03_.tkSumPt + dr03_.ecalRecHitSumEt + dr03_.hcalTowerSumEt; }
     float dr03TkSumPt() const { return dr03_.tkSumPt ; }
     float dr03EcalRecHitSumEt() const { return dr03_.ecalRecHitSumEt ; }
     float dr03HcalTowerSumEt() const { return dr03_.hcalTowerSumEt ; }
     float dr03HcalTowerFullConeSumEt() const { return dr03_.hcalTowerSumEt ; }
 
+    float dr03pfIsolation() const { return dr03PF_.chargedSumPt +  dr03PF_.photonSumPt + dr03PF_.neutralHadronSumPt ; }
+    float dr03pfIsolationDeltaBetaCorr() const { return  dr03PF_.chargedSumPt + fmax(dr03PF_.photonSumPt + dr03PF_.neutralHadronSumPt - 0.5*dr03PF_.sumPUPt, 0.); }
     float dr03pfChargedSumPt() const { return dr03PF_.chargedSumPt ; }
     float dr03pfPhotonSumEt() const { return dr03PF_.photonSumPt ; }
     float dr03pfNeutralHadronSumEt() const { return dr03PF_.neutralHadronSumPt ; }
-    float dr03pfIsolation() const { return dr03PF_.chargedSumPt +  dr03PF_.photonSumPt + dr03PF_.neutralHadronSumPt ; }
-    float dr03pfIsolationRhoCorr() const;
-    float dr03pfIsolationDeltaBetaCorr() const;
+
     const DetectorIsolationVariables & dr03DetectorIsolationVariables() const { return dr03_ ; }
     const PFIsolationVariables & dr03PFIsolationVariables() const { return dr03PF_ ; }
 
     // 04 accessors
+    float dr04Isolation() const { return dr04_.tkSumPt + dr04_.ecalRecHitSumEt + dr04_.hcalTowerSumEt; }
     float dr04TkSumPt() const { return dr04_.tkSumPt ; }
     float dr04EcalRecHitSumEt() const { return dr04_.ecalRecHitSumEt ; }
     float dr04HcalTowerSumEt() const { return dr04_.hcalTowerSumEt ; }
     float dr04HcalTowerFullConeSumEt() const { return dr04_.hcalTowerSumEt ; }
 
+    float dr04pfIsolation() const { return dr04PF_.chargedSumPt +  dr04PF_.photonSumPt + dr04PF_.neutralHadronSumPt ; }
+    float dr04pfIsolationDeltaBetaCorr() const { return  dr04PF_.chargedSumPt + fmax(dr04PF_.photonSumPt + dr04PF_.neutralHadronSumPt - 0.5*dr04PF_.sumPUPt, 0.); }
     float dr04pfChargedSumPt() const { return dr04PF_.chargedSumPt ; }
     float dr04pfPhotonSumEt() const { return dr04PF_.photonSumPt ; }
     float dr04pfNeutralHadronSumEt() const { return dr04PF_.neutralHadronSumPt ; }
-    float dr04pfIsolation() const { return dr04PF_.chargedSumPt +  dr04PF_.photonSumPt + dr04PF_.neutralHadronSumPt ; }
-    float dr04pfIsolationRhoCorr() const;
-    float dr04pfIsolationDeltaBetaCorr() const;
+
     const DetectorIsolationVariables & dr04DetectorIsolationVariables() const { return dr04_ ; }
     const PFIsolationVariables & dr04PFIsolationVariables() const { return dr04PF_ ; }
 
@@ -410,7 +412,7 @@ namespace vecbos {
     //=======================================================
     // Corrected Momentum Information
     //=======================================================
-    LorentzVector calibratedMomentum();
+    LorentzVector calibratedP4();
     float calibratedEnergy() { return calibratedEnergy_ ; }
     float calibratedEnergyError() { return calibratedEnergyError_ ; }
     float trackMomentumError() { return trackMomentumError_ ; }
