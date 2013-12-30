@@ -73,11 +73,21 @@ $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 # Analysis Tools libs
 $(OUTLIB)ToolsVertexSelector.o: $(INCLUDEDIR)/Tools/src/VertexSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsVertexSelector.o $<
+$(OUTLIB)ToolsCollectionSelector.o: $(INCLUDEDIR)/Tools/src/CollectionSelector.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCollectionSelector.o $<
 
 # Egamma Tools libs
 $(OUTLIB)EgammaToolsElectronEffectiveArea.o: $(INCLUDEDIR)/EgammaTools/src/ElectronEffectiveArea.cc \
 	$(OUTLIB)DataFormatsElectron.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronEffectiveArea.o $<
+$(OUTLIB)EgammaToolsElectronIDAlgo.o: $(INCLUDEDIR)/EgammaTools/src/ElectronIDAlgo.cc \
+	$(OUTLIB)DataFormatsElectron.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronIDAlgo.o $<
+$(OUTLIB)EgammaToolsElectronIDSelector.o: $(INCLUDEDIR)/EgammaTools/src/ElectronIDSelector.cc \
+	$(OUTLIB)DataFormatsElectron.o \
+	$(OUTLIB)ToolsCollectionSelector.o \
+	$(OUTLIB)EgammaToolsElectronIDAlgo.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronIDSelector.o $<
 
 
 # Analysis generic libs
@@ -91,7 +101,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 
 
 # Analyzer libs
-$(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc
+$(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc \
+	$(OUTLIB)EgammaToolsElectronIDSelector.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisDYToEESelection.o $<
 
 
