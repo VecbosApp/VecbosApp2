@@ -4,6 +4,7 @@
 #include <string.h>
 #include "DataFormats/include/Electron.hh"
 #include "DataFormats/include/ElectronFwd.hh"
+#include "DataFormats/include/VertexFwd.hh"
 
 namespace vecbos {
 
@@ -11,8 +12,7 @@ namespace vecbos {
 
   public:
     /// constructor
-    ElectronIDAlgo(vecbos::Electron electron, float rho) :
-      electron_(electron), rho_(rho) { }
+    ElectronIDAlgo(vecbos::Electron electron, float rho, vecbos::VertexCollection vertices);
     /// destructor
     ~ElectronIDAlgo() { }
     
@@ -47,6 +47,8 @@ namespace vecbos {
 	&& pass_mva_convrej(wp) && pass_mva_ip(wp); }
 
   private:
+    /// the best good primary vertex
+    vecbos::Vertex bestVertex_;
     /// the electron to be selected
     vecbos::Electron electron_;
     /// the event rho used to correct the isolation
