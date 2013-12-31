@@ -2,6 +2,7 @@
 
 #include "DataFormats/include/SuperCluster.hh"
 #include "DataFormats/include/SuperClusterFwd.hh"
+#include "EgammaTools/include/ElectronIDSelector.hh"
 
 #include "Analysis/include/DYToEESelection.hh"
 
@@ -28,6 +29,13 @@ void DYToEESelection::Loop() {
      EventHeader header = Event.eventHeader();
      cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
 	  << "\t evt = " << header.event() << endl;
+     
+     ElectronIDSelector elid_loose(Electrons,rhoFastjet);
+     elid_loose.configure("EgammaTools/data/electrons_mva_loose.cfg");
+     
+     ElectronCollection loose_electrons = elid_loose.output();
+     cout << "reco electrons size = " << Electrons.size() << "   loose electrons = " << loose_electrons.size() << endl;
+     
 
    }
 
