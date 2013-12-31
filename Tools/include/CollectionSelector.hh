@@ -75,7 +75,7 @@ namespace vecbos {
     } else {
       std::string parameter;
       std::string val;
-      while (1) {
+      while (!cfgfile.eof()) {
 	cfgfile >> parameter >> val;
 	if(parameter.compare("algo")==0) algo_ = val;
 	if(parameter.compare("wp")==0) wp_ = val;
