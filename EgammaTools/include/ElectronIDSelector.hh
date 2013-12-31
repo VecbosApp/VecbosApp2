@@ -19,6 +19,9 @@ namespace vecbos {
     /// selected objects according the configured algo and wp
     vecbos::ElectronCollection output();
     
+    /// set the rho for isolation correction with FastJet
+    void setRho(float rho) { rho_ = rho; }
+
   private:
     /// rho (to correct isolation with FastJet)
     float rho_;

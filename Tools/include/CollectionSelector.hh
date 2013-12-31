@@ -25,6 +25,9 @@ namespace vecbos {
     /// configure from text file
     void configure(std::string cfg);
 
+    /// set the input collection
+    void source(collection input) { input_ = input; }
+
     /// selected objects
     virtual collection output() { return output_; }
 
