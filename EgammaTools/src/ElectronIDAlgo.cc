@@ -1,8 +1,10 @@
+#include <iostream>
 #include "EgammaTools/include/ElectronEffectiveArea.hh"
 
 #include "EgammaTools/include/ElectronIDAlgo.hh"
 
 using namespace vecbos;
+using namespace std;
 
 bool ElectronIDAlgo::pass_hlt() {
   /// cuts[EB,EE]
@@ -123,30 +125,28 @@ bool ElectronIDAlgo::pass_cuts_ip(std::string wp) {
 
 bool ElectronIDAlgo::pass_mva_id(std::string algo, std::string wp) {
   bool pass=false;
-  if(algo.compare("mva_triggering")==0) {
+  if(algo.compare("mva")==0 && wp.compare("tight")==0) {
     if(!pass_hlt()) return false;
     float pt = electron_.pt();
     float abseta = fabs(electron_.superCluster().eta());
     float bdt = electron_.mvaTriggering();
-    if ( ( wp.compare("tight")==0 ) && 
-	 ( ( pt <= 20 && abseta >= 0.000 && abseta < 0.800 && bdt > 0.00 ) ||
-	   ( pt <= 20 && abseta >= 0.800 && abseta < 1.479 && bdt > 0.10 ) ||
-	   ( pt <= 20 && abseta >= 1.479 && abseta < 2.500 && bdt > 0.62 ) ||
-	   ( pt >  20 && abseta >= 0.000 && abseta < 0.800 && bdt > 0.94 ) ||
-	   ( pt >  20 && abseta >= 0.800 && abseta < 1.479 && bdt > 0.85 ) ||
-	   ( pt >  20 && abseta >= 1.479 && abseta < 2.500 && bdt > 0.92 ) ) )
+    if ( ( pt <= 20 && abseta >= 0.000 && abseta < 0.800 && bdt > 0.00 ) ||
+	 ( pt <= 20 && abseta >= 0.800 && abseta < 1.479 && bdt > 0.10 ) ||
+	 ( pt <= 20 && abseta >= 1.479 && abseta < 2.500 && bdt > 0.62 ) ||
+	 ( pt >  20 && abseta >= 0.000 && abseta < 0.800 && bdt > 0.94 ) ||
+	 ( pt >  20 && abseta >= 0.800 && abseta < 1.479 && bdt > 0.85 ) ||
+	 ( pt >  20 && abseta >= 1.479 && abseta < 2.500 && bdt > 0.92 ) )
       pass=true;
-  } else if(algo.compare("mva_non_triggering")==0) {
+  } else if(algo.compare("mva")==0 && wp.compare("loose")==0) {
     float pt = electron_.pt();
     float abseta = fabs(electron_.eta());
     float bdt = electron_.mvaNonTriggering();
-    if ( ( wp.compare("loose")==0 ) &&
-	 ( ( pt <= 10 && abseta >= 0.000 && abseta < 0.800 && bdt >  0.470 ) ||
-	   ( pt <= 10 && abseta >= 0.800 && abseta < 1.479 && bdt >  0.004 ) ||
-	   ( pt <= 10 && abseta >= 1.479 && abseta < 2.500 && bdt >  0.295 ) ||
-	   ( pt >  10 && abseta >= 0.000 && abseta < 0.800 && bdt > -0.340 ) ||
-	   ( pt >  10 && abseta >= 0.800 && abseta < 1.479 && bdt > -0.650 ) ||
-	   ( pt >  10 && abseta >= 1.479 && abseta < 2.500 && bdt >  0.600 ) ) )
+    if ( ( pt <= 10 && abseta >= 0.000 && abseta < 0.800 && bdt >  0.470 ) ||
+	 ( pt <= 10 && abseta >= 0.800 && abseta < 1.479 && bdt >  0.004 ) ||
+	 ( pt <= 10 && abseta >= 1.479 && abseta < 2.500 && bdt >  0.295 ) ||
+	 ( pt >  10 && abseta >= 0.000 && abseta < 0.800 && bdt > -0.340 ) ||
+	 ( pt >  10 && abseta >= 0.800 && abseta < 1.479 && bdt > -0.650 ) ||
+	 ( pt >  10 && abseta >= 1.479 && abseta < 2.500 && bdt >  0.600 ) )
       pass=true;
   }
   return pass;
@@ -185,9 +185,9 @@ bool  ElectronIDAlgo::pass_mva_ip(std::string wp) {
   }
   if( wp.compare("loose")==0 ) {
     /// impact parameter
-    if(electron_.gsfTrack().sip3D() >= 4) pass=false;
+    if(electron_.gsfTrack().sip3D() >= 4.0) pass=false;
   }
   
-  return false;
+  return pass;
 }
 
