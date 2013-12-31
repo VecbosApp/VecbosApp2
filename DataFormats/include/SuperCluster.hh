@@ -1,6 +1,7 @@
 #ifndef VECBOS_SUPERCLUSTER_HH
 #define VECBOS_SUPERCLUSTER_HH
 
+#include <math.h>
 #include <TVector3.h>
 
 namespace vecbos {
@@ -24,6 +25,11 @@ namespace vecbos {
     
     /// energy with basic calibrations
     float energy() const { return energy_; }
+    /// transverse energy with basic calibrations
+    float et() const { return energy_ * fabs(sin(direction_.Theta())); }
+
+    /// eta (no vertex correction: assume (0,0,0)
+    float eta() const { return direction_.Eta(); }
 
     /// raw uncorrected energy (sum of energies of component BasicClusters)
     float rawEnergy() const { return rawEnergy_; }
