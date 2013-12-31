@@ -81,7 +81,8 @@ $(OUTLIB)EgammaToolsElectronEffectiveArea.o: $(INCLUDEDIR)/EgammaTools/src/Elect
 	$(OUTLIB)DataFormatsElectron.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronEffectiveArea.o $<
 $(OUTLIB)EgammaToolsElectronIDAlgo.o: $(INCLUDEDIR)/EgammaTools/src/ElectronIDAlgo.cc \
-	$(OUTLIB)DataFormatsElectron.o
+	$(OUTLIB)DataFormatsElectron.o \
+	$(OUTLIB)ToolsVertexSelector.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronIDAlgo.o $<
 $(OUTLIB)EgammaToolsElectronIDSelector.o: $(INCLUDEDIR)/EgammaTools/src/ElectronIDSelector.cc \
 	$(OUTLIB)DataFormatsElectron.o \
