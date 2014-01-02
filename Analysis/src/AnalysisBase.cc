@@ -55,6 +55,9 @@ int AnalysisBase::loadTree(Long64_t entry) {
 
   // load the GSF Electron collection
   loadElectronCollection();
+
+  /// load the MET (calomet and pfmet)
+  loadMET();
   
   return centry;
 }
@@ -573,5 +576,45 @@ void AnalysisBase::loadMuonCollection() {
 
     Muons.push_back(muon);
   }
+
+}
+
+void AnalysisBase::loadMET() {
+  
+  /// Calo MET
+  Candidate::Vector caloMetP3(pxMet[0],pyMet[0],0.0);
+  Candidate::LorentzVector caloMetP4;
+  caloMetP4.SetVectM(caloMetP3,0.0);
+  Candidate::Vector caloMetVtx(vertexXMet[0],vertexYMet[0],vertexZMet[0]);
+  MET calomet(sumEtMet[0],significanceMet[0],caloMetP4,caloMetVtx);
+  CaloMet = calomet;
+
+  /// PF MET
+  Candidate::Vector pfMetP3(pxPFMet[0],pyPFMet[0],0.0);
+  Candidate::LorentzVector pfMetP4;
+  pfMetP4.SetVectM(pfMetP3,0.0);
+  Candidate::Vector pfMetVtx(vertexXPFMet[0],vertexYPFMet[0],vertexZPFMet[0]);
+  PFMET pfmet(sumEtPFMet[0],significancePFMet[0],pfMetP4,pfMetVtx);
+  
+  Candidate::Vector pfMetP3Type0(pxPFMet[1],pyPFMet[1],0.0);
+  Candidate::LorentzVector pfMetP4Type0;
+  pfMetP4Type0.SetVectM(pfMetP3Type0,0.0);
+
+  Candidate::Vector pfMetP3Type1(pxPFMet[2],pyPFMet[2],0.0);
+  Candidate::LorentzVector pfMetP4Type1;
+  pfMetP4Type1.SetVectM(pfMetP3Type1,0.0);
+  
+  Candidate::Vector pfMetP3Type1p2(pxPFMet[3],pyPFMet[3],0.0);
+  Candidate::LorentzVector pfMetP4Type1p2;
+  pfMetP4Type1p2.SetVectM(pfMetP3Type1p2,0.0);
+
+  PFMET::PFMETCorr corrections;
+  corrections.Type0Met = pfMetP4Type0;
+  corrections.Type1Met = pfMetP4Type1;
+  corrections.Type1p2Met = pfMetP4Type1p2;
+
+  pfmet.setCorrections(corrections);
+  
+  PfMet = pfmet;
 
 }

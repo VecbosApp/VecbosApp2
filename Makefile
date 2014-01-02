@@ -66,11 +66,18 @@ $(OUTLIB)DataFormatsMuon.o: $(INCLUDEDIR)/DataFormats/src/Muon.cc \
 	$(OUTLIB)DataFormatsCandidate.o \
 	$(OUTLIB)DataFormatsRecoCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsMuon.o $<
+$(OUTLIB)DataFormatsMET.o: $(INCLUDEDIR)/DataFormats/src/MET.cc \
+	$(OUTLIB)DataFormatsCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsMET.o $<
+$(OUTLIB)DataFormatsPFMET.o: $(INCLUDEDIR)/DataFormats/src/PFMET.cc \
+	$(OUTLIB)DataFormatsMET.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsPFMET.o $<
 $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsEventHeader.o \
 	$(OUTLIB)DataFormatsVertex.o \
 	$(OUTLIB)DataFormatsElectron.o \
 	$(OUTLIB)DataFormatsMuon.o \
+	$(OUTLIB)DataFormatsPFMET.o \
 	$(OUTLIB)DataFormatsCompositeCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 

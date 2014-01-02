@@ -8,6 +8,8 @@
 #include "DataFormats/include/TrackFwd.hh"
 #include "DataFormats/include/ElectronFwd.hh"
 #include "DataFormats/include/MuonFwd.hh"
+#include "DataFormats/include/MET.hh"
+#include "DataFormats/include/PFMET.hh"
 
 #include "TTree.h"
 
@@ -34,6 +36,8 @@ namespace vecbos {
     vecbos::TrackCollection StandaloneMuonTracks;
     vecbos::ElectronCollection Electrons;
     vecbos::MuonCollection Muons;
+    vecbos::MET CaloMet;
+    vecbos::PFMET PfMet;
 
   private:
     void loadEventHeader();
@@ -46,6 +50,7 @@ namespace vecbos {
     void loadStandaloneMuonTracks();
     void loadElectronCollection();
     void loadMuonCollection();
+    void loadMET();
 
   };
 
