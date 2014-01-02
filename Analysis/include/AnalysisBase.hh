@@ -38,6 +38,7 @@ namespace vecbos {
     vecbos::TrackCollection StandaloneMuonTracks;
     vecbos::ElectronCollection Electrons;
     vecbos::MuonCollection Muons;
+    vecbos::MET GenMet;
     vecbos::MET CaloMet;
     vecbos::PFMET PfMet;
     vecbos::PFJetCollection PfJets;

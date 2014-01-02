@@ -583,6 +583,14 @@ void AnalysisBase::loadMuonCollection() {
 }
 
 void AnalysisBase::loadMET() {
+
+  /// Gen MET
+  Candidate::Vector genMetP3(pxGenMet[0],pyGenMet[0],0.0);
+  Candidate::LorentzVector genMetP4;
+  genMetP4.SetVectM(genMetP3,0.0);
+  Candidate::Vector genMetVtx(vertexXGenMet[0],vertexYGenMet[0],vertexZGenMet[0]);
+  MET genmet(genMetP4,genMetVtx);
+  GenMet = genmet;
   
   /// Calo MET
   Candidate::Vector caloMetP3(pxMet[0],pyMet[0],0.0);
