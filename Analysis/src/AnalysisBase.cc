@@ -707,6 +707,17 @@ void AnalysisBase::loadJetCollection() {
 
     jet.setQGVars(qg);
 
+    PfJets.push_back(jet);
+
+  }
+
+  /// GenJets
+  GenJets.clear();
+  for(int i=0; i<nAK5GenJet; ++i) {
+    Candidate::LorentzVector p4Jet(pxAK5GenJet[i],pyAK5GenJet[i],pzAK5GenJet[i],energyAK5GenJet[i]);
+    Candidate::Point vtx(vertexXAK5GenJet[i],vertexYAK5GenJet[i],vertexZAK5GenJet[i]);
+    Jet jet(p4Jet,vtx);
+    GenJets.push_back(jet);
   }
 
 }

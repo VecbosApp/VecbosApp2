@@ -10,6 +10,7 @@
 #include "DataFormats/include/MuonFwd.hh"
 #include "DataFormats/include/MET.hh"
 #include "DataFormats/include/PFMET.hh"
+#include "DataFormats/include/JetFwd.hh"
 #include "DataFormats/include/PFJetFwd.hh"
 
 #include "TTree.h"
@@ -40,6 +41,7 @@ namespace vecbos {
     vecbos::MET CaloMet;
     vecbos::PFMET PfMet;
     vecbos::PFJetCollection PfJets;
+    vecbos::JetCollection GenJets;
 
   private:
     void loadEventHeader();
