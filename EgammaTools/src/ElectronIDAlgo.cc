@@ -1,10 +1,19 @@
 #include <iostream>
 #include "EgammaTools/include/ElectronEffectiveArea.hh"
+#include "Tools/include/VertexSelector.hh"
 
 #include "EgammaTools/include/ElectronIDAlgo.hh"
 
 using namespace vecbos;
 using namespace std;
+
+ElectronIDAlgo::ElectronIDAlgo(vecbos::Electron electron, float rho, vecbos::VertexCollection vertices) :
+      electron_(electron), rho_(rho)
+{
+  /// filter and take the first one
+  VertexSelector stdselector(vertices);
+  bestVertex_ = stdselector.goodCollection().front();
+}
 
 bool ElectronIDAlgo::pass_hlt() {
   /// cuts[EB,EE]
@@ -39,11 +48,10 @@ bool ElectronIDAlgo::pass_hlt() {
   if(electron_.gsfTrack().trackerExpectedHitsInner() > 0 || 
      electron_.hasMatchedConv()) pass=false;
   /// impact parameter
-  if(fabs(electron_.gsfTrack().dxy()) > cuts_dxy[i]) pass=false;
-  if(fabs(electron_.gsfTrack().dz()) > cuts_dz[i]) pass=false;
-  
+  if(fabs(electron_.gsfTrack().dxy(bestVertex_.position())) > cuts_dxy[i]) pass=false;
+  if(fabs(electron_.gsfTrack().dz(bestVertex_.position())) > cuts_dz[i]) pass=false;
+    
   return pass;
-
 }
 
 int ElectronIDAlgo::getIntCutsWP(std::string wp) {
@@ -116,7 +124,7 @@ bool ElectronIDAlgo::pass_cuts_ip(std::string wp) {
   bool pass=true;
   /// impact parameter
   if(fabs(electron_.gsfTrack().d0()) > cuts_d0[i][intwp]) pass=false;
-  if(fabs(electron_.gsfTrack().dz()) > cuts_dz[i][intwp]) pass=false;
+  if(fabs(electron_.gsfTrack().dz(bestVertex_.position())) > cuts_dz[i][intwp]) pass=false;
 
   return pass;
 }
@@ -180,8 +188,8 @@ bool  ElectronIDAlgo::pass_mva_ip(std::string wp) {
   bool pass=true;
   if( wp.compare("tight")==0 ) {
     /// impact parameter
-    if(fabs(electron_.gsfTrack().dxy()) > 0.020) pass=false;
-    if(fabs(electron_.gsfTrack().dz()) > 0.100) pass=false;
+    if(fabs(electron_.gsfTrack().dxy(bestVertex_.position())) > 0.020) pass=false;
+    if(fabs(electron_.gsfTrack().dz(bestVertex_.position())) > 0.100) pass=false;
   }
   if( wp.compare("loose")==0 ) {
     /// impact parameter

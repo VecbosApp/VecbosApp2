@@ -3,6 +3,7 @@
 
 #include "Tools/include/CollectionSelector.hh"
 #include "DataFormats/include/ElectronFwd.hh"
+#include "DataFormats/include/VertexFwd.hh"
 
 namespace vecbos {
 
@@ -12,16 +13,24 @@ namespace vecbos {
     /// default constructor
     ElectronIDSelector();
     /// constructor from collection
-    ElectronIDSelector(ElectronCollection input, float rho);
+    ElectronIDSelector(ElectronCollection input, float rho, VertexCollection vertices);
     /// destructor
     ~ElectronIDSelector() { };
 
     /// selected objects according the configured algo and wp
     vecbos::ElectronCollection output();
     
+    /// set the rho for isolation correction with FastJet
+    void setRho(float rho) { rho_ = rho; }
+
+    /// set the primary vertices collection
+    void setPrimaryVertices(VertexCollection vertices) { vertices_ = vertices; }
+
   private:
     /// rho (to correct isolation with FastJet)
     float rho_;
+    /// primary vertices collection
+    vecbos::VertexCollection vertices_;
 
     /// output for offline trigger emulation
     vecbos::ElectronCollection output_hlt();

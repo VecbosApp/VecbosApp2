@@ -141,8 +141,12 @@ namespace vecbos {
     void setImpactParameters(ImpactParameters ips) { ips_ = ips; }
     /// absolute significance of impact parameter in 3D
     float sip3D() { return fabs(ips_.ip3D/ips_.ip3Derr); }
+    /// absolute value of impact parameter in 3D
+    float ip3D() { return fabs(ips_.ip3D); }
     /// absolute significance of impact parameter in 2D
     float sip2D() { return fabs(ips_.ip2D/ips_.ip2Derr); }
+    /// absolute value of impact parameter in 2D
+    float ip2D() { return fabs(ips_.ip2D); }
     
     /// set the pt error
     void setPtError(float error) { ptErr_ = error; }

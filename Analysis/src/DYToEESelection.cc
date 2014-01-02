@@ -13,10 +13,14 @@ using namespace vecbos;
 DYToEESelection::DYToEESelection(TChain *chain) :
   AnalysisBase(chain) { }
 
+void DYToEESelection::BeginJob() {
+  elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
+}
+
 void DYToEESelection::Loop() {
 
   if (fChain == 0) return;
-  
+
   Long64_t nentries = fChain->GetEntriesFast();
   
   Long64_t nbytes = 0, nb = 0;
@@ -30,11 +34,12 @@ void DYToEESelection::Loop() {
      cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
 	  << "\t evt = " << header.event() << endl;
      
-     ElectronIDSelector elid_loose(Electrons,rhoFastjet);
-     elid_loose.configure("EgammaTools/data/electrons_mva_loose.cfg");
-     
-     ElectronCollection loose_electrons = elid_loose.output();
-     cout << "reco electrons size = " << Electrons.size() << "   loose electrons = " << loose_electrons.size() << endl;
+     elid_mva_tight.source(Electrons);
+     elid_mva_tight.setRho(rhoFastjet);
+     elid_mva_tight.setPrimaryVertices(PrimaryVertices);
+
+     ElectronCollection tight_electrons = elid_mva_tight.output();
+     cout << "reco electrons size = " << Electrons.size() << "   loose electrons = " << tight_electrons.size() << endl;
      
 
    }

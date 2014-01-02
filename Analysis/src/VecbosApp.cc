@@ -67,6 +67,7 @@ int main(int argc, char* argv[]) {
 
   //  AnalysisBase selection(theChain);
   DYToEESelection selection(theChain);
+  selection.BeginJob();
   selection.Loop();
 
 }
