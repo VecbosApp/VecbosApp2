@@ -72,12 +72,20 @@ $(OUTLIB)DataFormatsMET.o: $(INCLUDEDIR)/DataFormats/src/MET.cc \
 $(OUTLIB)DataFormatsPFMET.o: $(INCLUDEDIR)/DataFormats/src/PFMET.cc \
 	$(OUTLIB)DataFormatsMET.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsPFMET.o $<
+$(OUTLIB)DataFormatsJet.o: $(INCLUDEDIR)/DataFormats/src/Jet.cc \
+	$(OUTLIB)DataFormatsCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsJet.o $<
+$(OUTLIB)DataFormatsPFJet.o: $(INCLUDEDIR)/DataFormats/src/PFJet.cc \
+	$(OUTLIB)DataFormatsJet.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsPFJet.o $<
+
 $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsEventHeader.o \
 	$(OUTLIB)DataFormatsVertex.o \
 	$(OUTLIB)DataFormatsElectron.o \
 	$(OUTLIB)DataFormatsMuon.o \
 	$(OUTLIB)DataFormatsPFMET.o \
+	$(OUTLIB)DataFormatsPFJet.o \
 	$(OUTLIB)DataFormatsCompositeCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 
