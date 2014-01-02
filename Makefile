@@ -46,6 +46,9 @@ $(OUTLIB)DataFormatsCandidate.o: $(INCLUDEDIR)/DataFormats/src/Candidate.cc
 $(OUTLIB)DataFormatsRecoCandidate.o: $(INCLUDEDIR)/DataFormats/src/RecoCandidate.cc \
 	$(OUTLIB)DataFormatsCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsRecoCandidate.o $<
+$(OUTLIB)DataFormatsCompositeCandidate.o: $(INCLUDEDIR)/DataFormats/src/CompositeCandidate.cc \
+	$(OUTLIB)DataFormatsCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsCompositeCandidate.o $<
 $(OUTLIB)DataFormatsVertex.o: $(INCLUDEDIR)/DataFormats/src/Vertex.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsVertex.o $<
 $(OUTLIB)DataFormatsTrack.o: $(INCLUDEDIR)/DataFormats/src/Track.cc
@@ -67,7 +70,8 @@ $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsEventHeader.o \
 	$(OUTLIB)DataFormatsVertex.o \
 	$(OUTLIB)DataFormatsElectron.o \
-	$(OUTLIB)DataFormatsMuon.o
+	$(OUTLIB)DataFormatsMuon.o \
+	$(OUTLIB)DataFormatsCompositeCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 
 # Analysis Tools libs
