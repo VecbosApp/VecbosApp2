@@ -28,15 +28,17 @@ void AnalysisBase::init(TTree* tree) {
 
 int AnalysisBase::loadTree(Long64_t entry) {
 
+  Long64_t nb;
   // Set the environment to read one entry
   if (!fChain) return -5;
   Long64_t centry = fChain->LoadTree(entry);
   if (centry < 0) return centry;
+  nb = fChain->GetEntry(entry);  
   if (fChain->GetTreeNumber() != fCurrent) {
     fCurrent = fChain->GetTreeNumber();
     Notify();
   }
-
+  
   // load the Event Header (run, lumi,...)
   loadEventHeader();
 
@@ -55,7 +57,13 @@ int AnalysisBase::loadTree(Long64_t entry) {
 
   // load the GSF Electron collection
   loadElectronCollection();
-  
+
+  /// load the MET (calomet and pfmet)
+  loadMET();
+
+  /// load the Jet collections (PFjets and GenJets)
+  loadJetCollection();
+
   return centry;
 }
 
@@ -572,6 +580,154 @@ void AnalysisBase::loadMuonCollection() {
     muon.setCalibrateMomentum(scaledMomentumMuon[i]);
 
     Muons.push_back(muon);
+  }
+
+}
+
+void AnalysisBase::loadMET() {
+
+  /// Gen MET
+  Candidate::Vector genMetP3(pxGenMet[0],pyGenMet[0],0.0);
+  Candidate::LorentzVector genMetP4;
+  genMetP4.SetVectM(genMetP3,0.0);
+  Candidate::Vector genMetVtx(vertexXGenMet[0],vertexYGenMet[0],vertexZGenMet[0]);
+  MET genmet(genMetP4,genMetVtx);
+  GenMet = genmet;
+  
+  /// Calo MET
+  Candidate::Vector caloMetP3(pxMet[0],pyMet[0],0.0);
+  Candidate::LorentzVector caloMetP4;
+  caloMetP4.SetVectM(caloMetP3,0.0);
+  Candidate::Vector caloMetVtx(vertexXMet[0],vertexYMet[0],vertexZMet[0]);
+  MET calomet(sumEtMet[0],significanceMet[0],caloMetP4,caloMetVtx);
+  CaloMet = calomet;
+
+  /// PF MET
+  Candidate::Vector pfMetP3(pxPFMet[0],pyPFMet[0],0.0);
+  Candidate::LorentzVector pfMetP4;
+  pfMetP4.SetVectM(pfMetP3,0.0);
+  Candidate::Vector pfMetVtx(vertexXPFMet[0],vertexYPFMet[0],vertexZPFMet[0]);
+  PFMET pfmet(sumEtPFMet[0],significancePFMet[0],pfMetP4,pfMetVtx);
+  
+  Candidate::Vector pfMetP3Type0(pxPFMet[1],pyPFMet[1],0.0);
+  Candidate::LorentzVector pfMetP4Type0;
+  pfMetP4Type0.SetVectM(pfMetP3Type0,0.0);
+
+  Candidate::Vector pfMetP3Type1(pxPFMet[2],pyPFMet[2],0.0);
+  Candidate::LorentzVector pfMetP4Type1;
+  pfMetP4Type1.SetVectM(pfMetP3Type1,0.0);
+  
+  Candidate::Vector pfMetP3Type1p2(pxPFMet[3],pyPFMet[3],0.0);
+  Candidate::LorentzVector pfMetP4Type1p2;
+  pfMetP4Type1p2.SetVectM(pfMetP3Type1p2,0.0);
+
+  PFMET::PFMETCorr corrections;
+  corrections.Type0Met = pfMetP4Type0;
+  corrections.Type1Met = pfMetP4Type1;
+  corrections.Type1p2Met = pfMetP4Type1p2;
+
+  pfmet.setCorrections(corrections);
+  
+  PfMet = pfmet;
+
+}
+
+void AnalysisBase::loadJetCollection() {
+
+  /// PF Jets
+  PfJets.clear();
+
+  for(int i=0; i<nAK5PFPUcorrJet; ++i) {
+    Candidate::LorentzVector p4Jet(pxAK5PFPUcorrJet[i],pyAK5PFPUcorrJet[i],pzAK5PFPUcorrJet[i],energyAK5PFPUcorrJet[i]);
+    Candidate::LorentzVector p4JetRaw(uncorrpxAK5PFPUcorrJet[i],uncorrpyAK5PFPUcorrJet[i],uncorrpzAK5PFPUcorrJet[i],uncorrenergyAK5PFPUcorrJet[i]);
+    Candidate::Point vtx(vertexXAK5PFPUcorrJet[i],vertexYAK5PFPUcorrJet[i],vertexZAK5PFPUcorrJet[i]);
+    PFJet jet(p4Jet,p4JetRaw,vtx);
+
+    jet.setJetArea(areaAK5PFPUcorrJet[i]);
+    
+    Jet::BTagsJet btag;
+    btag.combinedSecondaryVertex = combinedSecondaryVertexBJetTagsAK5PFPUcorrJet[i];
+    btag.combinedSecondaryVertexMVA = combinedSecondaryVertexMVABJetTagsAK5PFPUcorrJet[i];
+    btag.jetBProbability = jetBProbabilityBJetTagsAK5PFPUcorrJet[i];
+    btag.jetProbability = jetProbabilityBJetTagsAK5PFPUcorrJet[i];
+    btag.simpleSecondaryVertexHighEff = simpleSecondaryVertexHighEffBJetTagsAK5PFPUcorrJet[i];
+    btag.simpleSecondaryVertexHighPur = simpleSecondaryVertexHighPurBJetTagsAK5PFPUcorrJet[i];
+    btag.trackCountingHighPur = trackCountingHighPurBJetTagsAK5PFPUcorrJet[i];
+    btag.trackCountingHighEff = trackCountingHighEffBJetTagsAK5PFPUcorrJet[i];
+    btag.trackCountingVeryHighEff = trackCountingVeryHighEffBJetTagsAK5PFPUcorrJet[i];
+    jet.setBTagsJet(btag);
+
+    PFJet::Specific specific;
+    specific.mChargedHadronEnergy = chargedHadronEnergyAK5PFPUcorrJet[i];
+    specific.mNeutralHadronEnergy = neutralHadronEnergyAK5PFPUcorrJet[i];
+    specific.mPhotonEnergy = photonEnergyAK5PFPUcorrJet[i];
+    specific.mElectronEnergy = electronEnergyAK5PFPUcorrJet[i];
+    specific.mMuonEnergy = muonEnergyAK5PFPUcorrJet[i];
+    specific.mHFHadronEnergy = HFHadronEnergyAK5PFPUcorrJet[i];
+    specific.mHFEMEnergy = HFEMEnergyAK5PFPUcorrJet[i];
+    
+    specific.mChargedHadronMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[i];
+    specific.mNeutralHadronMultiplicity = neutralHadronMultiplicityAK5PFPUcorrJet[i];
+    specific.mPhotonMultiplicity = photonMultiplicityAK5PFPUcorrJet[i];
+    specific.mElectronMultiplicity = electronMultiplicityAK5PFPUcorrJet[i];
+    specific.mMuonMultiplicity = muonMultiplicityAK5PFPUcorrJet[i];
+    specific.mHFHadronMultiplicity = HFHadronMultiplicityAK5PFPUcorrJet[i];
+    specific.mHFEMMultiplicity = HFEMMultiplicityAK5PFPUcorrJet[i];
+    jet.setSpecific(specific);
+
+    PFJet::JetId id;
+    id.weightedDz1 = weightedDz1AK5PFPUcorrJet[i];
+    id.weightedDz2 = weightedDz2AK5PFPUcorrJet[i];
+    id.betastar = betastarAK5PFPUcorrJet[i];
+    id.rms = rmsCandsHandAK5PFPUcorrJet[i];
+    id.mva = jetIdMvaFullAK5PFPUcorrJet[i];
+    id.dR2Mean = dR2MeanIdMvaAK5PFPUcorrJet[i];
+    id.dRMean = dRMeanIdMvaAK5PFPUcorrJet[i];
+    jet.setJetId(id);
+
+    PFJet::QGLikelihoodVars qg;
+    qg.ptD = ptDAK5PFPUcorrJet[i];
+    qg.rmsCand = rmsCand_QCAK5PFPUcorrJet[i];
+    qg.axis1 = axis1AK5PFPUcorrJet[i];
+    qg.axis2 = axis2AK5PFPUcorrJet[i];
+    qg.pull = pullAK5PFPUcorrJet[i];
+    qg.tana = tanaAK5PFPUcorrJet[i];
+
+    qg.ptD_QC = ptD_QCAK5PFPUcorrJet[i];
+    qg.rmsCand_QC = rmsCand_QCAK5PFPUcorrJet[i];
+    qg.axis1_QC = axis1_QCAK5PFPUcorrJet[i];
+    qg.axis2_QC = axis2_QCAK5PFPUcorrJet[i];
+    qg.pull_QC = pull_QCAK5PFPUcorrJet[i];
+    qg.tana_QC = tana_QCAK5PFPUcorrJet[i];
+    
+    qg.nChg_ptCut = nChg_ptCutAK5PFPUcorrJet[i];
+    qg.nChg_QC = nChg_QCAK5PFPUcorrJet[i];
+    qg.nChg_ptCut_QC = nChg_ptCut_QCAK5PFPUcorrJet[i];
+    qg.nNeutral_ptCut = nNeutral_ptCutAK5PFPUcorrJet[i];
+    
+    qg.Rchg = RchgAK5PFPUcorrJet[i];
+    qg.Rneutral = RneutralAK5PFPUcorrJet[i];
+    qg.R = RAK5PFPUcorrJet[i];
+    qg.Rchg_QC = Rchg_QCAK5PFPUcorrJet[i];
+    
+    qg.pTMax = pTMaxAK5PFPUcorrJet[i];
+    qg.pTMaxChg = pTMaxChgAK5PFPUcorrJet[i];
+    qg.pTMaxNeutral = pTMaxNeutralAK5PFPUcorrJet[i];
+    qg.pTMaxChg_QC = pTMaxChg_QCAK5PFPUcorrJet[i];
+
+    jet.setQGVars(qg);
+
+    PfJets.push_back(jet);
+
+  }
+
+  /// GenJets
+  GenJets.clear();
+  for(int i=0; i<nAK5GenJet; ++i) {
+    Candidate::LorentzVector p4Jet(pxAK5GenJet[i],pyAK5GenJet[i],pzAK5GenJet[i],energyAK5GenJet[i]);
+    Candidate::Point vtx(vertexXAK5GenJet[i],vertexYAK5GenJet[i],vertexZAK5GenJet[i]);
+    Jet jet(p4Jet,vtx);
+    GenJets.push_back(jet);
   }
 
 }
