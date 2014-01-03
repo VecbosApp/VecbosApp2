@@ -14,6 +14,7 @@
 
 // Header file for the classes stored in the TTree if any.
 #include <vector>
+#include <string>
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -56,32 +57,32 @@ public :
    Int_t           mothMc[101];   //[nMc]
    Int_t           statusMc[101];   //[nMc]
    Int_t           ntHMc;
-   Float_t         ptHMc[4];   //[ntHMc]
-   Float_t         thetatHMc[4];   //[ntHMc]
-   Float_t         etatHMc[4];   //[ntHMc]
-   Float_t         phitHMc[4];   //[ntHMc]
-   Float_t         energytHMc[4];   //[ntHMc]
-   Int_t           idtHMc[4];   //[ntHMc]
-   Int_t           statustHMc[4];   //[ntHMc]
-   Int_t           mothSttHMc[4];   //[ntHMc]
-   Int_t           grandmothSttHMc[4];   //[ntHMc]
-   Int_t           mothIdtHMc[4];   //[ntHMc]
-   Int_t           grandmothIdtHMc[4];   //[ntHMc]
+   Float_t         ptHMc[100];   //[ntHMc]
+   Float_t         thetatHMc[100];   //[ntHMc]
+   Float_t         etatHMc[100];   //[ntHMc]
+   Float_t         phitHMc[100];   //[ntHMc]
+   Float_t         energytHMc[100];   //[ntHMc]
+   Int_t           idtHMc[100];   //[ntHMc]
+   Int_t           statustHMc[100];   //[ntHMc]
+   Int_t           mothSttHMc[100];   //[ntHMc]
+   Int_t           grandmothSttHMc[100];   //[ntHMc]
+   Int_t           mothIdtHMc[100];   //[ntHMc]
+   Int_t           grandmothIdtHMc[100];   //[ntHMc]
    Int_t           nTrg;
-   Int_t           firedTrg[15];   //[nTrg]
+   Int_t           firedTrg[5000];   //[nTrg]
    Int_t           nHLT;
-   Int_t           indexHLT[443];   //[nHLT]
+   Int_t           indexHLT[5000];   //[nHLT]
    std::vector<std::string>  *nameHLT;
    Int_t           nTriggerPaths;
    Int_t           nTriggerObsPassing;
-   Int_t           sizePassing[443];   //[nTriggerPaths]
-   Int_t           indexPassing[786];   //[nTriggerObsPassing]
-   Int_t           indexPassingPerPath[443];   //[nTriggerPaths]
+   Int_t           sizePassing[5000];   //[nTriggerPaths]
+   Int_t           indexPassing[5000];   //[nTriggerObsPassing]
+   Int_t           indexPassingPerPath[5000];   //[nTriggerPaths]
    Int_t           nTriggerObs;
-   Float_t         triggerObsPt[1290];   //[nTriggerObs]
-   Float_t         triggerObsPhi[1290];   //[nTriggerObs]
-   Float_t         triggerObsEta[1290];   //[nTriggerObs]
-   Float_t         triggerObsMass[1290];   //[nTriggerObs]
+   Float_t         triggerObsPt[5000];   //[nTriggerObs]
+   Float_t         triggerObsPhi[5000];   //[nTriggerObs]
+   Float_t         triggerObsEta[5000];   //[nTriggerObs]
+   Float_t         triggerObsMass[5000];   //[nTriggerObs]
    Int_t           nEle;
    Int_t           chargeEle[500];   //[nEle]
    Float_t         energyEle[500];   //[nEle]
@@ -184,9 +185,9 @@ public :
    Float_t         dr03PhotonPFIsoPho[500];   //[nPho]
    Float_t         dr04NeutralHadronPFIsoPho[500];   //[nPho]
    Float_t         dr04PhotonPFIsoPho[500];   //[nPho]
-   Float_t         dr02ChargedHadronPFIsoPho[245];   //[nPerPVPho]
-   Float_t         dr03ChargedHadronPFIsoPho[245];   //[nPerPVPho]
-   Float_t         dr04ChargedHadronPFIsoPho[245];   //[nPerPVPho]
+   Float_t         dr02ChargedHadronPFIsoPho[500];   //[nPerPVPho]
+   Float_t         dr03ChargedHadronPFIsoPho[500];   //[nPerPVPho]
+   Float_t         dr04ChargedHadronPFIsoPho[500];   //[nPerPVPho]
    Int_t           nSC;
    Int_t           nBCSC[10000];   //[nSC]
    Int_t           nCrystalsSC[10000];   //[nSC]
@@ -1372,9 +1373,9 @@ VecbosEventContent::VecbosEventContent(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/Users/emanuele/Work/data/vecbos/default_MC_255_1_svD.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/Users/emanuele/Work/data/vecbos2/default_MC_255_1_svD.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("/Users/emanuele/Work/data/vecbos/default_MC_255_1_svD.root");
+         f = new TFile("/Users/emanuele/Work/data/vecbos2/default_MC_255_1_svD.root");
       }
       f->GetObject("ntp1",tree);
 
@@ -1418,7 +1419,7 @@ void VecbosEventContent::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
-   nameHLT = 0;
+    nameHLT = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1472,8 +1473,8 @@ void VecbosEventContent::Init(TTree *tree)
    fChain->SetBranchAddress("nTrg", &nTrg, &b_nTrg);
    fChain->SetBranchAddress("firedTrg", firedTrg, &b_firedTrg);
    fChain->SetBranchAddress("nHLT", &nHLT, &b_nHLT);
-   fChain->SetBranchAddress("indexHLT", indexHLT, &b_indexHLT);
    fChain->SetBranchAddress("nameHLT", &nameHLT, &b_nameHLT);
+   fChain->SetBranchAddress("indexHLT", indexHLT, &b_indexHLT);
    fChain->SetBranchAddress("nTriggerPaths", &nTriggerPaths, &b_nTriggerPaths);
    fChain->SetBranchAddress("nTriggerObsPassing", &nTriggerObsPassing, &b_nTriggerObsPassing);
    fChain->SetBranchAddress("sizePassing", sizePassing, &b_sizePassing);
