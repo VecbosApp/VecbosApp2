@@ -64,10 +64,10 @@ int main(int argc, char* argv[]) {
   inputFile->close();
   delete inputFile;
 
+  bool ismc=true;
 
-  //  AnalysisBase selection(theChain);
   DYToEESelection selection(theChain);
-  selection.BeginJob();
+  selection.BeginJob(ismc);
   selection.Loop();
 
 }

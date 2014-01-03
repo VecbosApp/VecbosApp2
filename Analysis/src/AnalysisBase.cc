@@ -28,14 +28,20 @@ void AnalysisBase::init(TTree* tree) {
 
 int AnalysisBase::loadTree(Long64_t entry) {
 
+  Long64_t nb;
   // Set the environment to read one entry
   if (!fChain) return -5;
   Long64_t centry = fChain->LoadTree(entry);
   if (centry < 0) return centry;
+  nb = fChain->GetEntry(entry);  
   if (fChain->GetTreeNumber() != fCurrent) {
     fCurrent = fChain->GetTreeNumber();
     Notify();
   }
+  
+  cout << "nameHLT->size() " << nameHLT->size()  << endl;
+  cout << "000 bella pise  " <<  (*nameHLT)[123] << endl;
+  cout << "000 bella pise  " <<  indexHLT[132] << endl;
 
   // load the Event Header (run, lumi,...)
   loadEventHeader();
