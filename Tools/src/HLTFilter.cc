@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
 
 using namespace vecbos;
 using namespace std;
