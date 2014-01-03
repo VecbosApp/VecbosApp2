@@ -111,6 +111,12 @@ $(OUTLIB)EgammaToolsElectronIDSelector.o: $(INCLUDEDIR)/EgammaTools/src/Electron
 	$(OUTLIB)EgammaToolsElectronIDAlgo.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronIDSelector.o $<
 
+# Output trees
+$(OUTLIB)OutputTreesElectronIDTree.o: $(INCLUDEDIR)/OutputTrees/src/ElectronIDTree.cc \
+	$(OUTLIB)DataFormatsElectron.o \
+	$(OUTLIB)DataFormatsVertex.o \
+	$(OUTLIB)EgammaToolsElectronIDAlgo.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)OutputTreesElectronIDTree.o $<
 
 # Analysis generic libs
 $(OUTLIB)AnalysisVecbosEventContent.o: $(INCLUDEDIR)/Analysis/src/VecbosEventContent.C
@@ -122,10 +128,10 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)EgammaToolsElectronEffectiveArea.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
-
 # Analyzer libs
 $(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc \
-	$(OUTLIB)EgammaToolsElectronIDSelector.o
+	$(OUTLIB)EgammaToolsElectronIDSelector.o \
+	$(OUTLIB)OutputTreesElectronIDTree.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisDYToEESelection.o $<
 
 
