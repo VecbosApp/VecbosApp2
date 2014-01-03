@@ -15,8 +15,10 @@ DYToEESelection::DYToEESelection(TChain *chain) :
 
 void DYToEESelection::BeginJob(bool isMC) {
   ismc_=isMC;
+  /// electron ID selector
   elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
-  doubleele_filter_8TeV = new HLTFilter(nameHLT,indexHLT,firedTrg);
+  /// HLT selector
+  doubleele_filter_8TeV = new HLTFilter(fChain);
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
   else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
 }
@@ -33,15 +35,12 @@ void DYToEESelection::Loop() {
      if (ientry < 0) break;
      cout << "Processing Event " << jentry << endl; 
      
-     // EventHeader header = Event.eventHeader();
-     // cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
-     // 	  << "\t evt = " << header.event() << endl;
+     EventHeader header = Event.eventHeader();
+     cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
+      	  << "\t evt = " << header.event() << endl;
      
-     //    cout << "bella pise  " <<  nameHLT->size() << endl;
-
-     /*
-     bool passhlt = doubleele_filter_8TeV->pass(header.run());
-     //     if(passhlt) cout << "\t===>This event passes HLT " << endl;
+     bool passhlt = doubleele_filter_8TeV->pass(jentry,header.run());
+     if(passhlt) cout << "\t===>This event passes HLT " << endl;
 
      elid_mva_tight.source(Electrons);
      elid_mva_tight.setRho(rhoFastjet);
@@ -49,7 +48,6 @@ void DYToEESelection::Loop() {
 
      ElectronCollection tight_electrons = elid_mva_tight.output();
      cout << "reco electrons size = " << Electrons.size() << "   loose electrons = " << tight_electrons.size() << endl;
-     */
 
    }
 

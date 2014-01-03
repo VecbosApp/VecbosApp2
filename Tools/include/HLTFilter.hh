@@ -14,8 +14,8 @@ namespace vecbos {
     typedef std::vector<std::string> path_list;
     typedef std::vector<int> position_list;
     
-    /// constructor
-    HLTFilter(path_list *nameHLT,  Int_t indexHLT[5000], Int_t firedTrg[5000]);
+    /// constructor from tree
+    HLTFilter(TTree *tree);
     /// destructor
     ~HLTFilter() { }
 
@@ -23,12 +23,12 @@ namespace vecbos {
     void configure(std::string cfg);
 
     /// response of the filter
-    bool pass(int run);
+    bool pass(int entry, int run);
   
 private:
     
     //! init the tree branches
-    //    void init();
+    void init();
     //! get the vector of the positions of the requested / vetoed paths
     position_list triggerMask(int run, path_list paths);
     //! parse the trigger path out of the string minrun-maxrun:path
@@ -36,11 +36,16 @@ private:
     //! extract the values of all the bits requested and return true if at least one is 1
     bool getTriggersOR(position_list bits);
 
+    //! the tree holding the trigger results
+    TTree * tree_;
+    TBranch        *b_firedTrg;
+    TBranch        *b_indexHLT;
+    TBranch        *b_nameHLT;
+    
     //! variables of the tree holding the trigger string paths and positions
-    path_list  *nameHLT_;
-    Int_t indexHLT_[5000];
-    //! variables holding the packed trigger bits values
-    Int_t firedTrg_[5000];   //[nTrg]
+    path_list  *nameHLT;
+    Int_t indexHLT[5000];
+    Int_t firedTrg[5000];
 
     //! vector of the required / vetoed trigger paths
     path_list required_paths_;

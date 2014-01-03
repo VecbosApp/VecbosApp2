@@ -7,23 +7,17 @@
 using namespace vecbos;
 using namespace std;
 
-HLTFilter::HLTFilter(path_list *nameHLT,  Int_t indexHLT[5000], Int_t firedTrg[5000]) 
-  : nameHLT_(nameHLT), configured_(false)
-{
-  for(int s=0;s<5000;++s) indexHLT_[s]=indexHLT[s];
-  for(int s=0;s<5000;++s) firedTrg_[s]=firedTrg[s];
-  //  init();
+
+HLTFilter::HLTFilter(TTree *tree) : tree_(tree), configured_(false) {
+  init();
 }
 
-// void HLTFilter::init() {
-//   // Set object pointer
-//   nameHLT = 0;
-//   m_tree->SetBranchAddress("nHLT", &nHLT, &b_nHLT);
-//   m_tree->SetBranchAddress("nameHLT", &nameHLT, &b_nameHLT);
-//   m_tree->SetBranchAddress("indexHLT", &indexHLT, &b_indexHLT);
-//   m_tree->SetBranchAddress("firedTrg", firedTrg, &b_firedTrg);
-//   configured_ = false;
-// }
+void HLTFilter::init() {
+  nameHLT = 0;
+  tree_->SetBranchAddress("firedTrg", firedTrg, &b_firedTrg);
+  tree_->SetBranchAddress("nameHLT", &nameHLT, &b_nameHLT);
+  tree_->SetBranchAddress("indexHLT", indexHLT, &b_indexHLT);
+}
 
 void HLTFilter::configure(std::string cfg) {
   std::ifstream cfgfile(cfg.c_str());
@@ -34,8 +28,7 @@ void HLTFilter::configure(std::string cfg) {
   } else {
     int requirebool;
     std::string val;
-    while (!cfgfile.eof()) {
-      cfgfile >> requirebool >> val;
+    while (cfgfile >> requirebool >> val) {
       if(requirebool==1) required_paths_.push_back(val);
       else if(requirebool==0) vetoed_paths_.push_back(val);
       else cout << "Warning! Strange character found as first field in the trigger string: " << requirebool 
@@ -46,7 +39,7 @@ void HLTFilter::configure(std::string cfg) {
   }
 }
 
-bool HLTFilter::pass(int run) {
+bool HLTFilter::pass(int entry, int run) {
   if(!configured_) {
     cout << "Warning! HLTFilter not configured, returning false... " << endl;
     return false;
@@ -54,9 +47,11 @@ bool HLTFilter::pass(int run) {
   m_requiredTriggers.clear();
   m_vetoedTriggers.clear();
 
+  tree_->GetEntry(entry);
+  
   m_requiredTriggers = triggerMask(run, required_paths_);
   m_vetoedTriggers = triggerMask(run, vetoed_paths_);
-  
+
   bool req = getTriggersOR(m_requiredTriggers);
   bool veto = getTriggersOR(m_vetoedTriggers);
   
@@ -70,13 +65,11 @@ HLTFilter::position_list HLTFilter::triggerMask(int run, path_list paths) {
   for (path_list::const_iterator fIter=paths.begin(); fIter!=paths.end(); ++fIter)
     {   
       std::string pathName = getHLTPathForRun(run,*fIter);
-      for(unsigned int i=0; i<nameHLT_->size(); i++)
+      for(unsigned int i=0; i<nameHLT->size(); i++)
         {
-          //if( !strcmp ((*fIter).c_str(), nameHLT_->at(i).c_str() ) )
-          // nameHLT_[i] has ..._vXXX
-          if(nameHLT_->at(i).find(pathName) != string::npos)
+          if(nameHLT->at(i).find(pathName) != string::npos)
             {
-              mask.push_back( indexHLT_[i] ) ;
+              mask.push_back( indexHLT[i] ) ;
               break;
             }
         }
@@ -118,7 +111,7 @@ bool HLTFilter::getTriggersOR(position_list bits) {
 
     int block =  bits[i]/30;
     int pos = bits[i]%30;
-    int word = firedTrg_[block];
+    int word = firedTrg[block];
     
     if ( (word >> pos)%2 ) return true;
   }
