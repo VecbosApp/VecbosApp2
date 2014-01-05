@@ -96,6 +96,14 @@ $(OUTLIB)ToolsCollectionSelector.o: $(INCLUDEDIR)/Tools/src/CollectionSelector.c
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCollectionSelector.o $<
 $(OUTLIB)ToolsHLTFilter.o: $(INCLUDEDIR)/Tools/src/HLTFilter.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsHLTFilter.o $<
+$(OUTLIB)ToolsCandidateSorter.o: $(INCLUDEDIR)/Tools/src/CandidateSorter.cc \
+	$(OUTLIB)DataFormatsCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCandidateSorter.o $<
+$(OUTLIB)ToolsCandidateCombiner.o: $(INCLUDEDIR)/Tools/src/CandidateCombiner.cc \
+	$(OUTLIB)DataFormatsCandidate.o \
+	$(OUTLIB)DataFormatsCompositeCandidate.o \
+	$(OUTLIB)ToolsCandidateSorter.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCandidateCombiner.o $<
 
 # Egamma Tools libs
 $(OUTLIB)EgammaToolsElectronEffectiveArea.o: $(INCLUDEDIR)/EgammaTools/src/ElectronEffectiveArea.cc \
@@ -131,7 +139,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 # Analyzer libs
 $(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc \
 	$(OUTLIB)EgammaToolsElectronIDSelector.o \
-	$(OUTLIB)OutputTreesElectronIDTree.o
+	$(OUTLIB)OutputTreesElectronIDTree.o \
+	$(OUTLIB)ToolsCandidateCombiner.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisDYToEESelection.o $<
 
 
