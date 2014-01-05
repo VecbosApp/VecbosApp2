@@ -110,7 +110,8 @@ namespace vecbos {
     virtual int status() const { return status_; }
     /// set status word                                                                   
     virtual void setStatus( int status ) { status_ = status; }    
-
+    /// basic overlap: check pdgId, charge, p4, vertex position
+    bool overlap(Candidate c);
 
   protected:
     /// electric charge                                                                   
