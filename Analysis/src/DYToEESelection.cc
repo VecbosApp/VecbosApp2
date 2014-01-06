@@ -3,6 +3,7 @@
 #include "DataFormats/include/SuperCluster.hh"
 #include "DataFormats/include/SuperClusterFwd.hh"
 #include "EgammaTools/include/ElectronIDSelector.hh"
+#include "EgammaTools/include/ElectronIDAlgo.hh"
 #include "Tools/include/CandidateCombiner.hh"
 #include "Tools/include/CandidateSorter.hh"
 
@@ -17,12 +18,29 @@ DYToEESelection::DYToEESelection(TChain *chain) :
 
 void DYToEESelection::BeginJob(bool isMC) {
   ismc_=isMC;
+
   /// electron ID selector
   elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
+
   /// HLT selector
   doubleele_filter_8TeV = new HLTFilter(fChain);
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
   else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
+
+  /// output tree
+  output = new ElectronIDTree("eleid.root");
+  output->addRunInfos();
+  output->addAttributesSignal();
+  output->addMomenta();
+  output->addMVAs();
+  output->addElectronIdBits();
+  output->addDenominatorFakeBits();
+  output->addIsolations();
+  
+}
+
+void DYToEESelection::EndJob() {
+  output->save();
 }
 
 void DYToEESelection::Loop() {
@@ -41,15 +59,12 @@ void DYToEESelection::Loop() {
      cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
       	  << "\t evt = " << header.event() << endl;
      
+     output->setVertices(PrimaryVertices);
+     output->fillRunInfos(header.run(), header.lumi(), header.event(),
+			 nPU,PrimaryVertices.size(), rhoFastjet, 1);
+
      // bool passhlt = doubleele_filter_8TeV->pass(jentry,header.run());
      // if(passhlt) cout << "\t===>This event passes HLT " << endl;
-
-     // elid_mva_tight.source(Electrons);
-     // elid_mva_tight.setRho(rhoFastjet);
-     // elid_mva_tight.setPrimaryVertices(PrimaryVertices);
-
-     // ElectronCollection tight_electrons = elid_mva_tight.output();
-     // cout << "reco electrons size = " << Electrons.size() << "   loose electrons = " << tight_electrons.size() << endl;
 
      CandidateCombiner zeecombiner;
      zeecombiner.addDaughterCollection(Electrons);
@@ -67,12 +82,21 @@ void DYToEESelection::Loop() {
        cout << "best Z(ee) mass = " << Zee.mass() << endl;
        Electron *ele1 = dynamic_cast<Electron*>(Zee.daughter(0));
        Electron *ele2 = dynamic_cast<Electron*>(Zee.daughter(1));
-       cout << "ele1 mva = " << ele1->mvaTriggering() << endl;
-       cout << "ele2 mva = " << ele1->mvaNonTriggering() << endl;
-       cout << "ele1 see = " << ele1->superCluster().sigmaIetaIeta() << endl;
-       cout << "ele2 see = " << ele2->superCluster().sigmaIetaIeta() << endl;
+
+       ElectronIDAlgo eleID(rhoFastjet,PrimaryVertices);
+       
+       eleID.setElectron(*ele1);
+       if( eleID.pass_mva("mva","loose") ) {
+	 output->fillElectronInfos(*ele2);
+	 output->fillAttributesSignal(Zee.mass(),1,0,0,0);
+       }
+       eleID.setElectron(*ele2);
+       if( eleID.pass_mva("mva","loose") ) {
+	 output->fillElectronInfos(*ele1);
+	 output->fillAttributesSignal(Zee.mass(),1,0,0,0);
+       }
+
+       output->store();
      }
-
    }
-
 }

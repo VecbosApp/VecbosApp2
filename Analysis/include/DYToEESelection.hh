@@ -4,6 +4,7 @@
 #include "Analysis/include/AnalysisBase.hh"
 #include "EgammaTools/include/ElectronIDSelector.hh"
 #include "Tools/include/HLTFilter.hh"
+#include "OutputTrees/include/ElectronIDTree.hh"
 
 namespace vecbos {
 
@@ -15,6 +16,8 @@ namespace vecbos {
     virtual ~DYToEESelection() { };
     //! configure the needed stuff
     void BeginJob(bool isMC);
+    //! close the needed stuff
+    void EndJob();
     //! loop over events
     void Loop();
     
@@ -23,6 +26,7 @@ namespace vecbos {
     ElectronIDSelector elid_mva_tight;
     HLTFilter *doubleele_filter_8TeV;
     bool ismc_;
+    ElectronIDTree *output;
 
   };
 
