@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 
 #include "Tools/include/CandidateSorter.hh"
 #include "DataFormats/include/Candidate.hh"
@@ -11,8 +12,8 @@ CompositeCandidateCollection CandidateSorter::output() {
   
   typedef std::pair<double, CompositeCandidate *> ValCand;
   std::vector<ValCand> pairs;
-  
-  for (CompositeCandidateCollection::iterator it = input_.begin(); it != input_.end(); ++it) {    
+
+  for (CompositeCandidateCollection::iterator it = input_.begin(); it < input_.end(); ++it) {    
     double val = 0;
     if(sortBy_.compare("pt")==0) val = it->pt();
     else if(sortBy_.compare("massval")==0) val = abs(it->mass()-polemass_);
