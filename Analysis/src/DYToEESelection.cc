@@ -59,12 +59,20 @@ void DYToEESelection::Loop() {
      cout << "===> Z(ee) size = " << zeeUnsorted.size() << endl;
 
      /// sort by the scalar sum of the daughters
+     
      CandidateSorter sorter(zeeUnsorted,"sumpt");
      CompositeCandidateCollection ZeeSorted = sorter.output();
      if(ZeeSorted.size()>0) {
        CompositeCandidate Zee = ZeeSorted.front();
        cout << "best Z(ee) mass = " << Zee.mass() << endl;
+       Electron *ele1 = dynamic_cast<Electron*>(Zee.daughter(0));
+       Electron *ele2 = dynamic_cast<Electron*>(Zee.daughter(1));
+       cout << "ele1 mva = " << ele1->mvaTriggering() << endl;
+       cout << "ele2 mva = " << ele1->mvaNonTriggering() << endl;
+       cout << "ele1 see = " << ele1->superCluster().sigmaIetaIeta() << endl;
+       cout << "ele2 see = " << ele2->superCluster().sigmaIetaIeta() << endl;
      }
+
    }
 
 }
