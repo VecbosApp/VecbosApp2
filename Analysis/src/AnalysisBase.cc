@@ -440,15 +440,15 @@ void AnalysisBase::loadElectronCollection() {
     int indexSC = superClusterIndexEle[i];
     SuperCluster sclu = (indexSC>=0) ? SuperClusters[indexSC] : SuperCluster();
     int indexPFSC = PFsuperClusterIndexEle[i];
-    SuperCluster pfsclu = (indexPFSC>=0) ? PFSuperClusters[indexSC] : SuperCluster();
-
+    SuperCluster pfsclu = (indexPFSC>=0) ? PFSuperClusters[indexPFSC] : SuperCluster();
+    
     int indexGsfTrack = gsfTrackIndexEle[i];
     Track gsfTrack = GsfTracks[indexGsfTrack]; // there is always a GsfTrack associated to an electron
     int indexCtfTrack = trackIndexEle[i];
     Track ctfTrack = (indexCtfTrack>=0) ? GeneralTracks[indexCtfTrack] : Track();
 
     Electron* electron = new Electron(charge,p4Ele,vtx,sclu,pfsclu,gsfTrack,ctfTrack);
-    
+
     electron->setRecoFlags(recoFlagsEle[i]);
     electron->setFiducialFlags(fiducialFlagsEle[i]);
     electron->setScPixCharge(scPixChargeEle[i]);
