@@ -24,6 +24,8 @@ using namespace vecbos;
 AnalysisBase::AnalysisBase(TTree *tree) :
   VecbosEventContent(tree)
 {
+  messageFreq_ = 1000;
+  maxEvents_ = -1;
   if(tree !=0) init(tree);
   else return;
 }
@@ -41,6 +43,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   if (!fChain) return -5;
   Long64_t centry = fChain->LoadTree(entry);
   if (centry < 0) return centry;
+  if (maxEvents_ > 0 && centry > maxEvents_) return -5;
   nb = fChain->GetEntry(entry);  
   if (fChain->GetTreeNumber() != fCurrent) {
     fCurrent = fChain->GetTreeNumber();
@@ -71,6 +74,13 @@ int AnalysisBase::loadTree(Long64_t entry) {
 
   /// load the Jet collections (PFjets and GenJets)
   loadJetCollection();
+
+  if(centry % messageFreq_ == 0) {
+    EventHeader header = Event.eventHeader();
+    cout << "Processing entry # " << centry
+	 << "\t\t\tRun = " << header.run() << "\tlumi = " << header.lumi() 
+	 << "\t evt = " << header.event() << endl;
+  }
 
   return centry;
 }

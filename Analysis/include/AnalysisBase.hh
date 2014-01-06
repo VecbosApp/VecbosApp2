@@ -20,13 +20,18 @@ namespace vecbos {
   
   class AnalysisBase : public VecbosEventContent {
   public:
-    //! constructor
+    /// constructor
     AnalysisBase(TTree *tree);
-    //! destructor
+    /// destructor
     virtual ~AnalysisBase() { }
     
     void init(TTree* tree = 0);
     int  loadTree(Long64_t entry);
+    /// repeat the log essage every messageFreq processed events (default is 1000)
+    void messageFrequency(int messageFreq) { messageFreq_ = messageFreq; }
+    /// max events to be processed (dafault all)
+    void maxEvents(int max) { maxEvents_ = max; }
+    
 
   protected:
     vecbos::Event Event;
@@ -58,6 +63,9 @@ namespace vecbos {
     void loadMuonCollection();
     void loadMET();
     void loadJetCollection();
+
+    int messageFreq_;
+    int maxEvents_;
 
   };
 

@@ -53,13 +53,10 @@ void DYToEESelection::Loop() {
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
      Long64_t ientry = loadTree(jentry);
      if (ientry < 0) break;
-     cout << "Processing Event " << jentry << endl; 
-     
-     EventHeader header = Event.eventHeader();
-     cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
-      	  << "\t evt = " << header.event() << endl;
-     
+
      output->setVertices(PrimaryVertices);
+
+     EventHeader header = Event.eventHeader();
      output->fillRunInfos(header.run(), header.lumi(), header.event(),
 			 nPU,PrimaryVertices.size(), rhoFastjet, 1);
 
