@@ -90,6 +90,8 @@ $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 
 # Analysis Tools libs
+$(OUTLIB)ToolsCollectionPtrCleaner.o: $(INCLUDEDIR)/Tools/src/CollectionPtrCleaner.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCollectionPtrCleaner.o $<
 $(OUTLIB)ToolsVertexSelector.o: $(INCLUDEDIR)/Tools/src/VertexSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsVertexSelector.o $<
 $(OUTLIB)ToolsCollectionSelector.o: $(INCLUDEDIR)/Tools/src/CollectionSelector.cc
@@ -130,6 +132,7 @@ $(OUTLIB)OutputTreesElectronIDTree.o: $(INCLUDEDIR)/OutputTrees/src/ElectronIDTr
 $(OUTLIB)AnalysisVecbosEventContent.o: $(INCLUDEDIR)/Analysis/src/VecbosEventContent.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisVecbosEventContent.o $<
 $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
+	$(OUTLIB)ToolsCollectionPtrCleaner.o \
 	$(OUTLIB)ToolsHLTFilter.o \
 	$(OUTLIB)AnalysisVecbosEventContent.o \
 	$(OUTLIB)ToolsVertexSelector.o \
