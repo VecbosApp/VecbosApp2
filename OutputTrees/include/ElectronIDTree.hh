@@ -39,6 +39,19 @@ namespace vecbos {
     //! fill the run,lumi, event number, mc match
     void fillRunInfos(int run, int lumi, int event, int npu[3], int nvtx, float rho, int mcmatch);   
 
+    //! fill electron attributes + z mass for the tag and probe
+    //! note: when both electrons from Z are probes, the same Z mass is repeated
+    void fillAttributesSignal(float zmass, int zeeDec, float genenergy, float genenergystatus1, float genenergystatus3);
+
+    //! fill electron attributes + other quantities for background tag and probe
+    void fillAttributesBackground(float dphi, float invmass, float met, float pth);
+    
+    //! fill the event in the tree
+    void store();
+    //! close the TFile
+    void save();
+
+
   private:
 
     //! fill the tree with electron id variables
@@ -69,18 +82,10 @@ namespace vecbos {
     enum cuts_wp { cuts_veto=0, cuts_loose, cuts_medium, custs_tight };
     enum mva_wp { mva_loose=0, mva_tihgt };
 
-    //! fill electron attributes + z mass for the tag and probe
-    //! note: when both electrons from Z are probes, the same Z mass is repeated
-    void fillAttributesSignal(float zmass, int zeeDec, float genenergy, float genenergystatus1, float genenergystatus3);
-    //! fill electron attributes + other quantities for background tag and probe
-    void fillAttributesBackground(float dphi, float invmass, float met, float pth);
     //! fill the splitting categories of the PDFs
     void fillCategories(int iecal, int iptbin, int iclass, int nbr);
     //! fill the different estimation of the momentum (ECAL - GSF track - comb - comb calibrated)
     void fillMomenta(vecbos::Electron electron);
-
-    void store();
-    void save();
 
   private:
 

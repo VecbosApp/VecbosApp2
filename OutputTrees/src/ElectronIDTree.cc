@@ -7,7 +7,7 @@ using namespace std;
 ElectronIDTree::ElectronIDTree(const char *filename) {
 
   myFile = new TFile(filename,"RECREATE");
-  myFile->mkdir("eleIDdir");
+  myFile->mkdir("electrons");
   myTree = new TTree("T1","eleID tree");
 
   // electron basics
@@ -178,7 +178,7 @@ void ElectronIDTree::store() {
 
 void ElectronIDTree::save() {
 
-  myFile->cd("eleIDdir");
+  myFile->cd("electrons");
   myTree->Write();
   myFile->Close();
 }
@@ -255,7 +255,8 @@ void ElectronIDTree::fillElectronInfos(Electron electron) {
   fillMVAs(electron.mvaTriggering(),
 	   electron.mvaNonTriggering() );
 
-  ElectronIDAlgo algo(electron,myRho,vertices_);
+  ElectronIDAlgo algo(myRho,vertices_);
+  algo.setElectron(electron);
 
   vector<string> cuts_wps;
   cuts_wps.push_back("veto");
@@ -431,7 +432,8 @@ void ElectronIDTree::fillMomenta(Electron electron) {
 }
 
 void ElectronIDTree::fillFakeRateDenomBits(float leadJetPt, Electron electron) {
-  ElectronIDAlgo algo(electron,myRho,vertices_);
+  ElectronIDAlgo algo(myRho,vertices_);
+  algo.setElectron(electron);
   myDenomFake = algo.pass_hlt();
   myLeadJetPt = leadJetPt;
 }
