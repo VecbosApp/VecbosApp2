@@ -7,7 +7,7 @@ using namespace std;
 Electron::Electron( int charge,  const LorentzVector & p4, const Point & vertexPosition,
 		    SuperCluster supercluster, SuperCluster pfsupercluster, 
 		    Track gsfTrack, Track ctfTrack) :
-  superCluster_(supercluster), pfSuperCluster_(supercluster), gsfTrack_(gsfTrack), ctfTrack_(ctfTrack) {
+  superCluster_(supercluster), pfSuperCluster_(pfsupercluster), gsfTrack_(gsfTrack), ctfTrack_(ctfTrack) {
   
   // candidate generic variables
   charge_ = charge;
@@ -25,17 +25,15 @@ Electron::Electron( int charge,  const LorentzVector & p4, const Point & vertexP
   trackExtrapolations_.positionAtVtx = vertexPosition;
   trackExtrapolations_.momentumAtVtx = gsfTrack_.momentum();
 
-  showerShape_.sigmaIetaIeta = superCluster_.sigmaIetaIeta();
-  showerShape_.sigmaIphiIphi = superCluster_.sigmaIphiIphi();
-  showerShape_.e1x5 = superCluster_.e1x5();
-  showerShape_.e2x5Max = superCluster_.e2x5Max();
-  showerShape_.e5x5 = superCluster_.e5x5();
-  showerShape_.r9 = superCluster_.e3x3() / superCluster_.energy();
-
   // reconstruction and ECAL fiducial flags
   recoflags_ = -1;
   fiducialflags_ = -1;
 
+}
+
+SuperCluster Electron::superCluster() const {
+  if(ecalDrivenSeed()) return superCluster_;
+  else return pfSuperCluster_;
 }
 
 void Electron::setScPixCharge(int charge) {
@@ -51,7 +49,7 @@ void Electron::setScPixCharge(int charge) {
 float Electron::superClusterFbrem() const {
   float pout = trackPAtOuter();
   float electronClusterEnergy = trackClusterMatching_.eEleClusterOverPout * pout;
-  return (superCluster_.energy() - electronClusterEnergy)/superCluster_.energy() ;
+  return (superCluster().energy() - electronClusterEnergy)/superCluster().energy() ;
 }
 
 float Electron::pfSuperClusterFbrem() const {
