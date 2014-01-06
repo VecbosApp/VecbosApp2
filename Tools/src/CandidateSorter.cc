@@ -18,7 +18,7 @@ CompositeCandidateCollection CandidateSorter::output() {
     if(sortBy_.compare("pt")==0) val = it->pt();
     else if(sortBy_.compare("massval")==0) val = abs(it->mass()-polemass_);
     else if(sortBy_.compare("sumpt")==0) {
-      for(int dau=0; dau < it->numberOfDaughters(); ++dau) val += it->daughter(dau).pt();
+      for(int dau=0; dau < it->numberOfDaughters(); ++dau) val += it->daughter(dau)->pt();
     }
     
     if (!sortAscending_) val = -val;

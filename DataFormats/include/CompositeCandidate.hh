@@ -23,7 +23,7 @@ namespace vecbos {
     /// point in the space
     typedef TVector3 Vector;
     /// collection of daughters
-    typedef CandidateCollection daughters;
+    typedef CandidateCollectionPtr daughters;
 
     /// default constructor
     CompositeCandidate(std::string name="") : Candidate(), name_(name) { }
@@ -41,9 +41,9 @@ namespace vecbos {
     /// number of daughters
     virtual int numberOfDaughters();
     /// return daughter at a given position, i = 0, ... numberOfDaughters() - 1
-    virtual Candidate daughter( int );
+    virtual Candidate *daughter( int );
     /// add a clone of the passed candidate as daughter 
-    void addDaughter( Candidate & cand);
+    void addDaughter( Candidate * cand);
     /// clear daughters
     void clearDaughters() { dau.clear(); }
 

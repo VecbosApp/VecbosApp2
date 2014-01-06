@@ -8,6 +8,9 @@ namespace vecbos {
   /// collection of Candidate objects
   typedef std::vector<CompositeCandidate> CompositeCandidateCollection;
 
+  /// collection of pointers of Candidate objects
+  typedef std::vector<CompositeCandidate*> CompositeCandidateCollectionPtr;
+
 }
 
 #endif
