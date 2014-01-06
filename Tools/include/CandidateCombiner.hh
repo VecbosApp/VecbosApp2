@@ -14,7 +14,7 @@ namespace vecbos {
 
     /// constructor
     CandidateCombiner(std::string name="") :
-      name_(name), checkCharge_(false) { };
+      name_(name), checkCharge_(false) { inputs_.clear(); };
     /// destructor
     ~CandidateCombiner() { };
     
