@@ -42,7 +42,8 @@ ElectronCollection ElectronIDSelector::output() {
 ElectronCollection ElectronIDSelector::output_hlt() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_hlt()) output_.push_back(*ele);
   }
   return output_;
@@ -51,7 +52,8 @@ ElectronCollection ElectronIDSelector::output_hlt() {
 ElectronCollection ElectronIDSelector::output_cuts_id() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_cuts_id(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -60,7 +62,8 @@ ElectronCollection ElectronIDSelector::output_cuts_id() {
 ElectronCollection ElectronIDSelector::output_cuts_iso() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_cuts_iso(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -69,7 +72,8 @@ ElectronCollection ElectronIDSelector::output_cuts_iso() {
 ElectronCollection ElectronIDSelector::output_cuts_convrej() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_cuts_convrej(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -78,7 +82,8 @@ ElectronCollection ElectronIDSelector::output_cuts_convrej() {
 ElectronCollection ElectronIDSelector::output_cuts_ip() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_cuts_ip(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -87,7 +92,8 @@ ElectronCollection ElectronIDSelector::output_cuts_ip() {
 ElectronCollection ElectronIDSelector::output_cuts() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_cuts_id(wp_) && algo.pass_cuts_iso(wp_) && 
        algo.pass_cuts_convrej(wp_) && algo.pass_cuts_ip(wp_)
        ) output_.push_back(*ele);
@@ -98,7 +104,8 @@ ElectronCollection ElectronIDSelector::output_cuts() {
 ElectronCollection ElectronIDSelector::output_mva_id() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_mva_id(algo_,wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -107,7 +114,8 @@ ElectronCollection ElectronIDSelector::output_mva_id() {
 ElectronCollection ElectronIDSelector::output_mva_iso() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_mva_iso(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -116,7 +124,8 @@ ElectronCollection ElectronIDSelector::output_mva_iso() {
 ElectronCollection ElectronIDSelector::output_mva_convrej() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_mva_convrej(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -125,7 +134,8 @@ ElectronCollection ElectronIDSelector::output_mva_convrej() {
 ElectronCollection ElectronIDSelector::output_mva_ip() {
   output_.clear();
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_mva_ip(wp_)) output_.push_back(*ele);
   }
   return output_;
@@ -135,7 +145,8 @@ ElectronCollection ElectronIDSelector::output_mva() {
   output_.clear();
   int iele=0;
   for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
-    ElectronIDAlgo algo(*ele,rho_,vertices_);
+    ElectronIDAlgo algo(rho_,vertices_);
+    algo.setElectron(*ele);
     if(algo.pass_mva_id(algo_,wp_) && algo.pass_mva_iso(wp_) && 
        algo.pass_mva_convrej(wp_) && algo.pass_mva_ip(wp_)
        ) output_.push_back(*ele);

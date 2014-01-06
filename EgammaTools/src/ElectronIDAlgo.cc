@@ -7,9 +7,10 @@
 using namespace vecbos;
 using namespace std;
 
-ElectronIDAlgo::ElectronIDAlgo(vecbos::Electron electron, float rho, vecbos::VertexCollection vertices) :
-      electron_(electron), rho_(rho)
+ElectronIDAlgo::ElectronIDAlgo(float rho, vecbos::VertexCollection vertices) :
+  rho_(rho)
 {
+  electron_ = Electron();
   /// filter and take the first one
   VertexSelector stdselector(vertices);
   bestVertex_ = stdselector.goodCollection().front();
