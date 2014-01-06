@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "DataFormats/include/CompositeCandidate.hh"
 
 using namespace std;
@@ -13,9 +15,10 @@ int CompositeCandidate::numberOfDaughters() { return dau.size(); }
 
 void CompositeCandidate::addDaughter(Candidate & cand) {
   dau.push_back(cand);
-  charge_ *= cand.charge();
+  charge_ += cand.charge();
 
-  LorentzVector myp4 = p4();
+  this->clearCache();
+  LorentzVector myp4 = this->p4();
   myp4 += cand.p4();
   pt_  = myp4.Pt();
   eta_ = myp4.Eta(); 

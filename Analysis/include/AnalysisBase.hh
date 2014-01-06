@@ -6,12 +6,7 @@
 #include "DataFormats/include/VertexFwd.hh"
 #include "DataFormats/include/SuperClusterFwd.hh"
 #include "DataFormats/include/TrackFwd.hh"
-#include "DataFormats/include/ElectronFwd.hh"
-#include "DataFormats/include/MuonFwd.hh"
-#include "DataFormats/include/MET.hh"
-#include "DataFormats/include/PFMET.hh"
-#include "DataFormats/include/JetFwd.hh"
-#include "DataFormats/include/PFJetFwd.hh"
+#include "DataFormats/include/CandidateFwd.hh"
 
 #include "TTree.h"
 
@@ -36,13 +31,13 @@ namespace vecbos {
     vecbos::TrackCollection GsfTracks;
     vecbos::TrackCollection GlobalMuonTracks;
     vecbos::TrackCollection StandaloneMuonTracks;
-    vecbos::ElectronCollection Electrons;
-    vecbos::MuonCollection Muons;
-    vecbos::MET GenMet;
-    vecbos::MET CaloMet;
-    vecbos::PFMET PfMet;
-    vecbos::PFJetCollection PfJets;
-    vecbos::JetCollection GenJets;
+    vecbos::CandidateCollection Electrons;
+    vecbos::CandidateCollection Muons;
+    vecbos::Candidate GenMet;
+    vecbos::Candidate CaloMet;
+    vecbos::Candidate PfMet;
+    vecbos::CandidateCollection PfJets;
+    vecbos::CandidateCollection GenJets;
 
   private:
     void loadEventHeader();

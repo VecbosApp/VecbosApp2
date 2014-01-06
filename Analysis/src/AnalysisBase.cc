@@ -6,6 +6,12 @@
 #include "DataFormats/include/Vertex.hh"
 #include "DataFormats/include/SuperCluster.hh"
 #include "DataFormats/include/Track.hh"
+#include "DataFormats/include/Electron.hh"
+#include "DataFormats/include/Muon.hh"
+#include "DataFormats/include/Jet.hh"
+#include "DataFormats/include/PFJet.hh"
+#include "DataFormats/include/Met.hh"
+#include "DataFormats/include/PfMet.hh"
 
 #include "Tools/include/VertexSelector.hh"
 #include "Math/include/Constants.h"
