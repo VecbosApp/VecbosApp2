@@ -29,6 +29,8 @@ namespace vecbos {
     struct ConversionRejection ;
     struct ClassificationVariables ;
 
+    /// default constructor
+    Electron() : RecoCandidate() { }
     /// constructor from constituents
     Electron( int charge, const LorentzVector & p4, const Point & vertexPosition, SuperCluster supercluster, SuperCluster pfsupercluster, Track gsfTrack, Track ctfTrack);
     /// destructor
