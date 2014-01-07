@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
   bool ismc=true;
 
   DYToEESelection selection(theChain);
+  selection.maxMC(20);
   selection.BeginJob(ismc);
   selection.Loop();
   selection.EndJob();
