@@ -49,6 +49,9 @@ $(OUTLIB)DataFormatsRecoCandidate.o: $(INCLUDEDIR)/DataFormats/src/RecoCandidate
 $(OUTLIB)DataFormatsCompositeCandidate.o: $(INCLUDEDIR)/DataFormats/src/CompositeCandidate.cc \
 	$(OUTLIB)DataFormatsCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsCompositeCandidate.o $<
+$(OUTLIB)DataFormatsGenParticle.o: $(INCLUDEDIR)/DataFormats/src/GenParticle.cc \
+	$(OUTLIB)DataFormatsCandidate.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsGenParticle.o $<
 $(OUTLIB)DataFormatsVertex.o: $(INCLUDEDIR)/DataFormats/src/Vertex.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsVertex.o $<
 $(OUTLIB)DataFormatsTrack.o: $(INCLUDEDIR)/DataFormats/src/Track.cc
@@ -82,6 +85,7 @@ $(OUTLIB)DataFormatsPFJet.o: $(INCLUDEDIR)/DataFormats/src/PFJet.cc \
 $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsEventHeader.o \
 	$(OUTLIB)DataFormatsVertex.o \
+	$(OUTLIB)DataFormatsGenParticle.o \
 	$(OUTLIB)DataFormatsElectron.o \
 	$(OUTLIB)DataFormatsMuon.o \
 	$(OUTLIB)DataFormatsPFMET.o \
@@ -101,6 +105,10 @@ $(OUTLIB)ToolsHLTFilter.o: $(INCLUDEDIR)/Tools/src/HLTFilter.cc
 $(OUTLIB)ToolsCandidateSorter.o: $(INCLUDEDIR)/Tools/src/CandidateSorter.cc \
 	$(OUTLIB)DataFormatsCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCandidateSorter.o $<
+$(OUTLIB)ToolsGenParticleCandidateMatch.o: $(INCLUDEDIR)/Tools/src/GenParticleCandidateMatch.cc \
+	$(OUTLIB)DataFormatsCandidate.o \
+	$(OUTLIB)DataFormatsGenParticle.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsGenParticleCandidateMatch.o $<
 $(OUTLIB)ToolsCandidateCombiner.o: $(INCLUDEDIR)/Tools/src/CandidateCombiner.cc \
 	$(OUTLIB)DataFormatsCandidate.o \
 	$(OUTLIB)DataFormatsCompositeCandidate.o \
@@ -136,7 +144,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)ToolsHLTFilter.o \
 	$(OUTLIB)AnalysisVecbosEventContent.o \
 	$(OUTLIB)ToolsVertexSelector.o \
-	$(OUTLIB)EgammaToolsElectronEffectiveArea.o
+	$(OUTLIB)EgammaToolsElectronEffectiveArea.o \
+	$(OUTLIB)ToolsGenParticleCandidateMatch.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs
