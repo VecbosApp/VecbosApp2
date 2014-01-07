@@ -112,6 +112,8 @@ namespace vecbos {
     virtual void setStatus( int status ) { status_ = status; }    
     /// basic overlap: check pdgId, charge, p4, vertex position
     bool overlap(Candidate c);
+    /// angular match within deltaR
+    bool angularMatch(Candidate c, float deltaR=0.1) { return momentum().DeltaR( c.momentum() ) < deltaR; }
 
   protected:
     /// electric charge                                                                   
