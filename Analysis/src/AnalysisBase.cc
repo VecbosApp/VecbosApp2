@@ -12,6 +12,7 @@
 #include "DataFormats/include/PFJet.hh"
 #include "DataFormats/include/Met.hh"
 #include "DataFormats/include/PfMet.hh"
+#include "DataFormats/include/GenParticle.hh"
 
 #include "Tools/include/VertexSelector.hh"
 #include "Tools/src/CollectionPtrCleaner.cc"
@@ -26,6 +27,7 @@ AnalysisBase::AnalysisBase(TTree *tree) :
 {
   messageFreq_ = 1000;
   maxEvents_ = -1;
+  maxMc_ = 20;
   if(tree !=0) init(tree);
   else return;
 }
@@ -74,6 +76,9 @@ int AnalysisBase::loadTree(Long64_t entry) {
 
   /// load the Jet collections (PFjets and GenJets)
   loadJetCollection();
+
+  /// load the GenParticles
+  loadGenParticles();
 
   if(centry % messageFreq_ == 0) {
     EventHeader header = Event.eventHeader();
@@ -754,4 +759,22 @@ void AnalysisBase::loadJetCollection() {
     GenJets.push_back(jet);
   }
 
+}
+
+void AnalysisBase::loadGenParticles() {
+
+  CollectionPtrCleaner<Candidate> cleaner(&GenParticles);
+  cleaner.clean();
+
+  /// skip the protons
+  for(int i=2; i<min(maxMc_,nMc); ++i) {
+    Candidate::LorentzVector p4Mc;
+    p4Mc.SetPtEtaPhiE(pMc[i]*fabs(sin(thetaMc[i])),
+		      etaMc[i], phiMc[i], energyMc[i]);
+    Vertex::Point vtx(vxMc[i],vxMc[i],vxMc[i]);
+    
+    GenParticle *particle = new GenParticle(0, p4Mc, vtx, idMc[i], statusMc[i], mothMc[i]);
+    GenParticles.push_back(particle);
+  }
+  
 }
