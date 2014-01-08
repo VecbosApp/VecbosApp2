@@ -41,7 +41,7 @@ namespace vecbos {
 
     //! fill electron attributes + z mass for the tag and probe
     //! note: when both electrons from Z are probes, the same Z mass is repeated
-    void fillAttributesSignal(float zmass, int zeeDec, float genenergy, float genenergystatus1, float genenergystatus3);
+    void fillAttributesSignal(float zmass, int zeeDec, float genenergy, float gentheta, float genphi);
 
     //! fill electron attributes + other quantities for background tag and probe
     void fillAttributesBackground(float dphi, float invmass, float met, float pth);
@@ -105,7 +105,7 @@ namespace vecbos {
     float myScEt,myScEta,myScPhi,myEtaSeed,myPhiSeed,myESeed,myIEtaSeed,myIPhiSeed,myEtaCrySeed,myPhiCrySeed,myIEtaCrySeed,myIPhiCrySeed;
     bool myEventNumberParity;
     float myZmass, myZDec, myWeight;
-    float myGeneratedEnergy,myGeneratedEnergyStatus1,myGeneratedEnergyStatus3;
+    float myGeneratedEnergy,myGeneratedTheta,myGeneratedPhi;
 
     int myCutBasedId[4], myCutBasedIdOnlyID[4], myCutBasedIdOnlyIso[4], myCutBasedIdOnlyConv[4];
     int myBDTId[2], myBDTIdOnlyID[2], myBDTIdOnlyIso[2], myBDTIdOnlyConv[2];
