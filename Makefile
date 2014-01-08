@@ -100,6 +100,9 @@ $(OUTLIB)ToolsVertexSelector.o: $(INCLUDEDIR)/Tools/src/VertexSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsVertexSelector.o $<
 $(OUTLIB)ToolsCollectionSelector.o: $(INCLUDEDIR)/Tools/src/CollectionSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCollectionSelector.o $<
+$(OUTLIB)ToolsCandidateKinematicFilter.o: $(INCLUDEDIR)/Tools/src/CandidateKinematicFilter.cc \
+	$(OUTLIB)ToolsCollectionSelector.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCandidateKinematicFilter.o $<
 $(OUTLIB)ToolsHLTFilter.o: $(INCLUDEDIR)/Tools/src/HLTFilter.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsHLTFilter.o $<
 $(OUTLIB)ToolsCandidateSorter.o: $(INCLUDEDIR)/Tools/src/CandidateSorter.cc \
@@ -145,7 +148,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)AnalysisVecbosEventContent.o \
 	$(OUTLIB)ToolsVertexSelector.o \
 	$(OUTLIB)EgammaToolsElectronEffectiveArea.o \
-	$(OUTLIB)ToolsGenParticleCandidateMatch.o
+	$(OUTLIB)ToolsGenParticleCandidateMatch.o \
+	$(OUTLIB)ToolsCandidateKinematicFilter.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs

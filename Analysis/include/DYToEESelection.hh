@@ -4,6 +4,7 @@
 #include "Analysis/include/AnalysisBase.hh"
 #include "EgammaTools/include/ElectronIDSelector.hh"
 #include "Tools/include/HLTFilter.hh"
+#include "DataFormats/include/Electron.hh"
 #include "OutputTrees/include/ElectronIDTree.hh"
 
 namespace vecbos {
@@ -22,6 +23,9 @@ namespace vecbos {
     void Loop();
     
   private:
+
+    //! fill the electron tree with the given probe
+    void fillProbe(float zeemass, Electron *electron);
 
     ElectronIDSelector elid_mva_tight;
     HLTFilter *doubleele_filter_8TeV;
