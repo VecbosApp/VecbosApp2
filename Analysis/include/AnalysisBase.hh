@@ -27,15 +27,21 @@ namespace vecbos {
     /// destructor
     virtual ~AnalysisBase() { }
     
+    //! configure the needed stuff
+    void BeginJob(bool isMC);
+    //! close the needed stuff
+    void EndJob() { };
+
     void init(TTree* tree = 0);
     int  loadTree(Long64_t entry);
     /// repeat the log essage every messageFreq processed events (default is 1000)
     void messageFrequency(int messageFreq) { messageFreq_ = messageFreq; }
     /// max events to be processed (dafault all)
     void maxEvents(int max) { maxEvents_ = max; }
-    ///  max MC particles to load (default is 20, stored in the ntuple 1000)
+    /// max MC particles to load (default is 20, stored in the ntuple 1000)
     void maxMC(int max) { maxMc_ = max; }
-    
+    /// set the JSON file on which filter (if MC it is not used)
+    void setJson(std::string jsonFilePath) { jsonFile_ = jsonFilePath; }
 
   protected:
     vecbos::Event Event;
@@ -55,6 +61,8 @@ namespace vecbos {
     vecbos::CandidateCollectionPtr PfJets;
     vecbos::CandidateCollectionPtr GenJets;
 
+    bool ismc_;
+
   private:
     void loadEventHeader();
     void loadPrimaryVertices();
@@ -73,6 +81,7 @@ namespace vecbos {
     int messageFreq_;
     int maxEvents_;
     int maxMc_;
+    std::string jsonFile_;
 
   };
 
