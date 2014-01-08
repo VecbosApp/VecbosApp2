@@ -93,6 +93,10 @@ $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 	$(OUTLIB)DataFormatsCompositeCandidate.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEvent.o $<
 
+# JSON parser tools
+$(OUTLIB)JsonFilter.o: $(INCLUDEDIR)JSON/src/JsonFilter.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JsonFilter.o $<
+
 # Analysis Tools libs
 $(OUTLIB)ToolsCollectionPtrCleaner.o: $(INCLUDEDIR)/Tools/src/CollectionPtrCleaner.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCollectionPtrCleaner.o $<
@@ -145,6 +149,7 @@ $(OUTLIB)AnalysisVecbosEventContent.o: $(INCLUDEDIR)/Analysis/src/VecbosEventCon
 $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)ToolsCollectionPtrCleaner.o \
 	$(OUTLIB)ToolsHLTFilter.o \
+	$(OUTLIB)JsonFilter.o \
 	$(OUTLIB)AnalysisVecbosEventContent.o \
 	$(OUTLIB)ToolsVertexSelector.o \
 	$(OUTLIB)EgammaToolsElectronEffectiveArea.o \

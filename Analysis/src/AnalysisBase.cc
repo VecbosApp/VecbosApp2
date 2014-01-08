@@ -16,6 +16,7 @@
 
 #include "Tools/include/VertexSelector.hh"
 #include "Tools/src/CollectionPtrCleaner.cc"
+#include "JSON/include/JsonFilter.hh"
 
 #include "Math/include/Constants.h"
 
@@ -32,6 +33,10 @@ AnalysisBase::AnalysisBase(TTree *tree) :
   else return;
 }
 
+void AnalysisBase::BeginJob(bool isMC) {
+  ismc_=isMC;
+  jsonFile_=std::string("");
+}
 
 void AnalysisBase::init(TTree* tree) {
   if(!tree) return;
@@ -39,6 +44,8 @@ void AnalysisBase::init(TTree* tree) {
 }
 
 int AnalysisBase::loadTree(Long64_t entry) {
+
+  JsonFilter jsonfilt(jsonFile_);
 
   Long64_t nb;
   // Set the environment to read one entry
@@ -54,6 +61,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   
   // load the Event Header (run, lumi,...)
   loadEventHeader();
+  if( !ismc_ && jsonFile_.compare("")!=0 && jsonfilt.isGoodRunLS(Event.eventHeader()) ) return -5;
 
   // load the collection of *good* primary vertices
   loadPrimaryVertices();

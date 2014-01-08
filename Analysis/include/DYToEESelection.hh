@@ -29,7 +29,6 @@ namespace vecbos {
 
     ElectronIDSelector elid_mva_tight;
     HLTFilter *doubleele_filter_8TeV;
-    bool ismc_;
     ElectronIDTree *output;
 
   };

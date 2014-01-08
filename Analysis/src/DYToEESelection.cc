@@ -19,7 +19,7 @@ DYToEESelection::DYToEESelection(TChain *chain) :
   AnalysisBase(chain) { }
 
 void DYToEESelection::BeginJob(bool isMC) {
-  ismc_=isMC;
+  AnalysisBase::BeginJob(isMC);
 
   /// electron ID selector
   elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
@@ -42,6 +42,7 @@ void DYToEESelection::BeginJob(bool isMC) {
 }
 
 void DYToEESelection::EndJob() {
+  AnalysisBase::EndJob();
   output->save();
 }
 

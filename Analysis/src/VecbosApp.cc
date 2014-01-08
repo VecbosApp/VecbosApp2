@@ -66,7 +66,8 @@ int main(int argc, char* argv[]) {
 
   DYToEESelection selection(theChain);
   selection.maxMC(20);
-  selection.BeginJob(ismc);
+  selection.BeginJob(isMC);
+  selection.setJson("JSON/data/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt");
   selection.Loop();
   selection.EndJob();
 
