@@ -10,8 +10,8 @@
 #include "DataFormats/include/Muon.hh"
 #include "DataFormats/include/Jet.hh"
 #include "DataFormats/include/PFJet.hh"
-#include "DataFormats/include/Met.hh"
-#include "DataFormats/include/PfMet.hh"
+#include "DataFormats/include/MET.hh"
+#include "DataFormats/include/PFMET.hh"
 #include "DataFormats/include/GenParticle.hh"
 
 #include "Tools/include/VertexSelector.hh"
