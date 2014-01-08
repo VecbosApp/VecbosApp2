@@ -12,8 +12,11 @@
 #include "DataFormats/include/PFJet.hh"
 #include "DataFormats/include/Met.hh"
 #include "DataFormats/include/PfMet.hh"
+#include "DataFormats/include/GenParticle.hh"
 
 #include "Tools/include/VertexSelector.hh"
+#include "Tools/src/CollectionPtrCleaner.cc"
+
 #include "Math/include/Constants.h"
 
 using namespace std;
@@ -22,6 +25,9 @@ using namespace vecbos;
 AnalysisBase::AnalysisBase(TTree *tree) :
   VecbosEventContent(tree)
 {
+  messageFreq_ = 1000;
+  maxEvents_ = -1;
+  maxMc_ = 20;
   if(tree !=0) init(tree);
   else return;
 }
@@ -39,6 +45,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   if (!fChain) return -5;
   Long64_t centry = fChain->LoadTree(entry);
   if (centry < 0) return centry;
+  if (maxEvents_ > 0 && centry > maxEvents_) return -5;
   nb = fChain->GetEntry(entry);  
   if (fChain->GetTreeNumber() != fCurrent) {
     fCurrent = fChain->GetTreeNumber();
@@ -69,6 +76,16 @@ int AnalysisBase::loadTree(Long64_t entry) {
 
   /// load the Jet collections (PFjets and GenJets)
   loadJetCollection();
+
+  /// load the GenParticles
+  loadGenParticles();
+
+  if(centry % messageFreq_ == 0) {
+    EventHeader header = Event.eventHeader();
+    cout << "Processing entry # " << centry
+	 << "\t\t\tRun = " << header.run() << "\tlumi = " << header.lumi() 
+	 << "\t evt = " << header.event() << endl;
+  }
 
   return centry;
 }
@@ -420,7 +437,9 @@ void AnalysisBase::loadStandaloneMuonTracks() {
 
 void AnalysisBase::loadElectronCollection() {
 
-  Electrons.clear();
+  
+  CollectionPtrCleaner<Candidate> cleaner(&Electrons);
+  cleaner.clean();
 
   math::PhysConstants constants;
 
@@ -436,27 +455,27 @@ void AnalysisBase::loadElectronCollection() {
     int indexSC = superClusterIndexEle[i];
     SuperCluster sclu = (indexSC>=0) ? SuperClusters[indexSC] : SuperCluster();
     int indexPFSC = PFsuperClusterIndexEle[i];
-    SuperCluster pfsclu = (indexPFSC>=0) ? PFSuperClusters[indexSC] : SuperCluster();
-
+    SuperCluster pfsclu = (indexPFSC>=0) ? PFSuperClusters[indexPFSC] : SuperCluster();
+    
     int indexGsfTrack = gsfTrackIndexEle[i];
     Track gsfTrack = GsfTracks[indexGsfTrack]; // there is always a GsfTrack associated to an electron
     int indexCtfTrack = trackIndexEle[i];
     Track ctfTrack = (indexCtfTrack>=0) ? GeneralTracks[indexCtfTrack] : Track();
 
-    Electron electron(charge,p4Ele,vtx,sclu,pfsclu,gsfTrack,ctfTrack);
-    
-    electron.setRecoFlags(recoFlagsEle[i]);
-    electron.setFiducialFlags(fiducialFlagsEle[i]);
-    electron.setScPixCharge(scPixChargeEle[i]);
+    Electron* electron = new Electron(charge,p4Ele,vtx,sclu,pfsclu,gsfTrack,ctfTrack);
 
-    electron.setFbrem(fbremEle[i]);
-    electron.setNbrem(nbremsEle[i]);
-    electron.setClassification(classificationEle[i]);
+    electron->setRecoFlags(recoFlagsEle[i]);
+    electron->setFiducialFlags(fiducialFlagsEle[i]);
+    electron->setScPixCharge(scPixChargeEle[i]);
+
+    electron->setFbrem(fbremEle[i]);
+    electron->setNbrem(nbremsEle[i]);
+    electron->setClassification(classificationEle[i]);
 
     Electron::TrackClusterMatching trkclu;
     trkclu.eSuperClusterOverP   = eSuperClusterOverPEle[i];
     trkclu.eSeedClusterOverPout = eSeedOverPoutEle[i];
-    trkclu.eSeedClusterOverP    = trkclu.eSeedClusterOverPout * electron.trackPAtOuter() / gsfTrack.p();
+    trkclu.eSeedClusterOverP    = trkclu.eSeedClusterOverPout * electron->trackPAtOuter() / gsfTrack.p();
     trkclu.eEleClusterOverPout  = eEleClusterOverPoutEle[i];
     trkclu.deltaEtaSuperClusterAtVtx = deltaEtaAtVtxEle[i];
     trkclu.deltaPhiSuperClusterAtVtx = deltaPhiAtVtxEle[i];
@@ -464,9 +483,9 @@ void AnalysisBase::loadElectronCollection() {
     trkclu.deltaPhiSeedClusterAtCalo = deltaPhiAtCaloEle[i];
     trkclu.deltaEtaEleClusterAtCalo = deltaEtaEleClusterTrackAtCaloEle[i];
     trkclu.deltaPhiEleClusterAtCalo = deltaPhiEleClusterTrackAtCaloEle[i];
-    electron.setTrackClusterMatching(trkclu);
+    electron->setTrackClusterMatching(trkclu);
 
-    electron.setHcalOverEcal(hOverEEle[i]);
+    electron->setHcalOverEcal(hOverEEle[i]);
 
     Electron::DetectorIsolationVariables detectorIso03;
     detectorIso03.tkSumPt = dr03TkSumPtEle[i];
@@ -498,10 +517,10 @@ void AnalysisBase::loadElectronCollection() {
     pfIso04.directionalPhotonSumPt = pfCandPhotonDirIso04Ele[i];
     pfIso04.directionalNeutralHadronSumPt = pfCandNeutralDirIso04Ele[i];
 
-    electron.setDr03DetectorIsolation(detectorIso03);
-    electron.setDr04DetectorIsolation(detectorIso04);
-    electron.setDr03PFIsolation(pfIso03);
-    electron.setDr04PFIsolation(pfIso04);
+    electron->setDr03DetectorIsolation(detectorIso03);
+    electron->setDr04DetectorIsolation(detectorIso04);
+    electron->setDr03PFIsolation(pfIso03);
+    electron->setDr04PFIsolation(pfIso04);
 
     Electron::ConversionRejection cr;
     cr.dist = convDistEle[i];
@@ -509,17 +528,17 @@ void AnalysisBase::loadElectronCollection() {
     cr.radius = convRadiusEle[i];
     cr.hasMatchedConv = hasMatchedConversionEle[i];
 
-    electron.setConversionVariables(cr);
+    electron->setConversionVariables(cr);
 
     Electron::IDMvaOutput mvas;
     mvas.mvaTriggering = mvaidtrigEle[i];
     mvas.mvaNonTriggering = mvaidnontrigEle[i];
 
-    electron.setIDMVAs(mvas);
+    electron->setIDMVAs(mvas);
 
-    electron.setCalibratedEnergy(calibEnergyEle[i]);
-    electron.setCalibratedEnergyError(calibEnergyErrorEle[i]);
-    electron.setTrackMomentumError(trackMomentumErrorEle[i]);
+    electron->setCalibratedEnergy(calibEnergyEle[i]);
+    electron->setCalibratedEnergyError(calibEnergyErrorEle[i]);
+    electron->setTrackMomentumError(trackMomentumErrorEle[i]);
 
     Electrons.push_back(electron);
   }
@@ -528,7 +547,8 @@ void AnalysisBase::loadElectronCollection() {
 
 void AnalysisBase::loadMuonCollection() {
 
-  Muons.clear();
+  CollectionPtrCleaner<Candidate> cleaner(&Muons);
+  cleaner.clean();
 
   math::PhysConstants constants;
 
@@ -550,10 +570,10 @@ void AnalysisBase::loadMuonCollection() {
     int indexCombinedTrack = combinedTrackIndexMuon[i];
     Track combTrack = GlobalMuonTracks[indexCombinedTrack];
 
-    Muon muon(charge,p4Muon,vtx,innerTrack,staTrack,combTrack);
+    Muon* muon = new Muon(charge,p4Muon,vtx,innerTrack,staTrack,combTrack);
 
-    muon.setPFId(pfmuonIdMuon[i]);
-    muon.setType(typeMuon[i]);
+    muon->setPFId(pfmuonIdMuon[i]);
+    muon->setType(typeMuon[i]);
     
     Muon::DetectorIsolationVariables detIso03;
     detIso03.tkSumPt = sumPt03Muon[i];
@@ -577,13 +597,13 @@ void AnalysisBase::loadMuonCollection() {
     pfIso04.neutralHadronSumPt = pfCandNeutralIso04Muon[i];
     pfIso04.sumPUPt = pfIsolationSumPUPtR04Muon[i];
 
-    muon.setDr03DetectorIsolation(detIso03);
-    muon.setDr05DetectorIsolation(detIso05);
-    muon.setDr03PFIsolation(pfIso03);
-    muon.setDr04PFIsolation(pfIso04);
+    muon->setDr03DetectorIsolation(detIso03);
+    muon->setDr05DetectorIsolation(detIso05);
+    muon->setDr03PFIsolation(pfIso03);
+    muon->setDr04PFIsolation(pfIso04);
 
-    muon.setNumberOfMatches(numberOfMatchesMuon[i]);
-    muon.setCalibrateMomentum(scaledMomentumMuon[i]);
+    muon->setNumberOfMatches(numberOfMatchesMuon[i]);
+    muon->setCalibrateMomentum(scaledMomentumMuon[i]);
 
     Muons.push_back(muon);
   }
@@ -641,15 +661,16 @@ void AnalysisBase::loadMET() {
 void AnalysisBase::loadJetCollection() {
 
   /// PF Jets
-  PfJets.clear();
+  CollectionPtrCleaner<Candidate> pfjetCleaner(&PfJets);
+  pfjetCleaner.clean();
 
   for(int i=0; i<nAK5PFPUcorrJet; ++i) {
     Candidate::LorentzVector p4Jet(pxAK5PFPUcorrJet[i],pyAK5PFPUcorrJet[i],pzAK5PFPUcorrJet[i],energyAK5PFPUcorrJet[i]);
     Candidate::LorentzVector p4JetRaw(uncorrpxAK5PFPUcorrJet[i],uncorrpyAK5PFPUcorrJet[i],uncorrpzAK5PFPUcorrJet[i],uncorrenergyAK5PFPUcorrJet[i]);
     Candidate::Point vtx(vertexXAK5PFPUcorrJet[i],vertexYAK5PFPUcorrJet[i],vertexZAK5PFPUcorrJet[i]);
-    PFJet jet(p4Jet,p4JetRaw,vtx);
+    PFJet* jet = new PFJet(p4Jet,p4JetRaw,vtx);
 
-    jet.setJetArea(areaAK5PFPUcorrJet[i]);
+    jet->setJetArea(areaAK5PFPUcorrJet[i]);
     
     Jet::BTagsJet btag;
     btag.combinedSecondaryVertex = combinedSecondaryVertexBJetTagsAK5PFPUcorrJet[i];
@@ -661,7 +682,7 @@ void AnalysisBase::loadJetCollection() {
     btag.trackCountingHighPur = trackCountingHighPurBJetTagsAK5PFPUcorrJet[i];
     btag.trackCountingHighEff = trackCountingHighEffBJetTagsAK5PFPUcorrJet[i];
     btag.trackCountingVeryHighEff = trackCountingVeryHighEffBJetTagsAK5PFPUcorrJet[i];
-    jet.setBTagsJet(btag);
+    jet->setBTagsJet(btag);
 
     PFJet::Specific specific;
     specific.mChargedHadronEnergy = chargedHadronEnergyAK5PFPUcorrJet[i];
@@ -679,7 +700,7 @@ void AnalysisBase::loadJetCollection() {
     specific.mMuonMultiplicity = muonMultiplicityAK5PFPUcorrJet[i];
     specific.mHFHadronMultiplicity = HFHadronMultiplicityAK5PFPUcorrJet[i];
     specific.mHFEMMultiplicity = HFEMMultiplicityAK5PFPUcorrJet[i];
-    jet.setSpecific(specific);
+    jet->setSpecific(specific);
 
     PFJet::JetId id;
     id.weightedDz1 = weightedDz1AK5PFPUcorrJet[i];
@@ -689,7 +710,7 @@ void AnalysisBase::loadJetCollection() {
     id.mva = jetIdMvaFullAK5PFPUcorrJet[i];
     id.dR2Mean = dR2MeanIdMvaAK5PFPUcorrJet[i];
     id.dRMean = dRMeanIdMvaAK5PFPUcorrJet[i];
-    jet.setJetId(id);
+    jet->setJetId(id);
 
     PFJet::QGLikelihoodVars qg;
     qg.ptD = ptDAK5PFPUcorrJet[i];
@@ -721,19 +742,39 @@ void AnalysisBase::loadJetCollection() {
     qg.pTMaxNeutral = pTMaxNeutralAK5PFPUcorrJet[i];
     qg.pTMaxChg_QC = pTMaxChg_QCAK5PFPUcorrJet[i];
 
-    jet.setQGVars(qg);
+    jet->setQGVars(qg);
 
     PfJets.push_back(jet);
 
   }
 
   /// GenJets
-  GenJets.clear();
+  CollectionPtrCleaner<Candidate> genjetCleaner(&GenJets);
+  genjetCleaner.clean();
+
   for(int i=0; i<nAK5GenJet; ++i) {
     Candidate::LorentzVector p4Jet(pxAK5GenJet[i],pyAK5GenJet[i],pzAK5GenJet[i],energyAK5GenJet[i]);
     Candidate::Point vtx(vertexXAK5GenJet[i],vertexYAK5GenJet[i],vertexZAK5GenJet[i]);
-    Jet jet(p4Jet,vtx);
+    Jet* jet = new Jet(p4Jet,vtx);
     GenJets.push_back(jet);
   }
 
+}
+
+void AnalysisBase::loadGenParticles() {
+
+  CollectionPtrCleaner<Candidate> cleaner(&GenParticles);
+  cleaner.clean();
+
+  /// skip the protons
+  for(int i=2; i<min(maxMc_,nMc); ++i) {
+    Candidate::LorentzVector p4Mc;
+    p4Mc.SetPtEtaPhiE(pMc[i]*fabs(sin(thetaMc[i])),
+		      etaMc[i], phiMc[i], energyMc[i]);
+    Vertex::Point vtx(vxMc[i],vxMc[i],vxMc[i]);
+    
+    GenParticle *particle = new GenParticle(0, p4Mc, vtx, idMc[i], statusMc[i], mothMc[i]);
+    GenParticles.push_back(particle);
+  }
+  
 }

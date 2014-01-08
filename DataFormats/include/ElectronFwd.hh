@@ -9,6 +9,9 @@ namespace vecbos {
   typedef std::vector<Electron> ElectronCollection;
   typedef std::vector<Electron>::iterator electron_iterator;
 
+  typedef std::vector<Electron*> ElectronCollectionPtr;
+  typedef std::vector<Electron*>::iterator electronptr_iterator;
+
 }
 
 #endif

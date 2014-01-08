@@ -15,8 +15,6 @@
 
 //#if Application == 1
 #include "Analysis/include/DYToEESelection.hh"
-//#include "Analysis/include/VecbosEventContent.h"
-#include "DataFormats/include/Track.hh"
 //#endif
 
 using namespace std;
@@ -67,7 +65,9 @@ int main(int argc, char* argv[]) {
   bool ismc=true;
 
   DYToEESelection selection(theChain);
+  selection.maxMC(20);
   selection.BeginJob(ismc);
   selection.Loop();
+  selection.EndJob();
 
 }

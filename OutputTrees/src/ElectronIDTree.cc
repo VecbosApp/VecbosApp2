@@ -7,7 +7,7 @@ using namespace std;
 ElectronIDTree::ElectronIDTree(const char *filename) {
 
   myFile = new TFile(filename,"RECREATE");
-  myFile->mkdir("eleIDdir");
+  myFile->mkdir("electrons");
   myTree = new TTree("T1","eleID tree");
 
   // electron basics
@@ -99,9 +99,9 @@ ElectronIDTree::~ElectronIDTree() {
 void ElectronIDTree::addAttributesSignal() {
   myTree->Branch("mass",       &myZmass,       "mass/F");
   myTree->Branch("zdec",       &myZDec,        "zdec/F");
-  myTree->Branch("GeneratedEnergy",         &myGeneratedEnergy,         "GeneratedEnergy/F");
-  myTree->Branch("GeneratedEnergyStatus1",  &myGeneratedEnergyStatus1,  "GeneratedEnergyStatus1/F");
-  myTree->Branch("GeneratedEnergyStatus3",  &myGeneratedEnergyStatus3,  "GeneratedEnergyStatus3/F");
+  myTree->Branch("etrue",      &myGeneratedEnergy, "etrue/F");
+  myTree->Branch("thetatrue",  &myGeneratedTheta,  "thetatrue/F");
+  myTree->Branch("phitrue",    &myGeneratedPhi,    "phitrue/F");
 }
 
 void ElectronIDTree::addElectronIdBits() {
@@ -178,7 +178,7 @@ void ElectronIDTree::store() {
 
 void ElectronIDTree::save() {
 
-  myFile->cd("eleIDdir");
+  myFile->cd("electrons");
   myTree->Write();
   myFile->Close();
 }
@@ -255,7 +255,8 @@ void ElectronIDTree::fillElectronInfos(Electron electron) {
   fillMVAs(electron.mvaTriggering(),
 	   electron.mvaNonTriggering() );
 
-  ElectronIDAlgo algo(electron,myRho,vertices_);
+  ElectronIDAlgo algo(myRho,vertices_);
+  algo.setElectron(electron);
 
   vector<string> cuts_wps;
   cuts_wps.push_back("veto");
@@ -384,12 +385,12 @@ void ElectronIDTree::fillIsolations(float trkIso, float ecalIso, float hcalIso,
   myPFCandPhotonIso=phoPFiso;
 }
 
-void ElectronIDTree::fillAttributesSignal(float zmass, int zdec, float genenergy, float genenergystatus1, float genenergystatus3) {
+void ElectronIDTree::fillAttributesSignal(float zmass, int zdec, float genenergy, float gentheta, float genphi) {
   myZmass=zmass;
   myZDec=float(zdec);
   myGeneratedEnergy=genenergy;
-  myGeneratedEnergyStatus1=genenergystatus1;
-  myGeneratedEnergyStatus3=genenergystatus3;
+  myGeneratedTheta=gentheta;
+  myGeneratedPhi=genphi;
 }
 
 void ElectronIDTree::fillAttributesBackground(float deltaphi, float invmass, float met, float pth) {
@@ -431,7 +432,8 @@ void ElectronIDTree::fillMomenta(Electron electron) {
 }
 
 void ElectronIDTree::fillFakeRateDenomBits(float leadJetPt, Electron electron) {
-  ElectronIDAlgo algo(electron,myRho,vertices_);
+  ElectronIDAlgo algo(myRho,vertices_);
+  algo.setElectron(electron);
   myDenomFake = algo.pass_hlt();
   myLeadJetPt = leadJetPt;
 }

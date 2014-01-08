@@ -12,9 +12,12 @@ namespace vecbos {
 
   public:
     /// constructor
-    ElectronIDAlgo(vecbos::Electron electron, float rho, vecbos::VertexCollection vertices);
+    ElectronIDAlgo(float rho, vecbos::VertexCollection vertices);
     /// destructor
     ~ElectronIDAlgo() { }
+    
+    /// set the electron on which apply the ID
+    void setElectron(Electron electron) { electron_ = electron; }
     
     /// pass the offline emulation of the HLT 2012 
     /// includes ID, iso, full conv. rejection as the denominator object for triggering electrons

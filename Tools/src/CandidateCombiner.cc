@@ -11,7 +11,7 @@ CompositeCandidateCollection CandidateCombiner::output() {
   if(inputs_.size()==0) 
     cout << "Warning: requested to combine 0 inputs. Returning an empty collection..." << endl;
   else if(inputs_.size()==1) {
-    CandidateCollection cands = inputs_.front();
+    CandidateCollectionPtr cands = inputs_.front();
     for(int i1 = 0; i1 < cands.size(); ++i1) {
       for(int i2 = i1 + 1; i2 < cands.size(); ++i2) {
 	CompositeCandidate comp;
@@ -34,11 +34,11 @@ CompositeCandidateCollection CandidateCombiner::output() {
 }
 
 
-CompositeCandidateCollection CandidateCombiner::combineTwoCollections(CandidateCollection first, CandidateCollection second) {
+CompositeCandidateCollection CandidateCombiner::combineTwoCollections(CandidateCollectionPtr first, CandidateCollectionPtr second) {
   CompositeCandidateCollection output;
   for(int i1 = 0; i1 < first.size(); ++i1) {
     for(int i2 = 0; i2 < second.size(); ++i2) {
-      if(first[i1].overlap(second[i2])) continue;
+      if(first[i1]->overlap(*second[i2])) continue;
       CompositeCandidate comp;
       comp.addDaughter(first[i1]);
       comp.addDaughter(second[i2]);
@@ -48,17 +48,17 @@ CompositeCandidateCollection CandidateCombiner::combineTwoCollections(CandidateC
   return output;
 }
 
-CompositeCandidateCollection CandidateCombiner::combineCompositeCollectionAndLeafCollection(CompositeCandidateCollection first, CandidateCollection second) {
+CompositeCandidateCollection CandidateCombiner::combineCompositeCollectionAndLeafCollection(CompositeCandidateCollection first, CandidateCollectionPtr second) {
   CompositeCandidateCollection output;
   for(int i1 = 0; i1 < first.size(); ++i1) {
     for(int i2 = 0; i2 < second.size(); ++i2) {
-      if(first[i1].overlap(second[i2])) continue;
+      if(first[i1].overlap(*second[i2])) continue;
       bool overlapdau=false;
       for(int ndau1=0; ndau1<first[i1].numberOfDaughters(); ++ndau1)
-	if(first[i1].daughter(ndau1).overlap(second[i2])) overlapdau=true;
+	if(first[i1].daughter(ndau1)->overlap(*second[i2])) overlapdau=true;
       if(overlapdau) continue;
       CompositeCandidate comp;
-      comp.addDaughter(first[i1]);
+      comp.addDaughter(&first[i1]);
       comp.addDaughter(second[i2]);
       output.push_back(comp);
     }

@@ -3,8 +3,11 @@
 #include "DataFormats/include/SuperCluster.hh"
 #include "DataFormats/include/SuperClusterFwd.hh"
 #include "EgammaTools/include/ElectronIDSelector.hh"
+#include "EgammaTools/include/ElectronIDAlgo.hh"
 #include "Tools/include/CandidateCombiner.hh"
 #include "Tools/include/CandidateSorter.hh"
+#include "Tools/include/GenParticleCandidateMatch.hh"
+#include "Tools/include/CandidateKinematicFilter.hh"
 
 #include "Analysis/include/DYToEESelection.hh"
 
@@ -17,12 +20,29 @@ DYToEESelection::DYToEESelection(TChain *chain) :
 
 void DYToEESelection::BeginJob(bool isMC) {
   ismc_=isMC;
+
   /// electron ID selector
   elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
+
   /// HLT selector
   doubleele_filter_8TeV = new HLTFilter(fChain);
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
   else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
+
+  /// output tree
+  output = new ElectronIDTree("eleid.root");
+  output->addRunInfos();
+  output->addAttributesSignal();
+  output->addMomenta();
+  output->addMVAs();
+  output->addElectronIdBits();
+  output->addDenominatorFakeBits();
+  output->addIsolations();
+  
+}
+
+void DYToEESelection::EndJob() {
+  output->save();
 }
 
 void DYToEESelection::Loop() {
@@ -35,36 +55,59 @@ void DYToEESelection::Loop() {
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
      Long64_t ientry = loadTree(jentry);
      if (ientry < 0) break;
-     cout << "Processing Event " << jentry << endl; 
-     
+
+     output->setVertices(PrimaryVertices);
+
      EventHeader header = Event.eventHeader();
-     cout << "Event header: run = " << header.run() << "\tlumi = " << header.lumi() 
-      	  << "\t evt = " << header.event() << endl;
-     
+     output->fillRunInfos(header.run(), header.lumi(), header.event(),
+			 nPU,PrimaryVertices.size(), rhoFastjet, 1);
+
      // bool passhlt = doubleele_filter_8TeV->pass(jentry,header.run());
      // if(passhlt) cout << "\t===>This event passes HLT " << endl;
 
-     // elid_mva_tight.source(Electrons);
-     // elid_mva_tight.setRho(rhoFastjet);
-     // elid_mva_tight.setPrimaryVertices(PrimaryVertices);
-
-     // ElectronCollection tight_electrons = elid_mva_tight.output();
-     // cout << "reco electrons size = " << Electrons.size() << "   loose electrons = " << tight_electrons.size() << endl;
+     CandidateKinematicFilter eleFilter;
+     eleFilter.source(Electrons);
+     eleFilter.setPtRange(7,1000); 
+     eleFilter.setEtaRange(-2.5,2.5); 
+     CandidateCollectionPtr AcceptanceElectrons = eleFilter.output();
 
      CandidateCombiner zeecombiner;
-     zeecombiner.addDaughterCollection(Electrons);
+     zeecombiner.addDaughterCollection(AcceptanceElectrons);
      CompositeCandidateCollection zeeUnsorted = zeecombiner.output();
-
-     cout << "Electrons size = " << Electrons.size() << endl;
-     cout << "===> Z(ee) size = " << zeeUnsorted.size() << endl;
 
      /// sort by the scalar sum of the daughters
      CandidateSorter sorter(zeeUnsorted,"sumpt");
      CompositeCandidateCollection ZeeSorted = sorter.output();
+
      if(ZeeSorted.size()>0) {
        CompositeCandidate Zee = ZeeSorted.front();
-       cout << "best Z(ee) mass = " << Zee.mass() << endl;
+       Electron *ele1 = dynamic_cast<Electron*>(Zee.daughter(0));
+       Electron *ele2 = dynamic_cast<Electron*>(Zee.daughter(1));
+
+       ElectronIDAlgo eleID(rhoFastjet,PrimaryVertices);
+       eleID.setElectron(*ele1);	 
+       if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele2);
+       eleID.setElectron(*ele2);	 
+       if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele1);       
+       output->store();
      }
    }
+}
 
+void DYToEESelection::fillProbe(float zeemass, Electron *electron) {
+
+  output->fillElectronInfos(*electron);
+
+  GenParticleCandidateMatch mcMatch(GenParticles);
+  mcMatch.setDeltaR(0.4);
+  mcMatch.checkStatus(1);
+  GenParticle *matchedEle = mcMatch.overlap(electron,11);
+
+  if(matchedEle) output->fillAttributesSignal(zeemass,
+					      1,
+					      matchedEle->energy(),
+					      matchedEle->theta(),
+					      matchedEle->phi());
+
+  else output->fillAttributesSignal(zeemass,0,-1,-999,-999);	 
 }

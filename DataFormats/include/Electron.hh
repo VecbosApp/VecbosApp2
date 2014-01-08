@@ -71,7 +71,7 @@ namespace vecbos {
 
     /// === Core attributes ===
   public:
-    SuperCluster superCluster() const { return superCluster_; }
+    SuperCluster superCluster() const;
     Track gsfTrack() const { return gsfTrack_; }
     Track closestTrack() const { return ctfTrack_; }
     Track track() const { return gsfTrack_; }
@@ -212,41 +212,22 @@ namespace vecbos {
 
   public :
     
-    struct ShowerShape
-    {
-      float sigmaIetaIeta ;      // weighted cluster rms along eta and inside 5x5 (Xtal eta)
-      float sigmaIphiIphi ;      // weighted cluster rms along phi and inside 5x5 (Xtal phi)
-      float e1x5 ;               // energy inside 1x5 in etaxphi around the seed Xtal
-      float e2x5Max ;            // energy inside 2x5 in etaxphi around the seed Xtal (max bwt the 2 possible sums)
-      float e5x5 ;               // energy inside 5x5 in etaxphi around the seed Xtal
-      float r9 ;                 // ratio of the 3x3 energy and supercluster energy
-      float hcalOverEcal ; // hcal over ecal seed cluster energy (using hcal towers within a cone)
-      ShowerShape()
-	: sigmaIetaIeta(std::numeric_limits<float>::infinity()),
-	  sigmaIphiIphi(std::numeric_limits<float>::infinity()),
-	  e1x5(0.), e2x5Max(0.), e5x5(0.),
-	  r9(-std::numeric_limits<float>::infinity()),
-	  hcalOverEcal(0.)
-      {}
-    } ;
-    
     // accessors
-    float sigmaIetaIeta() const { return showerShape_.sigmaIetaIeta ; }
-    float sigmaIphiIphi() const { return showerShape_.sigmaIphiIphi ; }
-    float e1x5() const { return showerShape_.e1x5 ; }
-    float e2x5Max() const { return showerShape_.e2x5Max ; }
-    float e5x5() const { return showerShape_.e5x5 ; }
-    float r9() const { return showerShape_.r9 ; }
-    float hcalOverEcal() const { return showerShape_.hcalOverEcal ; }
-    const ShowerShape & showerShape() const { return showerShape_ ; }
+    float sigmaIetaIeta() const { return superCluster().sigmaIetaIeta() ; }
+    float sigmaIphiIphi() const { return superCluster().sigmaIphiIphi() ; }
+    float e1x5() const { return superCluster().e1x5() ; }
+    float e2x5Max() const { return superCluster().e2x5Max() ; }
+    float e5x5() const { return superCluster().e5x5() ; }
+    float r9() const { return superCluster().e3x3() / superCluster().energy(); }
+    float hcalOverEcal() const { return hcalOverEcal_ ; }
 
     // setters 
-    void setHcalOverEcal(float hoe) { showerShape_.hcalOverEcal = hoe; }
+    void setHcalOverEcal(float hoe) { hcalOverEcal_ = hoe; }
 
   private:
 
     // attributes
-    ShowerShape showerShape_ ;
+    float hcalOverEcal_;
 
 
   //=======================================================
