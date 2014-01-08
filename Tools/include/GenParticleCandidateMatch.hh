@@ -11,7 +11,7 @@ namespace vecbos {
 
   public:
     /// default constructor
-    GenParticleCandidateMatch(GenParticleCollectionPtr genparticles);
+    GenParticleCandidateMatch(CandidateCollectionPtr genparticles);
     /// destructor 
     ~GenParticleCandidateMatch() { };
 
@@ -28,11 +28,11 @@ namespace vecbos {
     void checkStatus(int status) { status_ = status; }
 
     /// overlap between the candidate and a genparticle of given pdgId
-    GenParticle* overlap(CompositeCandidate *cand, int genParticlePdgId);
+    GenParticle* overlap(Candidate *cand, int genParticlePdgId);
 
   private:
     /// the list of GenParticles available in the event
-    GenParticleCollectionPtr genParticles_;
+    CandidateCollectionPtr genParticles_;
     /// the deltaR for angular match
     float deltaR_;
     /// bool check charge of the matched candidate and the gen particle
