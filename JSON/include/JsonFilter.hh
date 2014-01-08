@@ -16,9 +16,9 @@ namespace vecbos {
     typedef std::pair < aRun, LSSegments > aRunsLSSegmentsMapElement;
 
     /// default constructor
-    JsonFilter();
+    JsonFilter() : jsonFile_(std::string("")) { };
     /// constructor from JSON input file
-    JsonFilter(std::string jsonFilePath);
+    JsonFilter(std::string jsonFilePath) : jsonFile_(jsonFilePath) { };
     /// destructor
     ~JsonFilter() { };
 
