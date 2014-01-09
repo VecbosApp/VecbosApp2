@@ -21,6 +21,8 @@ namespace vecbos {
     void EndJob();
     //! loop over events
     void Loop();
+    //! set the output file name
+    void setOutputFile(std::string file) { outputFileName_ = file; }
     
   private:
 
@@ -30,6 +32,7 @@ namespace vecbos {
     ElectronIDSelector elid_mva_tight;
     HLTFilter *doubleele_filter_8TeV;
     ElectronIDTree *output;
+    std::string outputFileName_;
 
   };
 

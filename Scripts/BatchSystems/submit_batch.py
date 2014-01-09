@@ -1,38 +1,43 @@
 #! /usr/bin/env python
 import os
 import sys
+import time
+import commands
+import optparse
 # set parameters to use cmst3 batch 
 #######################################
-### usage  cmst3_submit_manyfilesperjob.py dataset njobs applicationName queue 
+### usage  
 #######################################
-if len(sys.argv) < 4:
-    print "usage cmst3_submit_manyfilesperjob.py card njobs applicationName queue"
-    print '      cmst3_submit_manyfilesperjob.py cmst3_52X/Data/Collisions8TeV_V14_52X/METRun2012A.list 50 1nh'
-    sys.exit(1)
-process = sys.argv[1].split("/")[1]
-dataset = sys.argv[1].split("/")[-1].replace(".list","")
+# if len(sys.argv) != 3:
+#     print "usage cmst3_submit_manyfilesperjob.py dataset isMC"
+#     sys.exit(1)
+dataset = sys.argv[1]
+isMC = int(sys.argv[2])
 
-isData = False#False Means MC
+usage = '''usage: %prog [opts] dataset isMC'''
+parser = optparse.OptionParser(usage)
+parser.add_option('-q', '--queue',       dest='queue', help='run in batch in queue specified as option (default -q 8nh)', default='8nh')
+parser.add_option('-y', '--year' ,       dest='year' , help='Year (2011,2012)'                                          , default=None, type='float')
+parser.add_option('-n', '--nfileperjob', dest='nfileperjob', help='split the jobs with n files read/batch job'    , default=10,   type='int')
+parser.add_option('-p', '--prefix',      dest='prefix', help='the prefix to be added to the output'                    , default='')
+parser.add_option('-a', '--application', dest='application', help='the executable to be run'                      , default='VecbosApp')
+parser.add_option('-d', '--download',    dest='download',    help='download the output on a local computer'       , default='pccmsrm')
 
-##########Data##############
-#isData = True
-#JSON = sys.argv[4]
-############################
+(opt, args) = parser.parse_args()
 
-inputlist =  sys.argv[1]
+if isMC != 0:
+    if opt.year == 2011:
+        inputlist = "Samples/44X/VECBOS_2_44X_V1/MC/"+dataset+".list"
+    else:
+        inputlist = "Samples/53X/VECBOS_2_53X_V3/MC/"+dataset+".list"
+else:
+    if opt.year == 2011:
+        inputlist = "Samples/44X/VECBOS_2_44X_V1/DATA/"+dataset+".list"
+    else:
+        inputlist = "Samples/53X/VECBOS_2_53X_V3/Data/"+dataset+".list"
+
 output = dataset
-# choose among cmt3 8nm 1nh 8nh 1nd 1nw 
-#queue = "cmst3"
-#queue = "cms8nht3"
-queue = sys.argv[3]
-ijobmax = int(sys.argv[2])
-# to write on the cmst3 cluster disks
-#outputdir = "/castor/cern.ch/user/m/mpierini/CMST3/DiJet/"+dataset;
-#outputdir = "/castor/cern.ch/user/m/mpierini/CMST3/RazorDiPhoton/"+dataset;
-#outputdir = "/castor/cern.ch/user/m/mpierini/CMST3/RazorDiLepton/"+dataset;
-#outputdir = "/castor/cern.ch/user/m/mpierini/VecbosApp/RazorHBB/"+dataset;
-#os.system("rfmkdir "+outputdir)
-################################################
+
 mydir = "/afs/cern.ch/work/e/emanuele/vecbos/VecbosApp2"
 myproxy = "x509up_u24421"
 os.system("voms-proxy-init -voms cms")
@@ -42,59 +47,69 @@ else:
     print "Couldn't find the correct proxy in /tmp."
     exit()
 os.system("cp /tmp/"+myproxy+" "+mydir)
-os.system("mkdir -p "+process+"/"+output)
-os.system("mkdir -p "+process+"/"+output+"/log/")
-os.system("mkdir -p "+process+"/"+output+"/input/")
-os.system("mkdir -p "+process+"/"+output+"/src/")
-os.system("mkdir -p "+process+"/"+output+"/out/")
+
+if opt.download=='pccmsrm':
+    if opt.year==2011:
+        diskoutputdir = "/cmsrm/pc24_2/emanuele/data/Vecbos4.4.X/"
+    else:
+        diskoutputdir = "/cmsrm/pc24_2/emanuele/data/Vecbos5.3.X/"
+    diskoutputmain = diskoutputdir+"/"+opt.prefix+"/"+output
+
+os.system("mkdir -p "+opt.prefix+"/"+output)
+os.system("mkdir -p "+opt.prefix+"/"+output+"/log/")
+os.system("mkdir -p "+opt.prefix+"/"+output+"/input/")
+os.system("mkdir -p "+opt.prefix+"/"+output+"/src/")
+outputroot = diskoutputmain+"/root/"
+
+if diskoutputdir != "none": 
+    os.system("ssh -o BatchMode=yes -o StrictHostKeyChecking=no pccmsrm24 mkdir -p "+diskoutputmain)
+
 #look for the current directory
 #######################################
 pwd = os.environ['PWD']
 #######################################
-numfiles = reduce(lambda x,y: x+1, file(inputlist).xreadlines(), 0)
-filesperjob = numfiles/ijobmax
-extrafiles  = numfiles%ijobmax
-input = open(inputlist)
-######################################
+inputListfile=open(inputlist)
+inputfiles = inputListfile.readlines()
+ijob=0
 
-for ijob in range(ijobmax):
-    # prepare the list file
-    inputfilename = pwd+"/"+process+"/"+output+"/input/input_"+str(ijob)+".list"
+while (len(inputfiles) > 0):
+    inputfilename = pwd+"/"+opt.prefix+"/"+output+"/input/input_"+str(ijob)+".list"
     inputfile = open(inputfilename,'w')
-    # if it is a normal job get filesperjob lines
-    if ijob != (ijobmax-1):
-        for line in range(filesperjob):
-            ntpfile = input.readline() 
+    for line in range(min(opt.nfileperjob,len(inputfiles))):
+        ntpfile = inputfiles.pop()
+        if ntpfile != '':
             inputfile.write(ntpfile)
-            continue
-    else:
-        # if it is the last job get ALL remaining lines
-        ntpfile = input.readline()
-        while ntpfile != '':
-            inputfile.write(ntpfile)
-            ntpfile = input.readline()
-            continue
+            
+
     inputfile.close()
 
     # prepare the script to run
-    outputname = process+"/"+output+"/src/submit_"+str(ijob)+".src"
-    print "OUTPUTFILE: ", outputname
+    outputname = opt.prefix+"/"+output+"/src/submit_"+str(ijob)+".src"
     outputfile = open(outputname,'w')
     outputfile.write('#!/bin/bash\n')
-    outputfile.write('cp '+mydir+'/'+myproxy+' /tmp/\n')
-    outputfile.write("cd "+mydir+"; eval `scramv1 run -sh`\n")
-    outputfile.write('cd '+pwd+'\n')
-    if isData:
-        outputfile.write('./VecbosApp '+inputfilename+" "+process+"/"+output+"/out/"+output+"_"+str(ijob)+".root --isData -json="+JSON+"\n")
-        print './VecbosApp '+inputfilename+" "+process+"/"+output+"/out/"+output+"_"+str(ijob)+".root --isData -json="+JSON+"\n"
+    # outputfile.write('export STAGE_HOST=castorcms\n')
+    # outputfile.write('export STAGE_SVCCLASS=cmst3\n')
+    # outputfile.write('cd '+pwd)
+    outputfile.write('cp -r '+pwd+"/"+'JSON/data $WORKDIR\n')
+    if opt.year==2011:
+        outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc434\n')
+        outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_4_2_8_patch7/\n')
     else:
-        outputfile.write('./VecbosApp '+inputfilename+" "+process+"/"+output+"/out/"+output+"_testMC_"+str(ijob)+".root \n")
-        print './VecbosApp '+inputfilename+" "+process+"/"+output+"/out/"+output+"_testMc_"+str(ijob)+".root \n"
+        outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc462\n')
+        outputfile.write('cd /afs/cern.ch/work/e/emanuele/vecbos/CMSSW_5_3_12/\n')
+    outputfile.write('eval `scramv1 runtime -sh`\n')
+    outputfile.write('cd $WORKDIR\n')
+    outputfile.write(pwd+'/'+opt.application+' '+inputfilename+" "+output+"_"+str(ijob)+" "+str(isMC)"\n")
+
+    outputfile.write('ls *.root | xargs -i scp -o BatchMode=yes -o StrictHostKeyChecking=no {} pccmsrm24:'+diskoutputmain+'/{}\n') 
     outputfile.close
-    basedir = process+"/"+output+"/log/";
-    os.system("echo bsub -q "+queue+" -o "+basedir+str(ijob)+".out -e "+basedir+str(ijob)+".err source "+pwd+"/"+outputname)
-    os.system("sleep 2; bsub -q "+queue+" -o "+basedir+str(ijob)+".out -e "+basedir+str(ijob)+".err source "+pwd+"/"+outputname)
-    #os.system("sleep 2; bsub -q "+queue+" -o /dev/log -e /dev/log source "+pwd+"/"+outputname)
-    #os.system("sleep 1; bsub -q "+queue+" source "+pwd+"/"+outputname)
+    os.system("echo bsub -q "+opt.queue+" -o "+opt.prefix+"/"+output+"/log/job_"+str(ijob)+".log source "+pwd+"/"+outputname)
+#    os.system("bsub -q "+opt.queue+" -o "+opt.prefix+"/"+dataset+"/"+output+"/log/"+output+"_"+str(ijob)+".log source "+pwd+"/"+outputname+" -copyInput="+dataset+"_"+str(ijob))
     ijob = ijob+1
+    # and now cope with the max number of accesses (3000, keep 2500 for the safe side)
+    totfiles = opt.nfileperjob*ijob
+    if(totfiles % 1000 == 0):
+        time.sleep(500);
+        print "sleeping 500 s during a dataset...";
+    #time.sleep(1)
     continue

@@ -24,19 +24,17 @@ int main(int argc, char* argv[]) {
 
   char inputFileName[500];
   char outputFileName[500];
-  char dataset[150];
   if ( argc < 2 ){
     std::cout << "missing argument: insert at least inputFile with list of root files" << std::endl; 
-    std::cout << "VecbosApp inputFile [outputFile] [1=MC,0=data] [dataset]" << std::endl;
+    std::cout << "VecbosApp inputFile [outputFile] [1=MC,0=data]" << std::endl;
     return 1;
   }
   strcpy(inputFileName,argv[1]);
   if (argc < 3 ) strcpy(outputFileName,argv[1]);
   else strcpy(outputFileName,argv[2]);
   int isMC=1;
-  if(argc==5) {
+  if(argc==4) {
     isMC=atoi(argv[3]);
-    strcpy(dataset,argv[4]);
   }
   
   // -------------------------
@@ -67,6 +65,7 @@ int main(int argc, char* argv[]) {
   DYToEESelection selection(theChain);
   selection.maxMC(20);
   selection.BeginJob(isMC);
+  selection.setOutputFile(outputFileName);
   selection.setJson("JSON/data/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt");
   selection.Loop();
   selection.EndJob();
