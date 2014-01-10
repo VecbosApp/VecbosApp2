@@ -146,11 +146,11 @@ int main(int argc, char* argv[]) {
   treeSig = treeBkg = 0;
 
   if(trg) {
-    fileSig = TFile::Open("data/electrons_zeemc.root");
-    fileBkg = TFile::Open("data/fakes.root");
+    fileSig = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc.root");
+    fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes.root");
   } else {
-    fileSig = TFile::Open("data/electrons_zeemc.root");
-    fileBkg = TFile::Open("data/fakes-zll1e.root");
+    fileSig = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc.root");
+    fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e.root");
   }
   if( fileSig && fileBkg) {
     fileSig->cd();
@@ -201,12 +201,12 @@ int main(int argc, char* argv[]) {
   id.push_back(TString("ROC_IdOnly_Data_EE_HighPt.pdf"));
 
   // HZZ isolations and new id bits are in friend trees
-  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","data/electrons_zeemc_hzzisoFriend.root");
-  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","data/fakes_hzzisoFriend.root");
-  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","data/fakes-zll1e_hzzisoFriend.root");
-  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","data/electrons_zeemc_hzzidbitsFriend.root");
-  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","data/fakes_hzzidbitsFriend.root");
-  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","data/fakes-zll1e_hzzidbitsFriend.root");
+  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc_hzzisoFriend.root");
+  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes_hzzisoFriend.root");
+  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e_hzzisoFriend.root");
+  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc_hzzidbitsFriend.root");
+  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes_hzzidbitsFriend.root");
+  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e_hzzidbitsFriend.root");
 
   for(int i=0;i<(int)cutBase.size();++i) {
     makeIdCurve(treeSig,treeBkg,cutSignal[i],cutBackground[i],id[i]);

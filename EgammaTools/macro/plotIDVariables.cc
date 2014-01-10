@@ -197,15 +197,15 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   fileSig = fileBkg = 0;
   treeSig = treeBkg = 0;
 
-  fileSig = TFile::Open("data/electrons_zeemc.root");
+  fileSig = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc.root");
   if(sigVsBkg) {
     if(applyOfflineHLT) { /// this is the case for the triggering electrons
-      fileBkg = TFile::Open("data/fakes.root");
+      fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes.root");
     } else { ///  this is the case for the non triggering electrons
-      fileBkg = TFile::Open("data/fakes-zll1e.root");
+      fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e.root");
     }
   } else {
-    fileBkg = TFile::Open("data/electrons.root");
+    fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons.root");
   }
 
   if( fileSig && fileBkg ) {
@@ -218,15 +218,15 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
     return;
   }
 
-  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "data/electrons_zeemc_hzzisoFriend.root");
+  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc_hzzisoFriend.root");
   if(sigVsBkg) {
     if(applyOfflineHLT) { /// this is the case for the triggering electrons
-      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "data/fakes_hzzisoFriend.root");
+      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes_hzzisoFriend.root");
     } else { ///  this is the case for the non triggering electrons
-      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "data/fakes-zll1e_hzzisoFriend.root");
+      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e_hzzisoFriend.root");
     }
   } else {
-    treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "data/electrons_hzzisoFriend.root");
+    treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_hzzisoFriend.root");
   }
   
   if(!treeSig || !treeBkg) {
@@ -379,7 +379,6 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   range.push_back(std::make_pair(0,30)); // vertices
 
   for(int v=0;v<(int)input.size();++v) {
-    if(v>1) break;
     for(int i=0;i<(int)cutBase.size();++i) {
       TString filen(input[v]);
       filen.Append(suffix[i]);

@@ -200,7 +200,7 @@ void calcAllAeff() {
 
   for(int i=0; i<(int)cut.size(); ++i) {
     cout << "\t---> calculating eff area for cut " << cut[i] << endl;
-    calibrateEA("data/electrons.root",id[i].Data(),cut[i].Data(),max[i],rebin[i]);
+    calibrateEA("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons.root",id[i].Data(),cut[i].Data(),max[i],rebin[i]);
     Aeff_neu[i] = neu[0]/rho[0];
     Aeff_neu_err[i] = Aeff_neu[i] * sqrt(pow(neu[1]/neu[0],2)+pow(rho[1]/rho[0],2));
     Aeff_pho[i] = pho[0]/rho[0];
@@ -360,6 +360,6 @@ void doAll() {
   
   // plot the raw / corrected isolation
   for(int i=0; i<(int)cut.size(); ++i) 
-    rhoEASubtracted("data/electrons.root",id[i].Data(),Aeff_neu[i],Aeff_pho[i],cut[i].Data(),max[i],rebin[i]);
+    rhoEASubtracted("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons.root",id[i].Data(),Aeff_neu[i],Aeff_pho[i],cut[i].Data(),max[i],rebin[i]);
 
 }
