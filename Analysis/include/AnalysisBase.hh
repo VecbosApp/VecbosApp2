@@ -14,7 +14,7 @@
 #include "DataFormats/include/PFJetFwd.hh"
 #include "DataFormats/include/GenParticleFwd.hh"
 #include "DataFormats/include/CandidateFwd.hh"
-
+#include "JSON/include/JsonFilter.hh"
 
 #include "TTree.h"
 
@@ -82,6 +82,7 @@ namespace vecbos {
     int maxEvents_;
     int maxMc_;
     std::string jsonFile_;
+    JsonFilter *jsonfilt;
 
   };
 

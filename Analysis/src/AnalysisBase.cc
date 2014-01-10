@@ -16,7 +16,6 @@
 
 #include "Tools/include/VertexSelector.hh"
 #include "Tools/src/CollectionPtrCleaner.cc"
-#include "JSON/include/JsonFilter.hh"
 
 #include "Math/include/Constants.h"
 
@@ -35,7 +34,8 @@ AnalysisBase::AnalysisBase(TTree *tree) :
 
 void AnalysisBase::BeginJob(bool isMC) {
   ismc_=isMC;
-  jsonFile_=std::string("");
+  jsonfilt = new JsonFilter(jsonFile_);
+  if(!isMC) jsonfilt->fillRunLSMap();
 }
 
 void AnalysisBase::init(TTree* tree) {
@@ -44,8 +44,6 @@ void AnalysisBase::init(TTree* tree) {
 }
 
 int AnalysisBase::loadTree(Long64_t entry) {
-
-  JsonFilter jsonfilt(jsonFile_);
 
   Long64_t nb;
   // Set the environment to read one entry
@@ -61,7 +59,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   
   // load the Event Header (run, lumi,...)
   loadEventHeader();
-  if( !ismc_ && jsonFile_.compare("")!=0 && jsonfilt.isGoodRunLS(Event.eventHeader()) ) return -5;
+  if( !ismc_ && !jsonfilt->isGoodRunLS(Event.eventHeader()) ) return -5;
 
   // load the collection of *good* primary vertices
   loadPrimaryVertices();
@@ -86,7 +84,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   loadJetCollection();
 
   /// load the GenParticles
-  loadGenParticles();
+  if(ismc_) loadGenParticles();
 
   if(centry % messageFreq_ == 0) {
     EventHeader header = Event.eventHeader();
@@ -621,12 +619,14 @@ void AnalysisBase::loadMuonCollection() {
 void AnalysisBase::loadMET() {
 
   /// Gen MET
-  Candidate::Vector genMetP3(pxGenMet[0],pyGenMet[0],0.0);
-  Candidate::LorentzVector genMetP4;
-  genMetP4.SetVectM(genMetP3,0.0);
-  Candidate::Vector genMetVtx(vertexXGenMet[0],vertexYGenMet[0],vertexZGenMet[0]);
-  MET genmet(genMetP4,genMetVtx);
-  GenMet = genmet;
+  if(ismc_) {
+    Candidate::Vector genMetP3(pxGenMet[0],pyGenMet[0],0.0);
+    Candidate::LorentzVector genMetP4;
+    genMetP4.SetVectM(genMetP3,0.0);
+    Candidate::Vector genMetVtx(vertexXGenMet[0],vertexYGenMet[0],vertexZGenMet[0]);
+    MET genmet(genMetP4,genMetVtx);
+    GenMet = genmet;
+  } else GenMet = MET();
   
   /// Calo MET
   Candidate::Vector caloMetP3(pxMet[0],pyMet[0],0.0);
@@ -760,11 +760,13 @@ void AnalysisBase::loadJetCollection() {
   CollectionPtrCleaner<Candidate> genjetCleaner(&GenJets);
   genjetCleaner.clean();
 
-  for(int i=0; i<nAK5GenJet; ++i) {
-    Candidate::LorentzVector p4Jet(pxAK5GenJet[i],pyAK5GenJet[i],pzAK5GenJet[i],energyAK5GenJet[i]);
-    Candidate::Point vtx(vertexXAK5GenJet[i],vertexYAK5GenJet[i],vertexZAK5GenJet[i]);
-    Jet* jet = new Jet(p4Jet,vtx);
-    GenJets.push_back(jet);
+  if(ismc_) {
+    for(int i=0; i<nAK5GenJet; ++i) {
+      Candidate::LorentzVector p4Jet(pxAK5GenJet[i],pyAK5GenJet[i],pzAK5GenJet[i],energyAK5GenJet[i]);
+      Candidate::Point vtx(vertexXAK5GenJet[i],vertexYAK5GenJet[i],vertexZAK5GenJet[i]);
+      Jet* jet = new Jet(p4Jet,vtx);
+      GenJets.push_back(jet);
+    }
   }
 
 }
