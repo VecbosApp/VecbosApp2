@@ -8,7 +8,8 @@ using namespace vecbos;
 using namespace std;
 
 
-HLTFilter::HLTFilter(TTree *tree) : tree_(tree), configured_(false) {
+HLTFilter::HLTFilter(TTree *tree, bool isMC) 
+  : tree_(tree), configured_(false), ismc_(isMC), requireHLTOnMC_(false) {
   init();
 }
 
@@ -40,6 +41,8 @@ void HLTFilter::configure(std::string cfg) {
 }
 
 bool HLTFilter::pass(int entry, int run) {
+  if(ismc_ && !requireHLTOnMC_) return true; 
+
   if(!configured_) {
     cout << "Warning! HLTFilter not configured, returning false... " << endl;
     return false;

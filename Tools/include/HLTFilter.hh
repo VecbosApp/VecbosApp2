@@ -15,12 +15,15 @@ namespace vecbos {
     typedef std::vector<int> position_list;
     
     /// constructor from tree
-    HLTFilter(TTree *tree);
+    HLTFilter(TTree *tree, bool isMC);
     /// destructor
     ~HLTFilter() { }
 
     /// configure from config file
     void configure(std::string cfg);
+
+    /// require the bits also on Mc
+    void requireHLTOnMC() { requireHLTOnMC_=true; }
 
     /// response of the filter
     bool pass(int entry, int run);
@@ -57,6 +60,10 @@ private:
 
     //! cache if it is configured
     bool configured_;
+
+    //! require the HLT on the MC
+    bool ismc_;
+    bool requireHLTOnMC_;
 
   };
     
