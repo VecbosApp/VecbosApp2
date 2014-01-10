@@ -16,7 +16,7 @@ namespace vecbos {
     //! destructor
     virtual ~DYToEESelection() { };
     //! configure the needed stuff
-    void BeginJob(bool isMC);
+    void BeginJob(JobConfiguration *conf);
     //! close the needed stuff
     void EndJob();
     //! loop over events

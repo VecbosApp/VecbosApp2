@@ -15,6 +15,7 @@
 #include "DataFormats/include/GenParticleFwd.hh"
 #include "DataFormats/include/CandidateFwd.hh"
 #include "JSON/include/JsonFilter.hh"
+#include "Tools/include/JobConfiguration.hh"
 
 #include "TTree.h"
 
@@ -28,20 +29,12 @@ namespace vecbos {
     virtual ~AnalysisBase() { }
     
     //! configure the needed stuff
-    void BeginJob(bool isMC);
+    virtual void BeginJob(JobConfiguration *conf);
     //! close the needed stuff
-    void EndJob() { };
+    virtual void EndJob() { };
 
     void init(TTree* tree = 0);
     int  loadTree(Long64_t entry);
-    /// repeat the log essage every messageFreq processed events (default is 1000)
-    void messageFrequency(int messageFreq) { messageFreq_ = messageFreq; }
-    /// max events to be processed (dafault all)
-    void maxEvents(int max) { maxEvents_ = max; }
-    /// max MC particles to load (default is 20, stored in the ntuple 1000)
-    void maxMC(int max) { maxMc_ = max; }
-    /// set the JSON file on which filter (if MC it is not used)
-    void setJson(std::string jsonFilePath) { jsonFile_ = jsonFilePath; }
 
   protected:
     vecbos::Event Event;
@@ -83,6 +76,7 @@ namespace vecbos {
     int maxMc_;
     std::string jsonFile_;
     JsonFilter *jsonfilt;
+    JobConfiguration *conf_;
 
   };
 

@@ -32,10 +32,15 @@ AnalysisBase::AnalysisBase(TTree *tree) :
   else return;
 }
 
-void AnalysisBase::BeginJob(bool isMC) {
-  ismc_=isMC;
-  jsonfilt = new JsonFilter(jsonFile_);
-  if(!isMC) jsonfilt->fillRunLSMap();
+void AnalysisBase::BeginJob(JobConfiguration *conf) {
+  conf_ = conf;
+  conf_->configure();
+  ismc_ = conf->getIntPar("IsMC");
+  jsonfilt = new JsonFilter(conf_->getStringPar("JSON"));
+  if(!ismc_) {
+    cout << "Data. Filtering good runs/LS with JSON = " << conf_->getStringPar("JSON") << endl;
+    jsonfilt->fillRunLSMap();
+  }
 }
 
 void AnalysisBase::init(TTree* tree) {
@@ -50,7 +55,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   if (!fChain) return -5;
   Long64_t centry = fChain->LoadTree(entry);
   if (centry < 0) return centry;
-  if (maxEvents_ > 0 && centry > maxEvents_) return -5;
+  if (conf_->getIntPar("MaxEvent") > 0 && centry > conf_->getIntPar("MaxEvent")) return -5;
   nb = fChain->GetEntry(entry);  
   if (fChain->GetTreeNumber() != fCurrent) {
     fCurrent = fChain->GetTreeNumber();
@@ -86,7 +91,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   /// load the GenParticles
   if(ismc_) loadGenParticles();
 
-  if(centry % messageFreq_ == 0) {
+  if(centry % conf_->getIntPar("MessageFrequency") == 0) {
     EventHeader header = Event.eventHeader();
     cout << "Processing entry # " << centry
 	 << "\t\t\tRun = " << header.run() << "\tlumi = " << header.lumi() 
@@ -777,7 +782,7 @@ void AnalysisBase::loadGenParticles() {
   cleaner.clean();
 
   /// skip the protons
-  for(int i=2; i<min(maxMc_,nMc); ++i) {
+  for(int i=2; i<min(conf_->getIntPar("MaxMCTruth"),nMc); ++i) {
     Candidate::LorentzVector p4Mc;
     p4Mc.SetPtEtaPhiE(pMc[i]*fabs(sin(thetaMc[i])),
 		      etaMc[i], phiMc[i], energyMc[i]);
