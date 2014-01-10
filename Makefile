@@ -36,6 +36,11 @@ VecbosApp: $(INCLUDEDIR)/Analysis/src/VecbosApp.cc \
 	$(OUTLIB)AnalysisDYToEESelection.o
 	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o VecbosApp $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
 
+# Egamma macro executables
+CompareROC: $(INCLUDEDIR)/EgammaTools/macro/CompareROC.C \
+	$(OUTLIB)ToolsFiguresOfMeritEvaluator.o
+	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o CompareROC $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
+
 # DataFormats libs
 $(OUTLIB)DataFormatsEventHeader.o: $(INCLUDEDIR)/DataFormats/src/EventHeader.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)DataFormatsEventHeader.o $<
@@ -123,6 +128,8 @@ $(OUTLIB)ToolsCandidateCombiner.o: $(INCLUDEDIR)/Tools/src/CandidateCombiner.cc 
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCandidateCombiner.o $<
 $(OUTLIB)ToolsJobConfiguration.o: $(INCLUDEDIR)/Tools/src/JobConfiguration.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsJobConfiguration.o $<
+$(OUTLIB)ToolsFiguresOfMeritEvaluator.o: $(INCLUDEDIR)/Tools/src/FiguresOfMeritEvaluator.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsFiguresOfMeritEvaluator.o $<
 
 # Egamma Tools libs
 $(OUTLIB)EgammaToolsElectronEffectiveArea.o: $(INCLUDEDIR)/EgammaTools/src/ElectronEffectiveArea.cc \
