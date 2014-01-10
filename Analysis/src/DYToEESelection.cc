@@ -25,7 +25,7 @@ void DYToEESelection::BeginJob(bool isMC) {
   elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
 
   /// HLT selector
-  doubleele_filter_8TeV = new HLTFilter(fChain);
+  doubleele_filter_8TeV = new HLTFilter(fChain,isMC);
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
   else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
 
@@ -63,7 +63,8 @@ void DYToEESelection::Loop() {
      output->fillRunInfos(header.run(), header.lumi(), header.event(),
 			 nPU,PrimaryVertices.size(), rhoFastjet, 1);
 
-     // bool passhlt = doubleele_filter_8TeV->pass(jentry,header.run());
+     bool passhlt = doubleele_filter_8TeV->pass(jentry,header.run());
+     if(!passhlt) continue;
      // if(passhlt) cout << "\t===>This event passes HLT " << endl;
 
      CandidateKinematicFilter eleFilter;
