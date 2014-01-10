@@ -16,9 +16,9 @@ namespace vecbos {
     typedef std::pair < aRun, LSSegments > aRunsLSSegmentsMapElement;
 
     /// default constructor
-    JsonFilter() : jsonFile_(std::string("")) { };
+    JsonFilter();
     /// constructor from JSON input file
-    JsonFilter(std::string jsonFilePath) : jsonFile_(jsonFilePath) { };
+    JsonFilter(std::string jsonFilePath);
     /// destructor
     ~JsonFilter() { };
 
@@ -32,6 +32,7 @@ namespace vecbos {
   private:
     runsLSSegmentsMap goodRunLS; 
     std::string jsonFile_;
+    int lastRun_, lastLumi_;
 
   };
 

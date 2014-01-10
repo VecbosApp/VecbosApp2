@@ -7,6 +7,16 @@
 using namespace vecbos;
 using namespace std;
 
+JsonFilter::JsonFilter() : jsonFile_(std::string("")) {
+  lastRun_ = -1;
+  lastLumi_ = -1;
+}
+
+JsonFilter::JsonFilter(std::string jsonFilePath) : jsonFile_(jsonFilePath) { 
+  lastRun_ = -1;
+  lastLumi_ = -1;
+}
+
 void JsonFilter::fillRunLSMap()
 {
   
@@ -54,19 +64,38 @@ void JsonFilter::fillRunLSMap()
         std::cout << "[" << (*iSeg).first << "," << (*iSeg).second << "] "; 
       std::cout << std::endl;
     }
+  std::cout << "And this is all the data I will consider, nothing more. " << std::endl;
 }
 
 bool JsonFilter::isGoodRunLS(EventHeader header)
 {
+
+  if (jsonFile_ == "") return true;
+
   int run=header.run();
+  int lumi=header.lumi();
+
   runsLSSegmentsMap::const_iterator thisRun=goodRunLS.find(run);
-  if (thisRun == goodRunLS.end())
+  if (thisRun == goodRunLS.end()) {
+    std::cout << "[GoodRunLS]::Run " << run << " is rejected" << std::endl;
     return false;
+  }
   for (LSSegments::const_iterator iSeg=goodRunLS[run].begin();iSeg!=goodRunLS[run].end();++iSeg)
     {
-      if ( header.lumi() >= (*iSeg).first && header.lumi() <= (*iSeg).second)
+      if ( lumi >= (*iSeg).first && lumi <= (*iSeg).second) {
+        if(lastRun_ != run || lastLumi_ != lumi) {
+          lastRun_ = run;  
+          lastLumi_ = lumi;
+          std::cout << "[GoodRunLS]::Run " << lastRun_ << " LS " << lastLumi_ << " is OK" << std::endl;
+        }
         return true;
+      }
     }
+  if(lastRun_ != run || lastLumi_ != lumi) {
+    lastRun_ = run;  
+    lastLumi_ = lumi;
+  }
+  std::cout << "[GoodRunLS]::Run " << lastRun_ << " LS " << lastLumi_ << " is rejected" << std::endl;
   return false;
 }
 
