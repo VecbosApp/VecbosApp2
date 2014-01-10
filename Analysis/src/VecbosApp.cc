@@ -11,6 +11,7 @@
 #include <TTree.h>
 #include <TChain.h>
 
+#include "Tools/include/JobConfiguration.hh"
 //#include "Analysis/include/Application.hh"
 
 //#if Application == 1
@@ -30,13 +31,14 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   strcpy(inputFileName,argv[1]);
-  if (argc < 3 ) strcpy(outputFileName,argv[1]);
-  else strcpy(outputFileName,argv[2]);
+  if (argc > 2 ) strcpy(outputFileName,argv[2]);
+  else strcpy(outputFileName,argv[1]);
   int isMC=1;
   if(argc==4) {
     isMC=atoi(argv[3]);
   }
-  
+  cout << "output basename = " << outputFileName << endl;
+
   // -------------------------
   // Loading the file
   TChain *theChain = new TChain("ntp1");
@@ -62,11 +64,10 @@ int main(int argc, char* argv[]) {
 
   bool ismc=true;
 
+  JobConfiguration *conf = new JobConfiguration("Analysis/cfg/vecbosapp_core.cfg");
+
   DYToEESelection selection(theChain);
-  selection.maxMC(20);
-  selection.BeginJob(isMC);
-  selection.setOutputFile(outputFileName);
-  selection.setJson("JSON/data/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt");
+  selection.BeginJob(conf);
   selection.Loop();
   selection.EndJob();
 

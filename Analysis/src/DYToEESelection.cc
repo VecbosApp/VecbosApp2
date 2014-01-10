@@ -18,14 +18,14 @@ using namespace vecbos;
 DYToEESelection::DYToEESelection(TChain *chain) :
   AnalysisBase(chain) { }
 
-void DYToEESelection::BeginJob(bool isMC) {
-  AnalysisBase::BeginJob(isMC);
+void DYToEESelection::BeginJob(JobConfiguration *conf) {
+  AnalysisBase::BeginJob(conf);
 
   /// electron ID selector
   elid_mva_tight.configure("EgammaTools/data/electrons_mva_tight.cfg");
 
   /// HLT selector
-  doubleele_filter_8TeV = new HLTFilter(fChain,isMC);
+  doubleele_filter_8TeV = new HLTFilter(fChain,ismc_);
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
   else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
 

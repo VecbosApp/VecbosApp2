@@ -121,6 +121,8 @@ $(OUTLIB)ToolsCandidateCombiner.o: $(INCLUDEDIR)/Tools/src/CandidateCombiner.cc 
 	$(OUTLIB)DataFormatsCompositeCandidate.o \
 	$(OUTLIB)ToolsCandidateSorter.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCandidateCombiner.o $<
+$(OUTLIB)ToolsJobConfiguration.o: $(INCLUDEDIR)/Tools/src/JobConfiguration.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsJobConfiguration.o $<
 
 # Egamma Tools libs
 $(OUTLIB)EgammaToolsElectronEffectiveArea.o: $(INCLUDEDIR)/EgammaTools/src/ElectronEffectiveArea.cc \
@@ -154,7 +156,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)ToolsVertexSelector.o \
 	$(OUTLIB)EgammaToolsElectronEffectiveArea.o \
 	$(OUTLIB)ToolsGenParticleCandidateMatch.o \
-	$(OUTLIB)ToolsCandidateKinematicFilter.o
+	$(OUTLIB)ToolsCandidateKinematicFilter.o \
+	$(OUTLIB)ToolsJobConfiguration.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs
