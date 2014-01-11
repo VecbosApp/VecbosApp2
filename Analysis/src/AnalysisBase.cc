@@ -56,7 +56,7 @@ int AnalysisBase::loadTree(Long64_t entry) {
   if (!fChain) return -5;
   Long64_t centry = fChain->LoadTree(entry);
   if (centry < 0) return centry;
-  if (conf_->getIntPar("MaxEvent") > 0 && centry > conf_->getIntPar("MaxEvent")) return -5;
+  if (conf_->getIntPar("MaxEvent") > 0 && entry > conf_->getIntPar("MaxEvent")) return -5;
   nb = fChain->GetEntry(entry);  
   if (fChain->GetTreeNumber() != fCurrent) {
     fCurrent = fChain->GetTreeNumber();
@@ -92,9 +92,9 @@ int AnalysisBase::loadTree(Long64_t entry) {
   /// load the GenParticles
   if(ismc_) loadGenParticles();
 
-  if(centry % conf_->getIntPar("MessageFrequency") == 0) {
+  if(entry % conf_->getIntPar("MessageFrequency") == 0) {
     EventHeader header = Event.eventHeader();
-    cout << "Processing entry # " << centry
+    cout << "Processing entry # " << entry
 	 << "\t\t\tRun = " << header.run() << "\tlumi = " << header.lumi() 
 	 << "\t evt = " << header.event() << endl;
   }
