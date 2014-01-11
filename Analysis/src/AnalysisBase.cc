@@ -41,6 +41,7 @@ void AnalysisBase::BeginJob(JobConfiguration *conf) {
     cout << "Data. Filtering good runs/LS with JSON = " << conf_->getStringPar("JSON") << endl;
     jsonfilt->fillRunLSMap();
   }
+  outputFileName_ = conf_->getStringPar("OutputBase");
 }
 
 void AnalysisBase::init(TTree* tree) {

@@ -32,7 +32,6 @@ namespace vecbos {
     ElectronIDSelector elid_mva_tight;
     HLTFilter *doubleele_filter_8TeV;
     ElectronIDTree *output;
-    std::string outputFileName_;
 
   };
 
