@@ -27,17 +27,10 @@ int main(int argc, char* argv[]) {
   char outputFileName[500];
   if ( argc < 2 ){
     std::cout << "missing argument: insert at least inputFile with list of root files" << std::endl; 
-    std::cout << "VecbosApp inputFile [outputFile] [1=MC,0=data]" << std::endl;
+    std::cout << "VecbosApp inputFile" << std::endl;
     return 1;
   }
   strcpy(inputFileName,argv[1]);
-  if (argc > 2 ) strcpy(outputFileName,argv[2]);
-  else strcpy(outputFileName,argv[1]);
-  int isMC=1;
-  if(argc==4) {
-    isMC=atoi(argv[3]);
-  }
-  cout << "output basename = " << outputFileName << endl;
 
   // -------------------------
   // Loading the file
@@ -61,8 +54,6 @@ int main(int argc, char* argv[]) {
   }
   inputFile->close();
   delete inputFile;
-
-  bool ismc=true;
 
   JobConfiguration *conf = new JobConfiguration("Analysis/cfg/vecbosapp_core.cfg");
 

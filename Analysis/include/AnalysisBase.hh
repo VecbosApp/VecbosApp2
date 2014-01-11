@@ -54,7 +54,16 @@ namespace vecbos {
     vecbos::CandidateCollectionPtr PfJets;
     vecbos::CandidateCollectionPtr GenJets;
 
+    /// the core configuration 
+    JobConfiguration *conf_;
+    /// the parametrs configured by the core configuator
     bool ismc_;
+    int messageFreq_;
+    int maxEvents_;
+    int maxMc_;
+    std::string jsonFile_;
+    std::string outputFileName_;
+    JsonFilter *jsonfilt;
 
   private:
     void loadEventHeader();
@@ -71,12 +80,6 @@ namespace vecbos {
     void loadJetCollection();
     void loadGenParticles();
 
-    int messageFreq_;
-    int maxEvents_;
-    int maxMc_;
-    std::string jsonFile_;
-    JsonFilter *jsonfilt;
-    JobConfiguration *conf_;
 
   };
 
