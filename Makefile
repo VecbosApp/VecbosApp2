@@ -102,6 +102,10 @@ $(OUTLIB)DataFormatsEvent.o: $(INCLUDEDIR)/DataFormats/src/Event.cc \
 $(OUTLIB)JsonFilter.o: $(INCLUDEDIR)JSON/src/JsonFilter.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JsonFilter.o $<
 
+# Math lib
+$(OUTLIB)MathHistogramTools.o: $(INCLUDEDIR)/Math/src/HistogramTools.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)MathHistogramTools.o $<
+
 # Analysis Tools libs
 $(OUTLIB)ToolsCollectionPtrCleaner.o: $(INCLUDEDIR)/Tools/src/CollectionPtrCleaner.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsCollectionPtrCleaner.o $<
@@ -164,7 +168,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)EgammaToolsElectronEffectiveArea.o \
 	$(OUTLIB)ToolsGenParticleCandidateMatch.o \
 	$(OUTLIB)ToolsCandidateKinematicFilter.o \
-	$(OUTLIB)ToolsJobConfiguration.o
+	$(OUTLIB)ToolsJobConfiguration.o \
+	$(OUTLIB)MathHistogramTools.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs
