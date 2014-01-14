@@ -23,12 +23,18 @@ namespace macros {
   class PlotIDVariables {
   public:
     /// default constructor
-    PlotIDVariables() : outputPath_("./") { };
+    PlotIDVariables() : outputPath_("./"), localData_(false), plotAllVariables_(false) { };
     /// constructor from parameters
-    PlotIDVariables(std::string outputPath) : outputPath_(outputPath) { };
+    PlotIDVariables(std::string outputPath) : outputPath_(outputPath), localData_(false), plotAllVariables_(false) { };
     
     /// destructor
     ~PlotIDVariables() { };
+
+    /// use the data in the local path, not on EOS (default is EOS)
+    void setLocalData() { localData_ = true; }
+
+    /// call this if you want to plot all the set of variables
+    void doAllVariables() { plotAllVariables_ = true; }
 
     /// plot signal vs bkg vaiables for non triggering electrons
     void plotSignalVsBackgroundNonTriggering() { compareDistributions(true,false); }
@@ -49,6 +55,9 @@ namespace macros {
     
     void makeInputVarDistributions(TString var, TString title, pair<float,float> range, TTree *treeSig, TTree* treeBkg, TString cutSig, TString cutBkg, TString namefile, bool sigVsBkg,bool applyOfflineHLT);
     void compareDistributions(bool sigVsBkg, bool applyOfflineHLT=false);
+    
+    bool localData_;
+    bool plotAllVariables_;
 
   };
 
@@ -168,15 +177,13 @@ void PlotIDVariables::makeInputVarDistributions(TString var, TString title, pair
   fullname.ReplaceAll("/","Over");
   fullname.ReplaceAll("[","_");
   fullname.ReplaceAll("]","_");
-  TObjArray *tokens = fullname.Tokenize(".");
-  const char *basename = (((TObjString*)(*tokens)[0])->GetString()).Data();
 
   TString suffix = (sigVsBkg) ? "_SigVsBkg" : "_SimVsData";
   suffix += (applyOfflineHLT) ? "_triggering" : "_nontriggering";
 
-  TString pdf = TString(outputPath_+"/") + TString(basename) + suffix + TString(".pdf");
-  TString png = TString(outputPath_+"/") + TString(basename) + suffix + TString(".png");
-  TString macro = TString(outputPath_+"/") + TString(basename) + suffix + TString(".C");
+  TString pdf = TString(outputPath_+"/") + TString(fullname) + suffix + TString(".pdf");
+  TString png = TString(outputPath_+"/") + TString(fullname) + suffix + TString(".png");
+  TString macro = TString(outputPath_+"/") + TString(fullname) + suffix + TString(".C");
 
   c1.SaveAs(pdf);
   c1.SaveAs(png);
@@ -190,6 +197,11 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   // if applyOfflineHLT=1 => signal = Z->ee (data), bkg = QCD fake rate sample (data). This is because with denom applied Z->ee is quite clean
   // if applyOfflineHLT=0 => signal = Z->ee (mc), bkg = W->ln + 1jet (data)
 
+  string eospath("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/");
+  string localpath("data/");
+
+  string path = (localData_) ? localpath : eospath;
+  
   gStyle->SetOptStat(0);
 
   TFile *fileSig, *fileBkg;
@@ -197,15 +209,15 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   fileSig = fileBkg = 0;
   treeSig = treeBkg = 0;
 
-  fileSig = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc.root");
+  fileSig = TFile::Open((path+"electrons_zeemc.root").c_str());
   if(sigVsBkg) {
     if(applyOfflineHLT) { /// this is the case for the triggering electrons
-      fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes.root");
+      fileBkg = TFile::Open((path+"fakes.root").c_str());
     } else { ///  this is the case for the non triggering electrons
-      fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e.root");
+      fileBkg = TFile::Open((path+"fakes-zll1e.root").c_str());
     }
   } else {
-    fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons.root");
+    fileBkg = TFile::Open((path+"electrons.root").c_str());
   }
 
   if( fileSig && fileBkg ) {
@@ -218,15 +230,15 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
     return;
   }
 
-  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc_hzzisoFriend.root");
+  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", (path+"electrons_zeemc_hzzisoFriend.root").c_str());
   if(sigVsBkg) {
     if(applyOfflineHLT) { /// this is the case for the triggering electrons
-      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes_hzzisoFriend.root");
+      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", (path+"fakes_hzzisoFriend.root").c_str());
     } else { ///  this is the case for the non triggering electrons
-      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e_hzzisoFriend.root");
+      treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", (path+"fakes-zll1e_hzzisoFriend.root").c_str());
     }
   } else {
-    treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_hzzisoFriend.root");
+    treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1", (path+"electrons_hzzisoFriend.root").c_str());
   }
   
   if(!treeSig || !treeBkg) {
@@ -269,20 +281,20 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   if(applyOfflineHLT) input.push_back("newbdthww[3]");
   else input.push_back("bdthzz[3]");
   input.push_back("EoP");
+  input.push_back("deta");
+  input.push_back("dphi");
+  input.push_back("see");
+  input.push_back("fbrem");
   input.push_back("EoPout");
   input.push_back("eleEoPout");
   input.push_back("IoEmIoP");
   input.push_back("HoE");
   input.push_back("eledeta");
-  input.push_back("deta");
-  input.push_back("dphi");
-  input.push_back("see");
   input.push_back("sep");
   input.push_back("spp");
   input.push_back("phiwidth");
   input.push_back("etawidth");
   input.push_back("missHits");
-  input.push_back("fbrem");
   input.push_back("nbrem");
   input.push_back("dist");
   input.push_back("dcot");
@@ -307,20 +319,20 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   if(applyOfflineHLT) title.push_back("Triggering BDT");
   else title.push_back("Non-Triggering BDT");
   title.push_back("E_{SC}/p_{in}");
+  title.push_back("#Delta #eta");
+  title.push_back("#Delta #phi");
+  title.push_back("#sigma_{i#eta i#eta}");
+  title.push_back("f_{brem}");
   title.push_back("E_{seed}/p_{out}");
   title.push_back("E_{match cluster}/p_{out}");
   title.push_back("1/E-1/P");
   title.push_back("H/E");
   title.push_back("#Delta #eta (track-cluster)");
-  title.push_back("#Delta #eta");
-  title.push_back("#Delta #phi");
-  title.push_back("#sigma_{i#eta i#eta}");
   title.push_back("#sigma_{i#eta i#phi}");
   title.push_back("#sigma_{i#phi i#phi}");
   title.push_back("#phi width");
   title.push_back("#eta width");
   title.push_back("miss hits");
-  title.push_back("f_{brem}");
   title.push_back("n_{brem}");
   title.push_back("conv. dist");
   title.push_back("conv. ctg #theta");
@@ -344,20 +356,20 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   vector< pair<float,float> > range;
   range.push_back(std::make_pair(-1.0,1.0)); // identification BDT
   range.push_back(std::make_pair(0.0,3.0)); // EoP
+  range.push_back(std::make_pair(-0.01,0.01)); // deta in
+  range.push_back(std::make_pair(-0.2,0.2)); // dphi in
+  range.push_back(std::make_pair(0.0,0.04)); // see
+  range.push_back(std::make_pair(-0.2,1.0)); // fbrem
   range.push_back(std::make_pair(0.0,5.0)); // EoPout
   range.push_back(std::make_pair(0.0,5.0)); // eleEoPout
   range.push_back(std::make_pair(-0.1,0.1)); // 1/E - 1/P
   range.push_back(std::make_pair(0.0,0.15)); // H/E
   range.push_back(std::make_pair(-0.03,0.03)); // ele deta
-  range.push_back(std::make_pair(-0.01,0.01)); // deta in
-  range.push_back(std::make_pair(-0.2,0.2)); // dphi in
-  range.push_back(std::make_pair(0.0,0.04)); // see
   range.push_back(std::make_pair(0.0,0.08)); // sep
   range.push_back(std::make_pair(0.0,0.08)); // spp
   range.push_back(std::make_pair(0.0,0.04)); // eta width
   range.push_back(std::make_pair(0.0,0.08)); // phi width
   range.push_back(std::make_pair(0.0,10)); // miss hits
-  range.push_back(std::make_pair(-0.2,1.0)); // fbrem
   range.push_back(std::make_pair(0.0,5.0)); // nbrem
   range.push_back(std::make_pair(-2.0,2.0)); // dist
   range.push_back(std::make_pair(-20.0,20.)); // dcot
@@ -378,10 +390,13 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   range.push_back(std::make_pair(0,4.0)); // comb PF iso HZZ
   range.push_back(std::make_pair(0,30)); // vertices
 
-  for(int v=0;v<(int)input.size();++v) {
+  int maxVariables = (plotAllVariables_) ? input.size() : 6;
+
+  for(int v=0;v<maxVariables;++v) {
     for(int i=0;i<(int)cutBase.size();++i) {
       TString filen(input[v]);
       filen.Append(suffix[i]);
+      cout << filen.Data() << endl;
       makeInputVarDistributions(input[v],title[v],range[v],treeSig,treeBkg,cutSignal[i],cutBackground[i],filen,sigVsBkg,applyOfflineHLT);
     }
   }
