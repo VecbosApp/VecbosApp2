@@ -266,18 +266,18 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   suffix.push_back("_EE_HighPt");
 
   vector<TString> input;
-  if(applyOfflineHLT) input.push_back("newbdthww[3]");
-  else input.push_back("bdthzz[3]");
+//   if(applyOfflineHLT) input.push_back("newbdthww[3]");
+//   else input.push_back("bdthzz[3]");
   input.push_back("EoP");
   input.push_back("EoPout");
-  input.push_back("eleEoPout");
-  input.push_back("IoEmIoP");
-  input.push_back("HoE");
-  input.push_back("eledeta");
+  //  input.push_back("eleEoPout");
+  //  input.push_back("IoEmIoP");
+  //  input.push_back("HoE");
+  //  input.push_back("eledeta");
   input.push_back("deta");
   input.push_back("dphi");
   input.push_back("see");
-  input.push_back("sep");
+  //  input.push_back("sep");
   input.push_back("spp");
   input.push_back("phiwidth");
   input.push_back("etawidth");
@@ -304,18 +304,18 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   input.push_back("vertices");
 
   vector<TString> title;
-  if(applyOfflineHLT) title.push_back("Triggering BDT");
-  else title.push_back("Non-Triggering BDT");
+//   if(applyOfflineHLT) title.push_back("Triggering BDT");
+//   else title.push_back("Non-Triggering BDT");
   title.push_back("E_{SC}/p_{in}");
   title.push_back("E_{seed}/p_{out}");
-  title.push_back("E_{match cluster}/p_{out}");
-  title.push_back("1/E-1/P");
-  title.push_back("H/E");
-  title.push_back("#Delta #eta (track-cluster)");
+  //  title.push_back("E_{match cluster}/p_{out}");
+  //  title.push_back("1/E-1/P");
+  //  title.push_back("H/E");
+  //  title.push_back("#Delta #eta (track-cluster)");
   title.push_back("#Delta #eta");
   title.push_back("#Delta #phi");
   title.push_back("#sigma_{i#eta i#eta}");
-  title.push_back("#sigma_{i#eta i#phi}");
+  //  title.push_back("#sigma_{i#eta i#phi}");
   title.push_back("#sigma_{i#phi i#phi}");
   title.push_back("#phi width");
   title.push_back("#eta width");
@@ -342,17 +342,17 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   title.push_back("n. vertices");
 
   vector< pair<float,float> > range;
-  range.push_back(std::make_pair(-1.0,1.0)); // identification BDT
+  //  range.push_back(std::make_pair(-1.0,1.0)); // identification BDT
   range.push_back(std::make_pair(0.0,3.0)); // EoP
   range.push_back(std::make_pair(0.0,5.0)); // EoPout
-  range.push_back(std::make_pair(0.0,5.0)); // eleEoPout
-  range.push_back(std::make_pair(-0.1,0.1)); // 1/E - 1/P
-  range.push_back(std::make_pair(0.0,0.15)); // H/E
-  range.push_back(std::make_pair(-0.03,0.03)); // ele deta
+  //  range.push_back(std::make_pair(0.0,5.0)); // eleEoPout
+  //  range.push_back(std::make_pair(-0.1,0.1)); // 1/E - 1/P
+  //  range.push_back(std::make_pair(0.0,0.15)); // H/E
+  //  range.push_back(std::make_pair(-0.03,0.03)); // ele deta
   range.push_back(std::make_pair(-0.01,0.01)); // deta in
   range.push_back(std::make_pair(-0.2,0.2)); // dphi in
   range.push_back(std::make_pair(0.0,0.04)); // see
-  range.push_back(std::make_pair(0.0,0.08)); // sep
+  ///  range.push_back(std::make_pair(0.0,0.08)); // sep
   range.push_back(std::make_pair(0.0,0.08)); // spp
   range.push_back(std::make_pair(0.0,0.04)); // eta width
   range.push_back(std::make_pair(0.0,0.08)); // phi width
@@ -379,6 +379,7 @@ void PlotIDVariables::compareDistributions(bool sigVsBkg, bool applyOfflineHLT) 
   range.push_back(std::make_pair(0,30)); // vertices
 
   for(int v=0;v<(int)input.size();++v) {
+    if( v==7) break;
     for(int i=0;i<(int)cutBase.size();++i) {
       TString filen(input[v]);
       filen.Append(suffix[i]);
