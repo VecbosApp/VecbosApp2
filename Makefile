@@ -149,6 +149,11 @@ $(OUTLIB)EgammaToolsElectronIDSelector.o: $(INCLUDEDIR)/EgammaTools/src/Electron
 	$(OUTLIB)EgammaToolsElectronIDAlgo.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsElectronIDSelector.o $<
 
+# Jet Tools libs
+$(OUTLIB)JetToolsJetPileupIdentification.o:  $(INCLUDEDIR)/JetTools/src/JetPileupIdentification.cc \
+	$(OUTLIB)DataFormatsPFJet.o 
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsJetPileupIdentification.o $<
+
 # Output trees
 $(OUTLIB)OutputTreesElectronIDTree.o: $(INCLUDEDIR)/OutputTrees/src/ElectronIDTree.cc \
 	$(OUTLIB)DataFormatsElectron.o \
@@ -169,7 +174,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)ToolsGenParticleCandidateMatch.o \
 	$(OUTLIB)ToolsCandidateKinematicFilter.o \
 	$(OUTLIB)ToolsJobConfiguration.o \
-	$(OUTLIB)MathHistogramTools.o
+	$(OUTLIB)MathHistogramTools.o \
+	$(OUTLIB)JetToolsJetPileupIdentification.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs
