@@ -20,6 +20,7 @@ namespace vecbos {
     /// get the raw jet momentum
     LorentzVector rawP4() { return p4raw_; }
     float etraw() { return p4raw_.Pt(); }
+    float energyraw() { return p4raw_.Energy(); }
 
     /// btagging variables of the jet
     struct BTagsJet {
