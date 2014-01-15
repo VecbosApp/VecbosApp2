@@ -139,6 +139,11 @@ int main(int argc, char* argv[]) {
 
   // switch to decide if run on triggering or non-triggering eles
   bool trg = false;
+  bool localdata = true;
+
+  string localpath = "data/";
+  string eospath = "root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/";
+  string path = (localdata) ? localpath : eospath;
 
   TFile *fileSig, *fileBkg;
   TTree *treeSig, *treeBkg;
@@ -146,11 +151,11 @@ int main(int argc, char* argv[]) {
   treeSig = treeBkg = 0;
 
   if(trg) {
-    fileSig = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc.root");
-    fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes.root");
+    fileSig = TFile::Open((path+"electrons_zeemc.root").c_str());
+    fileBkg = TFile::Open((path+"fakes.root").c_str());
   } else {
-    fileSig = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc.root");
-    fileBkg = TFile::Open("root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e.root");
+    fileSig = TFile::Open((path+"electrons_zeemc.root").c_str());
+    fileBkg = TFile::Open((path+"fakes-zll1e.root").c_str());
   }
   if( fileSig && fileBkg) {
     fileSig->cd();
@@ -201,12 +206,12 @@ int main(int argc, char* argv[]) {
   id.push_back(TString("ROC_IdOnly_Data_EE_HighPt.pdf"));
 
   // HZZ isolations and new id bits are in friend trees
-  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc_hzzisoFriend.root");
-  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes_hzzisoFriend.root");
-  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e_hzzisoFriend.root");
-  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/electrons_zeemc_hzzidbitsFriend.root");
-  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes_hzzidbitsFriend.root");
-  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1","root://eoscms//eos/cms/store/group/phys_egamma/emanuele/eleid/cmsdasjan14/fakes-zll1e_hzzidbitsFriend.root");
+  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1",(path+"electrons_zeemc_hzzisoFriend.root").c_str());
+  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1",(path+"fakes_hzzisoFriend.root").c_str());
+  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1",(path+"fakes-zll1e_hzzisoFriend.root").c_str());
+  treeSig->AddFriend("eleIDdir/isoT1 = eleIDdir/T1",(path+"electrons_zeemc_hzzidbitsFriend.root").c_str());
+  if(trg) treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1",(path+"fakes_hzzidbitsFriend.root").c_str());
+  else treeBkg->AddFriend("eleIDdir/isoT1 = eleIDdir/T1",(path+"fakes-zll1e_hzzidbitsFriend.root").c_str());
 
   for(int i=0;i<(int)cutBase.size();++i) {
     makeIdCurve(treeSig,treeBkg,cutSignal[i],cutBackground[i],id[i]);
