@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+# example: submit_batch.py -p test0 -d pccmsrm DYJetsToLL_M-50_TuneZ2Star_8TeV-madgraph-tarball 1
+
 import os
 import sys
 import time
@@ -39,7 +41,7 @@ def main():
     parser.add_option('-a', '--application', action='store',     dest='application', help='the executable to be run'                                  , default='VecbosApp')
     parser.add_option('-d', '--download',    action='store',     dest='download',    help='download the output on a local computer'                   , default='pccmsrm')
     parser.add_option('-c', '--create',      action='store_true',dest='create',      help='create only the jobs, do not submit them'                  , default=False)
-    parser.add_option('-t', '--testnjob',    action='store',     dest='testn',       help='submit only the first n jobs'                              , default=5, type='int')
+    parser.add_option('-t', '--testnjobs',   action='store',     dest='testnjobs',   help='submit only the first n jobs'                              , default=1000000, type='int')
     parser.add_option('-s', '--site',        action='store',     dest='site',        help='site where to run the job: CERN(default), UCSD'            , default='CERN')
     (opt, args) = parser.parse_args()
 
@@ -48,13 +50,13 @@ def main():
         sys.exit(1)
     dataset = args[0]
     isMC = int(args[1])
-        
+
     ##########################################
     # if running with xrootd, customize here #
     ##########################################
     if(opt.site=='CERN'): mydir = "/afs/cern.ch/work/e/emanuele/vecbos/VecbosApp2"
     if(opt.site=='UCSD'): mydir = "/home/users/emanuele/releases/CMSSW_5_3_12/src/VecbosApp2"
-    myproxy = "x509up_u31125"
+    myproxy = "x509up_u24421"
     ##########################################
 
     if isMC != 0:
@@ -122,7 +124,10 @@ def main():
         outputname = opt.prefix+"/"+output+"/src/submit_"+str(ijob)+".src"
         outputfile = open(outputname,'w')
         outputfile.write('#!/bin/bash\n')
-        if(opt.site=='CERN'): outputfile.write('cp -r '+pwd+"/"+'JSON/data $WORKDIR\n')
+        if(opt.site=='CERN'):
+            outputfile.write('cp -r '+pwd+"/"+'JSON $WORKDIR\n')
+            outputfile.write('cp -r '+pwd+"/"+'EgammaTools $WORKDIR\n')
+            outputfile.write('cp -r '+pwd+"/"+'Analysis $WORKDIR\n')
         if opt.year==2011:
             outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc434\n')
             if(opt.site=='CERN'): outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_4_2_8_patch7/\n')
@@ -150,6 +155,7 @@ def main():
                 #os.system("condor_submit "+condorname)
                 sourcefile.write("condor_submit "+condorname+'\n')
         ijob = ijob+1
+        if(ijob==opt.testnjobs): break
         # and now cope with the max number of accesses (3000, keep 2500 for the safe side)
         totfiles = opt.nfileperjob*ijob
         if(totfiles % 1000 == 0):
