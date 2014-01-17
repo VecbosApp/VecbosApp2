@@ -8,8 +8,7 @@ using namespace vecbos;
 using namespace std;
 
 JobConfiguration::JobConfiguration(const std::string cfgfile) :
-  cfg_(cfgfile), messageFreq_(1000), maxMC_(20), 
-  jsonFilePath_(std::string("")), outputFileBase_("vecbosapp_tree") 
+  cfg_(cfgfile)
 { }
 
 void JobConfiguration::configure() {
@@ -19,25 +18,20 @@ void JobConfiguration::configure() {
     return;
   } else {
     std::string parameter;
-    std::string val;
+    std::string val; 
     while (!cfgfile.eof()) {
       cfgfile >> parameter >> val;
-      if(parameter.compare("MessageFrequency")==0) messageFreq_ = atoi(val.c_str());
-      if(parameter.compare("MaxMCTruth")==0) maxMC_ = atoi(val.c_str());
-      if(parameter.compare("MaxEvent")==0) maxEvent_ = atoi(val.c_str());
-      if(parameter.compare("IsMC")==0) isMC_ = atoi(val.c_str());
-      if(parameter.compare("JSON")==0) jsonFilePath_ = val;
-      if(parameter.compare("OutputBase")==0) outputFileBase_ = val;
+      if(parameter.compare("MessageFrequency")==0) pars_int.insert( intentry(parameter, atoi(val.c_str())) );
+      if(parameter.compare("MaxMCTruth")==0) pars_int.insert( intentry(parameter, atoi(val.c_str())) );
+      if(parameter.compare("MaxEvent")==0) pars_int.insert( intentry(parameter, atoi(val.c_str())) );
+      if(parameter.compare("IsMC")==0) pars_int.insert( intentry(parameter, atoi(val.c_str())) );
+      if(parameter.compare("JSON")==0) pars_string.insert( stringentry(parameter, val) );
+      if(parameter.compare("OutputBase")==0) pars_string.insert( stringentry(parameter, val) );
+      if(parameter.compare("GlobalTagMC")==0) pars_string.insert( stringentry(parameter, val) );
+      if(parameter.compare("GlobalTagDATA")==0) pars_string.insert( stringentry(parameter, val) );
     }
     cfgfile.close();    
   }
   
-  pars_int.insert( intentry("MessageFrequency",messageFreq_) );
-  pars_int.insert( intentry("MaxMCTruth",maxMC_) );
-  pars_int.insert( intentry("MaxEvent",maxEvent_) );
-  pars_int.insert( intentry("IsMC",isMC_) );
-  pars_string.insert( stringentry("JSON",jsonFilePath_) );
-  pars_string.insert( stringentry("OutputBase",outputFileBase_) );
-
 }
 
