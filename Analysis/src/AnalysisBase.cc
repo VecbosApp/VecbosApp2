@@ -41,7 +41,6 @@ void AnalysisBase::BeginJob(JobConfiguration *conf) {
     cout << "Data. Filtering good runs/LS with JSON = " << conf_->getStringPar("JSON") << endl;
     jsonfilt->fillRunLSMap();
   }
-  outputFileName_ = conf_->getStringPar("OutputBase");
 
   if(ismc_) {
     jetCorrector_ = new FactorizedJetCorrector("L1FastJet:L2Relative:L3Absolute","L1FastJet:L2Relative:L3Absolute","START53_V27","AK5PF");
@@ -701,7 +700,7 @@ void AnalysisBase::loadJetCollection() {
     jetCorrector_->setRho( rhoJetsFastJet );
 
     float jec = jetCorrector_->getCorrection();
-    cout << "jec = " << jec << " ratio in ntuple = " << jet->pt() / jet->rawpt() << std::endl;
+    //    cout << "jec = " << jec << " ratio in ntuple = " << jet->pt() / jet->rawpt() << std::endl;
 
     Jet::BTagsJet btag;
     btag.combinedSecondaryVertex = combinedSecondaryVertexBJetTagsAK5PFPUcorrJet[i];

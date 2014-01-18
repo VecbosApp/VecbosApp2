@@ -26,7 +26,6 @@ void JobConfiguration::configure() {
       if(parameter.compare("MaxEvent")==0) pars_int.insert( intentry(parameter, atoi(val.c_str())) );
       if(parameter.compare("IsMC")==0) pars_int.insert( intentry(parameter, atoi(val.c_str())) );
       if(parameter.compare("JSON")==0) pars_string.insert( stringentry(parameter, val) );
-      if(parameter.compare("OutputBase")==0) pars_string.insert( stringentry(parameter, val) );
       if(parameter.compare("GlobalTagMC")==0) pars_string.insert( stringentry(parameter, val) );
       if(parameter.compare("GlobalTagDATA")==0) pars_string.insert( stringentry(parameter, val) );
     }

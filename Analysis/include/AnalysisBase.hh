@@ -34,6 +34,8 @@ namespace vecbos {
     virtual void BeginJob(JobConfiguration *conf);
     //! close the needed stuff
     virtual void EndJob() { };
+    //! set the output file name
+    void setOutputFile(std::string file) { outputFileName_ = file; }
 
     void init(TTree* tree = 0);
     int  loadTree(Long64_t entry);
