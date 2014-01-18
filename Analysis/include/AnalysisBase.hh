@@ -17,6 +17,8 @@
 #include "JSON/include/JsonFilter.hh"
 #include "Tools/include/JobConfiguration.hh"
 
+#include "JetTools/include/FactorizedJetCorrector.h"
+
 #include "TTree.h"
 
 namespace vecbos {
@@ -32,6 +34,8 @@ namespace vecbos {
     virtual void BeginJob(JobConfiguration *conf);
     //! close the needed stuff
     virtual void EndJob() { };
+    //! set the output file name
+    void setOutputFile(std::string file) { outputFileName_ = file; }
 
     void init(TTree* tree = 0);
     int  loadTree(Long64_t entry);
@@ -64,6 +68,7 @@ namespace vecbos {
     std::string jsonFile_;
     std::string outputFileName_;
     JsonFilter *jsonfilt;
+    FactorizedJetCorrector *jetCorrector_;
 
   private:
     void loadEventHeader();

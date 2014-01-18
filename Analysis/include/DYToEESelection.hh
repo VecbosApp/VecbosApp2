@@ -21,8 +21,6 @@ namespace vecbos {
     void EndJob();
     //! loop over events
     void Loop();
-    //! set the output file name
-    void setOutputFile(std::string file) { outputFileName_ = file; }
     
   private:
 

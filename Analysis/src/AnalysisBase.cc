@@ -41,7 +41,14 @@ void AnalysisBase::BeginJob(JobConfiguration *conf) {
     cout << "Data. Filtering good runs/LS with JSON = " << conf_->getStringPar("JSON") << endl;
     jsonfilt->fillRunLSMap();
   }
-  outputFileName_ = conf_->getStringPar("OutputBase");
+
+  if(ismc_) {
+    jetCorrector_ = new FactorizedJetCorrector("L1FastJet:L2Relative:L3Absolute","L1FastJet:L2Relative:L3Absolute","START53_V27","AK5PF");
+  }
+  else {
+    jetCorrector_ = new FactorizedJetCorrector("L1FastJet:L2L3Residual","L1FastJet:L2L3Residual","FT53_V21A_AN6","AK5PF");
+  }
+
 }
 
 void AnalysisBase::init(TTree* tree) {
@@ -684,8 +691,17 @@ void AnalysisBase::loadJetCollection() {
     Candidate::Point vtx(vertexXAK5PFPUcorrJet[i],vertexYAK5PFPUcorrJet[i],vertexZAK5PFPUcorrJet[i]);
     PFJet* jet = new PFJet(p4Jet,p4JetRaw,vtx);
 
-    jet->setJetArea(areaAK5PFPUcorrJet[i]);
+    jet->setArea(areaAK5PFPUcorrJet[i]);
     
+    jetCorrector_->setJetEta( jet->eta() );
+    jetCorrector_->setJetPt( jet->rawpt() );
+    jetCorrector_->setJetE( jet->rawenergy() );
+    jetCorrector_->setJetA( jet->area() );
+    jetCorrector_->setRho( rhoJetsFastJet );
+
+    float jec = jetCorrector_->getCorrection();
+    //    cout << "jec = " << jec << " ratio in ntuple = " << jet->pt() / jet->rawpt() << std::endl;
+
     Jet::BTagsJet btag;
     btag.combinedSecondaryVertex = combinedSecondaryVertexBJetTagsAK5PFPUcorrJet[i];
     btag.combinedSecondaryVertexMVA = combinedSecondaryVertexMVABJetTagsAK5PFPUcorrJet[i];

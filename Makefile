@@ -153,6 +153,24 @@ $(OUTLIB)EgammaToolsElectronIDSelector.o: $(INCLUDEDIR)/EgammaTools/src/Electron
 $(OUTLIB)JetToolsJetPileupIdentification.o:  $(INCLUDEDIR)/JetTools/src/JetPileupIdentification.cc \
 	$(OUTLIB)DataFormatsPFJet.o 
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsJetPileupIdentification.o $<
+$(OUTLIB)JetToolsPFJetIdentification.o:  $(INCLUDEDIR)/JetTools/src/PFJetIdentification.cc \
+	$(OUTLIB)DataFormatsPFJet.o 
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsPFJetIdentification.o $<
+$(OUTLIB)JetToolsJetCorrectorParameters.o: $(INCLUDEDIR)/JetTools/src/JetCorrectorParameters.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsJetCorrectorParameters.o $<
+$(OUTLIB)JetToolsSimpleJetCorrectionUncertainty.o: $(INCLUDEDIR)/JetTools/src/SimpleJetCorrectionUncertainty.cc \
+	$(OUTLIB)JetToolsJetCorrectorParameters.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsSimpleJetCorrectionUncertainty.o $<
+$(OUTLIB)JetToolsJetCorrectionUncertainty.o: $(INCLUDEDIR)/JetTools/src/JetCorrectionUncertainty.cc \
+	$(OUTLIB)JetToolsSimpleJetCorrectionUncertainty.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsJetCorrectionUncertainty.o $<
+$(OUTLIB)JetToolsSimpleJetCorrector.o: $(INCLUDEDIR)/JetTools/src/SimpleJetCorrector.cc \
+	$(OUTLIB)JetToolsJetCorrectorParameters.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsSimpleJetCorrector.o $<
+$(OUTLIB)JetToolsFactorizedJetCorrector.o: $(INCLUDEDIR)/JetTools/src/FactorizedJetCorrector.cc \
+	$(OUTLIB)JetToolsSimpleJetCorrector.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsFactorizedJetCorrector.o $<
+
 
 # Output trees
 $(OUTLIB)OutputTreesElectronIDTree.o: $(INCLUDEDIR)/OutputTrees/src/ElectronIDTree.cc \
@@ -175,7 +193,10 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)ToolsCandidateKinematicFilter.o \
 	$(OUTLIB)ToolsJobConfiguration.o \
 	$(OUTLIB)MathHistogramTools.o \
-	$(OUTLIB)JetToolsJetPileupIdentification.o
+	$(OUTLIB)JetToolsJetPileupIdentification.o \
+	$(OUTLIB)JetToolsPFJetIdentification.o \
+	$(OUTLIB)JetToolsFactorizedJetCorrector.o \
+	$(OUTLIB)JetToolsJetCorrectionUncertainty.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs

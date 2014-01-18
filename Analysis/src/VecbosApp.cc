@@ -25,12 +25,13 @@ int main(int argc, char* argv[]) {
 
   char inputFileName[500];
   char outputFileName[500];
-  if ( argc < 2 ){
-    std::cout << "missing argument: insert at least inputFile with list of root files" << std::endl; 
-    std::cout << "VecbosApp inputFile" << std::endl;
+  if ( argc < 3 ){
+    std::cout << "missing argument: insert at least inputFile with list of root files and the output file w/o .root" << std::endl; 
+    std::cout << "VecbosApp inputFile outputFile" << std::endl;
     return 1;
   }
   strcpy(inputFileName,argv[1]);
+  strcpy(outputFileName,argv[2]);
 
   // -------------------------
   // Loading the file
@@ -57,7 +58,10 @@ int main(int argc, char* argv[]) {
 
   JobConfiguration *conf = new JobConfiguration("Analysis/cfg/vecbosapp_core.cfg");
 
+  cout << "Will put the output in file = " << outputFileName << endl;
+
   DYToEESelection selection(theChain);
+  selection.setOutputFile(outputFileName);
   selection.BeginJob(conf);
   selection.Loop();
   selection.EndJob();

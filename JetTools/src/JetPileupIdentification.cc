@@ -4,12 +4,12 @@
 using namespace vecbos;
 using namespace std;
 
-bool JetPileupIdentification::output(wp_t wp) {
+bool JetPileupIdentification::output(PFJet *jet) {
 
   bool isOk = true;
 
-  float pt = jet_->pt(); 
-  float eta = jet_->eta();
+  float pt = jet->pt(); 
+  float eta = jet->eta();
   int ieta;
   if ( fabs(eta)<=2.5 ) ieta = 0;
   else if ( fabs(eta)<=2.75 ) ieta = 1;
@@ -18,7 +18,7 @@ bool JetPileupIdentification::output(wp_t wp) {
 
   if(version_ < cutbased) {
 
-    float id = jet_->mva();
+    float id = jet->mva();
     
     // Tight Id
     float Pt010_Tight[2][4]     = {{-0.83,-0.81,-0.74,-0.81},
@@ -51,7 +51,7 @@ bool JetPileupIdentification::output(wp_t wp) {
 				   {-0.4,-0.85,-0.7,-0.6}};
       
 
-    switch(wp) {
+    switch(wp_) {
     case JetPileupIdentification::tight:
       if (pt<10           && id<Pt010_Tight[version_][ieta] ) isOk = false;
       if (pt<20 && pt>=10 && id<Pt1020_Tight[version_][ieta]) isOk = false;
@@ -68,7 +68,7 @@ bool JetPileupIdentification::output(wp_t wp) {
       if (pt<30 && pt>=20 && id<Pt2030_Loose[version_][ieta]) isOk = false;
       if (pt<50 && pt>=30 && id<Pt3050_Loose[version_][ieta]) isOk = false;
     default:
-      cout << "WARNING: JET PU ID working point = " << wp << " not foreseen" << endl;
+      cout << "WARNING: JET PU ID working point = " << wp_ << " not foreseen" << endl;
     }
   } else {
     // 4 Eta Categories  0-2.5 2.5-2.75 2.75-3.0 3.0-5.0
@@ -109,10 +109,10 @@ bool JetPileupIdentification::output(wp_t wp) {
     float Pt2030_RMSLoose[4]        = { 0.06, 0.05, 0.05, 0.055 };
     float Pt3050_RMSLoose[4]        = { 0.06, 0.05, 0.05, 0.055 };
 
-    float betastar = jet_->betastar();
-    float rms = jet_->rms();
+    float betastar = jet->betastar();
+    float rms = jet->rms();
 
-    switch(wp) {
+    switch(wp_) {
     case JetPileupIdentification::tight:
       if (pt<10           && betastar < Pt010_BetaStarTight[ieta]  && rms < Pt010_RMSTight[ieta]) isOk = false;
       if (pt<20 && pt>=10 && betastar < Pt1020_BetaStarTight[ieta] && rms < Pt1020_RMSTight[ieta]) isOk = false;
@@ -129,7 +129,7 @@ bool JetPileupIdentification::output(wp_t wp) {
       if (pt<30 && pt>=20 && betastar < Pt2030_BetaStarLoose[ieta] && rms < Pt2030_RMSLoose[ieta]) isOk = false;
       if (pt<50 && pt>=30 && betastar < Pt3050_BetaStarLoose[ieta] && rms < Pt3050_RMSLoose[ieta]) isOk = false;
     default:
-      cout << "WARNING: JET PU ID working point = " << wp << " not foreseen" << endl;
+      cout << "WARNING: JET PU ID working point = " << wp_ << " not foreseen" << endl;
     }
   }
 

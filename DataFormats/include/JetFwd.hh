@@ -5,7 +5,11 @@
 
 namespace vecbos {
 
-typedef std::vector<vecbos::Jet> JetCollection;
+  typedef std::vector<vecbos::Jet> JetCollection;
+  typedef std::vector<vecbos::Jet>::iterator jet_iterator;
+
+  typedef std::vector<vecbos::Jet*> JetCollectionPtr;
+  typedef std::vector<vecbos::Jet*>::iterator jetptr_iterator;
 
 }
 

@@ -27,13 +27,8 @@ namespace vecbos {
     int getIntPar(std::string parname) { return pars_int[parname]; }
 
   private:
+    /// data members
     std::string cfg_;
-    int messageFreq_;
-    int maxMC_;
-    int maxEvent_;
-    int isMC_;
-    std::string jsonFilePath_;
-    std::string outputFileBase_;
 
     /// the containers of the configuration parameters
     std::map<std::string,int> pars_int;

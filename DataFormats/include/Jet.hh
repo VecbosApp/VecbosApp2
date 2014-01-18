@@ -19,7 +19,8 @@ namespace vecbos {
 
     /// get the raw jet momentum
     LorentzVector rawP4() { return p4raw_; }
-    float etraw() { return p4raw_.Pt(); }
+    float rawpt() { return p4raw_.Pt(); }
+    float rawenergy() { return p4raw_.Energy(); }
 
     /// btagging variables of the jet
     struct BTagsJet {
@@ -68,9 +69,9 @@ namespace vecbos {
     virtual void scaleEnergy (double fScale);
     
     /// set jet area
-    virtual void setJetArea (float fArea) { JetArea_ = fArea;}
+    virtual void setArea (float fArea) { JetArea_ = fArea;}
     /// get jet area
-    virtual float jetArea () const {return JetArea_;}
+    virtual float area () const {return JetArea_;}
 
     /// Print object
     virtual std::string print ();
