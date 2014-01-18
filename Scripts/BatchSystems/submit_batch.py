@@ -127,7 +127,7 @@ def main():
         if(opt.site=='CERN'):
             outputfile.write('cp -r '+pwd+"/"+'JSON $WORKDIR\n')
             outputfile.write('cp -r '+pwd+"/"+'EgammaTools $WORKDIR\n')
-            outputfile.write('cp -r '+pwd+"/"+'Analysis $WORKDIR\n')
+            outputfile.write('cp -r '+pwd+"/"+'Analysis $WORKDIR\n') 
         if opt.year==2011:
             outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc434\n')
             if(opt.site=='CERN'): outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_4_2_8_patch7/\n')
