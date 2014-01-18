@@ -373,14 +373,14 @@ void FiguresOfMeritEvaluator:: drawResults(const char *fileName, int option) {
 
   // draw the results
   TString fullname(fileName);
-  TObjArray *tokens = fullname.Tokenize(".");
-  const char *basename = (((TObjString*)(*tokens)[0])->GetString()).Data();
+  cout << "==> fullname = " << fileName << "\t" << fullname.Data() << endl;
 
-  TString pdf = TString(basename)+TString(".pdf");
-  TString png = TString(basename)+TString(".png");
-  TString macro = TString(basename)+TString(".C");
 
-  TString root = TString(basename)+TString(".root");
+  TString pdf = TString(fullname)+TString(".pdf");
+  TString png = TString(fullname)+TString(".png");
+  TString macro = TString(fullname)+TString(".C");
+
+  TString root = TString(fullname)+TString(".root");
   TFile *tfile = TFile::Open(root,"recreate");
 
   for(int ig=0;ig<(int)graphs.size();++ig) {
