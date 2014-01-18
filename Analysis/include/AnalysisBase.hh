@@ -17,6 +17,8 @@
 #include "JSON/include/JsonFilter.hh"
 #include "Tools/include/JobConfiguration.hh"
 
+#include "JetTools/include/FactorizedJetCorrector.h"
+
 #include "TTree.h"
 
 namespace vecbos {
@@ -64,6 +66,7 @@ namespace vecbos {
     std::string jsonFile_;
     std::string outputFileName_;
     JsonFilter *jsonfilt;
+    FactorizedJetCorrector *jetCorrector_;
 
   private:
     void loadEventHeader();
