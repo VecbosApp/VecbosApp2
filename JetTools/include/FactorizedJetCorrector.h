@@ -19,8 +19,8 @@ class FactorizedJetCorrector
     enum VarTypes   {kJetPt,kJetEta,kJetPhi,kJetE,kJetEMF,kRelLepPt,kPtRel,kNPV,kJetA,kRho,kJPTrawE,kJPTrawEt,kJPTrawPt,kJPTrawEta,kJPTrawOff};
     enum LevelTypes {kL1,kL2,kL3,kL4,kL5,kL6,kL7,kL1fj,kL1JPT};
     FactorizedJetCorrector();
-    FactorizedJetCorrector(const std::string& fLevels, const std::string& fTags, const std::string& fOptions="");
-    FactorizedJetCorrector(const std::vector<JetCorrectorParameters>& fParameters);
+    FactorizedJetCorrector(const std::string& fLevels, const std::string& fTags, const std::string& GTname, const std::string &jetType, const std::string& fOptions="");
+    FactorizedJetCorrector(const std::vector<JetCorrectorParameters>& fParameters, const std::string& GTname, const std::string &jetType);
     ~FactorizedJetCorrector();
     void setNPV		(int   fNPV);
     void setJetEta      (float fEta);
@@ -54,7 +54,10 @@ class FactorizedJetCorrector
     void checkConsistency(const std::vector<std::string>& fLevels, const std::vector<std::string>& fTags);
     std::vector<float> fillVector(const std::vector<VarTypes>& fVarTypes);
     std::vector<VarTypes> mapping(const std::vector<std::string>& fNames);
+    std::string formFilename(std::string filen);
     //---- Member Data ---------
+    std::string gtname_;
+    std::string jettype_;
     int   mNPV;
     float mJetE;
     float mJetEta;

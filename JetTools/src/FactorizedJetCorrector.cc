@@ -50,11 +50,13 @@ FactorizedJetCorrector::FactorizedJetCorrector()
   mIsLepPyset       = false;
   mIsLepPzset       = false;
   mIsAddLepToJetset = false;
+  gtname_="";
+  jettype_="";
 }
 //------------------------------------------------------------------------ 
 //--- FactorizedJetCorrector constructor ---------------------------------
 //------------------------------------------------------------------------
-FactorizedJetCorrector::FactorizedJetCorrector(const std::string& fLevels, const std::string& fFiles, const std::string& fOptions)
+FactorizedJetCorrector::FactorizedJetCorrector(const std::string& fLevels, const std::string& fFiles, const std::string& GTname, const std::string &jetType, const std::string& fOptions)
 {
   mJetEta = -9999;
   mJetPt  = -9999;
@@ -87,12 +89,14 @@ FactorizedJetCorrector::FactorizedJetCorrector(const std::string& fLevels, const
   mIsLepPyset       = false;
   mIsLepPzset       = false;
   mIsAddLepToJetset = false;
+  gtname_  = GTname;
+  jettype_ = jetType; 
   initCorrectors(fLevels, fFiles, fOptions);       
 }
 //------------------------------------------------------------------------
 //--- FactorizedJetCorrector constructor ---------------------------------
 //------------------------------------------------------------------------
-FactorizedJetCorrector::FactorizedJetCorrector(const std::vector<JetCorrectorParameters>& fParameters)
+FactorizedJetCorrector::FactorizedJetCorrector(const std::vector<JetCorrectorParameters>& fParameters, const std::string& GTname, const std::string &jetType)
 {
   mJetEta = -9999;
   mJetPt  = -9999;
@@ -149,6 +153,8 @@ FactorizedJetCorrector::FactorizedJetCorrector(const std::vector<JetCorrectorPar
     mBinTypes.push_back(mapping(mCorrectors[i]->parameters().definitions().binVar()));
     mParTypes.push_back(mapping(mCorrectors[i]->parameters().definitions().parVar()));
   }  
+  gtname_  = GTname;
+  jettype_ = jetType; 
 }
 
 //------------------------------------------------------------------------ 
@@ -201,15 +207,15 @@ void FactorizedJetCorrector::initCorrectors(const std::string& fLevels, const st
   //---- Create instances of the requested sub-correctors.
   for(unsigned i=0;i<mLevels.size();i++) {     	    
     if (mLevels[i]==kL1||mLevels[i]==kL1JPT||mLevels[i]==kL2||mLevels[i]==kL3||mLevels[i]==kL4||mLevels[i]==kL6||mLevels[i]==kL1fj)
-      mCorrectors.push_back(new SimpleJetCorrector(Files[i])); 
+      mCorrectors.push_back(new SimpleJetCorrector(formFilename(Files[i]))); 
     else if (mLevels[i]==kL5 && FlavorOption.length()==0) 
       handleError("FactorizedJetCorrector","must specify flavor option when requesting L5Flavor correction!");
     else if (mLevels[i]==kL5 && FlavorOption.length()>0)
-      mCorrectors.push_back(new SimpleJetCorrector(Files[i],FlavorOption));
+      mCorrectors.push_back(new SimpleJetCorrector(formFilename(Files[i]),FlavorOption));
     else if (mLevels[i]==kL7 && PartonOption.length()==0) 
       handleError("FactorizedJetCorrector","must specify parton option when requesting L7Parton correction!");
     else if (mLevels[i]==kL7 && PartonOption.length()>0)
-      mCorrectors.push_back(new SimpleJetCorrector(Files[i],PartonOption));
+      mCorrectors.push_back(new SimpleJetCorrector(formFilename(Files[i]),PartonOption));
     else {
       std::stringstream sserr; 
       sserr<<"unknown correction level "<<tmp[i];
@@ -637,4 +643,12 @@ void FactorizedJetCorrector::setAddLepToJet(bool fAddLepToJet)
 {
   mAddLepToJet = fAddLepToJet;
   mIsAddLepToJetset = true;
+}
+//------------------------------------------------------------------------
+std::string FactorizedJetCorrector::formFilename(std::string filen) {
+  std::string output = "JetTools/data/";
+  output += (gtname_ + "_");
+  output += (filen + "_");
+  output += (jettype_ + ".txt");
+  return output;
 }

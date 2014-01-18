@@ -56,31 +56,31 @@ namespace vecbos {
     /// chargedHadronEnergy 
     float chargedHadronEnergy () {return m_specific.mChargedHadronEnergy;}
     ///  chargedHadronEnergyFraction
-    float  chargedHadronEnergyFraction () {return chargedHadronEnergy () / energyraw ();}
+    float  chargedHadronEnergyFraction () {return chargedHadronEnergy () / rawenergy ();}
     /// neutralHadronEnergy
     float neutralHadronEnergy () {return m_specific.mNeutralHadronEnergy;}
     /// neutralHadronEnergyFraction
-    float neutralHadronEnergyFraction () {return neutralHadronEnergy () / energyraw ();}
+    float neutralHadronEnergyFraction () {return neutralHadronEnergy () / rawenergy ();}
     /// photonEnergy 
     float photonEnergy () {return m_specific.mPhotonEnergy;}
     /// photonEnergyFraction
-    float photonEnergyFraction () {return photonEnergy () / energyraw ();}
+    float photonEnergyFraction () {return photonEnergy () / rawenergy ();}
     /// electronEnergy 
     float electronEnergy () {return m_specific.mElectronEnergy;}
     /// electronEnergyFraction
-    float electronEnergyFraction () {return electronEnergy () / energyraw ();}
+    float electronEnergyFraction () {return electronEnergy () / rawenergy ();}
     /// muonEnergy 
     float muonEnergy () {return m_specific.mMuonEnergy;}
     /// muonEnergyFraction
-    float muonEnergyFraction () {return muonEnergy () / energyraw ();}
+    float muonEnergyFraction () {return muonEnergy () / rawenergy ();}
     /// HFHadronEnergy 
     float HFHadronEnergy () {return m_specific.mHFHadronEnergy;}
     /// HFHadronEnergyFraction
-    float HFHadronEnergyFraction () {return HFHadronEnergy () / energyraw ();}
+    float HFHadronEnergyFraction () {return HFHadronEnergy () / rawenergy ();}
     /// HFEMEnergy 
     float HFEMEnergy () {return m_specific.mHFEMEnergy;}
     /// HFEMEnergyFraction
-    float HFEMEnergyFraction () {return HFEMEnergy () / energyraw ();}
+    float HFEMEnergyFraction () {return HFEMEnergy () / rawenergy ();}
 
     /// chargedHadronMultiplicity
     int chargedHadronMultiplicity () {return m_specific.mChargedHadronMultiplicity;}
@@ -100,15 +100,15 @@ namespace vecbos {
     /// chargedEmEnergy
     float chargedEmEnergy () {return m_specific.mElectronEnergy;}
     /// chargedEmEnergyFraction
-    float chargedEmEnergyFraction () {return chargedEmEnergy () / energyraw ();}
+    float chargedEmEnergyFraction () {return chargedEmEnergy () / rawenergy ();}
     /// chargedMuEnergy
     float chargedMuEnergy () {return m_specific.mMuonEnergy;}
     /// chargedMuEnergyFraction
-    float chargedMuEnergyFraction () {return chargedMuEnergy () / energyraw ();}
+    float chargedMuEnergyFraction () {return chargedMuEnergy () / rawenergy ();}
     /// neutralEmEnergy
     float neutralEmEnergy () {return m_specific.mPhotonEnergy;}
     /// neutralEmEnergyFraction
-    float neutralEmEnergyFraction () {return neutralEmEnergy () / energyraw ();}
+    float neutralEmEnergyFraction () {return neutralEmEnergy () / rawenergy ();}
   
     /// chargedMultiplicity
     int chargedMultiplicity () {return m_specific.mChargedHadronMultiplicity + m_specific.mElectronMultiplicity + m_specific.mMuonMultiplicity;}
