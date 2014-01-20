@@ -17,7 +17,7 @@ CompositeCandidateCollection CandidateCombiner::output() {
 	CompositeCandidate comp;
 	comp.addDaughter(cands[i1]);
 	comp.addDaughter(cands[i2]);
-	output.push_back(comp);
+	if(comp.mass()>massMin_ && comp.mass()<massMax_) output.push_back(comp);
       }
     }
   } else if(inputs_.size()==2) {
@@ -42,7 +42,7 @@ CompositeCandidateCollection CandidateCombiner::combineTwoCollections(CandidateC
       CompositeCandidate comp;
       comp.addDaughter(first[i1]);
       comp.addDaughter(second[i2]);
-      output.push_back(comp);
+      if(comp.mass()>massMin_ && comp.mass()<massMax_) output.push_back(comp);
     }
   }
   return output;
@@ -60,7 +60,7 @@ CompositeCandidateCollection CandidateCombiner::combineCompositeCollectionAndLea
       CompositeCandidate comp;
       comp.addDaughter(&first[i1]);
       comp.addDaughter(second[i2]);
-      output.push_back(comp);
+      if(comp.mass()>massMin_ && comp.mass()<massMax_) output.push_back(comp);
     }
   }
   return output;

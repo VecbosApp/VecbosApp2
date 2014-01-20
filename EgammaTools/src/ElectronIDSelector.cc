@@ -13,14 +13,14 @@ ElectronIDSelector::ElectronIDSelector() : rho_(0) {
   output_.clear();
 }
 
-ElectronIDSelector::ElectronIDSelector(ElectronCollection input, float rho, VertexCollection vertices) : 
+ElectronIDSelector::ElectronIDSelector(CandidateCollectionPtr input, float rho, VertexCollection vertices) : 
   rho_(rho), vertices_(vertices) 
 { 
   input_ = input;
   output_.clear(); 
 }
 
-ElectronCollection ElectronIDSelector::output() {
+CandidateCollectionPtr ElectronIDSelector::output() {
   if(algo_.compare("hlt")==0) output_hlt();
 
   else if(algo_.compare("cuts_id")==0)      return output_cuts_id();
@@ -39,61 +39,61 @@ ElectronCollection ElectronIDSelector::output() {
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_hlt() {
+CandidateCollectionPtr ElectronIDSelector::output_hlt() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_hlt()) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_cuts_id() {
+CandidateCollectionPtr ElectronIDSelector::output_cuts_id() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_cuts_id(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_cuts_iso() {
+CandidateCollectionPtr ElectronIDSelector::output_cuts_iso() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_cuts_iso(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_cuts_convrej() {
+CandidateCollectionPtr ElectronIDSelector::output_cuts_convrej() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_cuts_convrej(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_cuts_ip() {
+CandidateCollectionPtr ElectronIDSelector::output_cuts_ip() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_cuts_ip(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_cuts() {
+CandidateCollectionPtr ElectronIDSelector::output_cuts() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_cuts_id(wp_) && algo.pass_cuts_iso(wp_) && 
        algo.pass_cuts_convrej(wp_) && algo.pass_cuts_ip(wp_)
        ) output_.push_back(*ele);
@@ -101,52 +101,52 @@ ElectronCollection ElectronIDSelector::output_cuts() {
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_mva_id() {
+CandidateCollectionPtr ElectronIDSelector::output_mva_id() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_mva_id(algo_,wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_mva_iso() {
+CandidateCollectionPtr ElectronIDSelector::output_mva_iso() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_mva_iso(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_mva_convrej() {
+CandidateCollectionPtr ElectronIDSelector::output_mva_convrej() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_mva_convrej(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_mva_ip() {
+CandidateCollectionPtr ElectronIDSelector::output_mva_ip() {
   output_.clear();
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_mva_ip(wp_)) output_.push_back(*ele);
   }
   return output_;
 }
 
-ElectronCollection ElectronIDSelector::output_mva() {
+CandidateCollectionPtr ElectronIDSelector::output_mva() {
   output_.clear();
   int iele=0;
-  for(electron_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
+  for(candidateptr_iterator ele=input_.begin(); ele!=input_.end(); ++ele) {
     ElectronIDAlgo algo(rho_,vertices_);
-    algo.setElectron(*ele);
+    algo.setElectron(*(dynamic_cast<Electron*>(*ele)));
     if(algo.pass_mva_id(algo_,wp_) && algo.pass_mva_iso(wp_) && 
        algo.pass_mva_convrej(wp_) && algo.pass_mva_ip(wp_)
        ) output_.push_back(*ele);

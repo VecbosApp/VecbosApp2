@@ -16,11 +16,18 @@ namespace vecbos {
     /// point in the space
     typedef TVector3 Vector;
 
+    /// default constructor
+    Muon() : RecoCandidate() { }
     /// constructor from constituents
     Muon( int charge, const LorentzVector & p4, const Point & vertexPosition,
 	  Track innerTrack, Track staTrack, Track gblTrack);
     /// destructor
     ~Muon() { };
+
+    /// get the tracks
+    Track innerTrack() { return innerTrack_; }
+    Track standaloneTrack() { return standaloneTrack_; }
+    Track globalMuonTrack() { return globalMuonTrack_; }
 
   private:
     Track innerTrack_, standaloneTrack_, globalMuonTrack_;

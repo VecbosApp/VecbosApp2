@@ -7,11 +7,13 @@ namespace math {
     float electron_mass;
     float muon_mass;
     float tau_mass;
+    float Z0_mass;
   PhysConstants() :
     PI(TMath::Pi()),
       electron_mass(0.510998928E-03), // GeV
       muon_mass(105.6583715E-03), // GeV
-      tau_mass(1776.82E-03) // GeV
+      tau_mass(1776.82E-03), // GeV
+      Z0_mass(91.1876) // GeV
     { }
   };
 
