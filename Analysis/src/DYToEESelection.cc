@@ -27,7 +27,7 @@ void DYToEESelection::BeginJob(JobConfiguration *conf) {
   /// HLT selector
   doubleele_filter_8TeV = new HLTFilter(fChain,ismc_);
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
-  else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
+  else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_tagandprobe_2012.txt");
 
   /// output tree
   output = new ElectronIDTree((outputFileName_+".root").c_str());
