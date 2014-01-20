@@ -13,14 +13,14 @@ MuonIDSelector::MuonIDSelector() : rho_(0) {
   output_.clear();
 }
 
-MuonIDSelector::MuonIDSelector(MuonCollectionPtr input, float rho, VertexCollection vertices) : 
+MuonIDSelector::MuonIDSelector(CandidateCollectionPtr input, float rho, VertexCollection vertices) : 
   rho_(rho), vertices_(vertices) 
 { 
   input_ = input;
   output_.clear(); 
 }
 
-MuonCollectionPtr MuonIDSelector::output() {
+CandidateCollectionPtr MuonIDSelector::output() {
   if(algo_.compare("cuts_id")==0)       return output_cuts_id();
   else if(algo_.compare("cuts_iso")==0) return output_cuts_iso();
   else if(algo_.compare("cuts_ip")==0)  return output_cuts_ip();
@@ -30,41 +30,41 @@ MuonCollectionPtr MuonIDSelector::output() {
   return output_;
 }
 
-MuonCollectionPtr MuonIDSelector::output_cuts_id() {
+CandidateCollectionPtr MuonIDSelector::output_cuts_id() {
   output_.clear();
-  for(muonptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
+  for(candidateptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
     MuonIDAlgo algo(rho_,vertices_);
-    algo.setMuon(*(*mu));
+    algo.setMuon(*(dynamic_cast<Muon*>(*mu)));
     if(algo.pass_cuts_id(wp_)) output_.push_back(*mu);
   }
   return output_;
 }
 
-MuonCollectionPtr MuonIDSelector::output_cuts_iso() {
+CandidateCollectionPtr MuonIDSelector::output_cuts_iso() {
   output_.clear();
-  for(muonptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
+  for(candidateptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
     MuonIDAlgo algo(rho_,vertices_);
-    algo.setMuon(*(*mu));
+    algo.setMuon(*(dynamic_cast<Muon*>(*mu)));
     if(algo.pass_cuts_iso(wp_)) output_.push_back(*mu);
   }
   return output_;
 }
 
-MuonCollectionPtr MuonIDSelector::output_cuts_ip() {
+CandidateCollectionPtr MuonIDSelector::output_cuts_ip() {
   output_.clear();
-  for(muonptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
+  for(candidateptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
     MuonIDAlgo algo(rho_,vertices_);
-    algo.setMuon(*(*mu));
+    algo.setMuon(*(dynamic_cast<Muon*>(*mu)));
     if(algo.pass_cuts_ip(wp_)) output_.push_back(*mu);
   }
   return output_;
 }
 
-MuonCollectionPtr MuonIDSelector::output_cuts() {
+CandidateCollectionPtr MuonIDSelector::output_cuts() {
   output_.clear();
-  for(muonptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
+  for(candidateptr_iterator mu=input_.begin(); mu!=input_.end(); ++mu) {
     MuonIDAlgo algo(rho_,vertices_);
-    algo.setMuon(*(*mu));
+    algo.setMuon(*(dynamic_cast<Muon*>(*mu)));
     if(algo.pass_cuts_id(wp_) && algo.pass_cuts_iso(wp_) && algo.pass_cuts_ip(wp_)
        ) output_.push_back(*mu);
   }
