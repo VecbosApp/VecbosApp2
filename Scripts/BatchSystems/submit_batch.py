@@ -127,6 +127,7 @@ def main():
         outputfile.write('#!/bin/bash\n')
         if(opt.site=='CERN'):
             outputfile.write('cp -r '+pwd+"/"+'JSON $WORKDIR\n')
+            outputfile.write('cp -r '+pwd+"/"+'MuonTools $WORKDIR\n')
             outputfile.write('cp -r '+pwd+"/"+'EgammaTools $WORKDIR\n')
             outputfile.write('cp -r '+pwd+"/"+'Analysis $WORKDIR\n')
             outputfile.write('cp -r '+pwd+"/"+'JetTools $WORKDIR\n')
