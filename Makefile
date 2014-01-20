@@ -135,6 +135,18 @@ $(OUTLIB)ToolsJobConfiguration.o: $(INCLUDEDIR)/Tools/src/JobConfiguration.cc
 $(OUTLIB)ToolsFiguresOfMeritEvaluator.o: $(INCLUDEDIR)/Tools/src/FiguresOfMeritEvaluator.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ToolsFiguresOfMeritEvaluator.o $<
 
+# Muon Tools libs
+$(OUTLIB)MuonToolsMuonIDAlgo.o: $(INCLUDEDIR)/MuonTools/src/MuonIDAlgo.cc \
+	$(OUTLIB)DataFormatsMuon.o \
+	$(OUTLIB)ToolsVertexSelector.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)MuonToolsMuonIDAlgo.o $<
+$(OUTLIB)MuonToolsMuonIDSelector.o: $(INCLUDEDIR)/MuonTools/src/MuonIDSelector.cc \
+	$(OUTLIB)DataFormatsMuon.o \
+	$(OUTLIB)ToolsCollectionSelector.o \
+	$(OUTLIB)MuonToolsMuonIDAlgo.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)MuonToolsMuonIDSelector.o $<
+
+
 # Egamma Tools libs
 $(OUTLIB)EgammaToolsElectronEffectiveArea.o: $(INCLUDEDIR)/EgammaTools/src/ElectronEffectiveArea.cc \
 	$(OUTLIB)DataFormatsElectron.o
@@ -196,7 +208,9 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)JetToolsJetPileupIdentification.o \
 	$(OUTLIB)JetToolsPFJetIdentification.o \
 	$(OUTLIB)JetToolsFactorizedJetCorrector.o \
-	$(OUTLIB)JetToolsJetCorrectionUncertainty.o
+	$(OUTLIB)JetToolsJetCorrectionUncertainty.o \
+	$(OUTLIB)EgammaToolsElectronIDSelector.o \
+	$(OUTLIB)MuonToolsMuonIDSelector.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 # Analyzer libs
