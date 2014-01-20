@@ -74,11 +74,12 @@ def main():
 
     print "the outputs will be in the directory: "+opt.prefix
 
-    os.system("voms-proxy-init -voms cms")
     if os.path.isfile("/tmp/"+myproxy):
         print "Proxy file found in /tmp."
+        os.system("touch /tmp/"+myproxy)
     else:
-        print "Couldn't find the correct proxy in /tmp."
+        print "Couldn't find the correct proxy in /tmp. Making it now. Then change the proxy file name in this script and relaunch..."
+        os.system("voms-proxy-init -voms cms")
         exit()
     os.system("cp /tmp/"+myproxy+" "+mydir)
 
