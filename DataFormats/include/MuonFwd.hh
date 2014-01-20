@@ -9,6 +9,9 @@ namespace vecbos {
   typedef std::vector<Muon> MuonCollection;
   typedef std::vector<Muon>::iterator muon_iterator;
 
+  typedef std::vector<Muon*> MuonCollectionPtr;
+  typedef std::vector<Muon*>::iterator muonptr_iterator;
+
 }
 
 #endif
