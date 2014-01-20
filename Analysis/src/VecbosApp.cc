@@ -12,11 +12,14 @@
 #include <TChain.h>
 
 #include "Tools/include/JobConfiguration.hh"
-//#include "Analysis/include/Application.hh"
+#include "Analysis/include/Application.hh"
 
-//#if Application == 1
+#if Application == 1
 #include "Analysis/include/DYToEESelection.hh"
-//#endif
+#endif
+#if Application == 2
+#include "EgammaTools/include/FakeElectronSelectorZllPlusOneFake.hh"
+#endif
 
 using namespace std;
 using namespace vecbos;
@@ -57,13 +60,26 @@ int main(int argc, char* argv[]) {
   delete inputFile;
 
   JobConfiguration *conf = new JobConfiguration("Analysis/cfg/vecbosapp_core.cfg");
-
   cout << "Will put the output in file = " << outputFileName << endl;
+
+#if Application == 1
 
   DYToEESelection selection(theChain);
   selection.setOutputFile(outputFileName);
   selection.BeginJob(conf);
   selection.Loop();
   selection.EndJob();
+
+#endif
+
+#if Application == 2
+
+  FakeElectronSelectorZllPlusOneFake selection(theChain);
+  selection.setOutputFile(outputFileName);
+  selection.BeginJob(conf);
+  selection.Loop();
+  selection.EndJob();
+
+#endif
 
 }
