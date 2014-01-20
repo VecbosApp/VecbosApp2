@@ -23,10 +23,10 @@ def main():
         os.system("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleElectron_Run2012D-22Jan2013 0")
     
         print "Submitting DoubleMuon now...\n"
-        os.System("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMu_Run2012A-22Jan2013 0")
-        os.System("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMuParked_Run2012B-22Jan2013 0")
-        os.System("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMuParked_Run2012C-22Jan2013 0")
-        os.System("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMuParked_Run2012D-22Jan2013 0")
+        os.system("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMu_Run2012A-22Jan2013 0")
+        os.system("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMuParked_Run2012B-22Jan2013 0")
+        os.system("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMuParked_Run2012C-22Jan2013 0")
+        os.system("Scripts/BatchSystems/submit_batch.py -n 4 -p "+opt.prefix+" -d pccmsrm DoubleMuParked_Run2012D-22Jan2013 0")
 
 if __name__ == "__main__":
         main()
