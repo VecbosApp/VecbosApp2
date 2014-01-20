@@ -7,18 +7,18 @@
 
 namespace vecbos {
 
-  class ElectronIDSelector : public CollectionSelector<vecbos::Electron> {
+  class ElectronIDSelector : public CollectionSelector<vecbos::Electron*> {
   public:
 
     /// default constructor
     ElectronIDSelector();
     /// constructor from collection
-    ElectronIDSelector(ElectronCollection input, float rho, VertexCollection vertices);
+    ElectronIDSelector(ElectronCollectionPtr input, float rho, VertexCollection vertices);
     /// destructor
     ~ElectronIDSelector() { };
 
     /// selected objects according the configured algo and wp
-    vecbos::ElectronCollection output();
+    vecbos::ElectronCollectionPtr output();
     
     /// set the rho for isolation correction with FastJet
     void setRho(float rho) { rho_ = rho; }
@@ -33,29 +33,29 @@ namespace vecbos {
     vecbos::VertexCollection vertices_;
 
     /// output for offline trigger emulation
-    vecbos::ElectronCollection output_hlt();
+    vecbos::ElectronCollectionPtr output_hlt();
 
     /// output for cutbased selection - id only
-    vecbos::ElectronCollection output_cuts_id();
+    vecbos::ElectronCollectionPtr output_cuts_id();
     /// output for cutbased selection - iso only
-    vecbos::ElectronCollection output_cuts_iso();
+    vecbos::ElectronCollectionPtr output_cuts_iso();
     /// output for cutbased selection - conversion rejection only
-    vecbos::ElectronCollection output_cuts_convrej();
+    vecbos::ElectronCollectionPtr output_cuts_convrej();
     /// output for cutbased selection - ip only
-    vecbos::ElectronCollection output_cuts_ip();
+    vecbos::ElectronCollectionPtr output_cuts_ip();
     /// output for cutbased selection - id + iso + conversion rejection + ip
-    vecbos::ElectronCollection output_cuts();
+    vecbos::ElectronCollectionPtr output_cuts();
 
     /// output for MVA selection - id only
-    vecbos::ElectronCollection output_mva_id();
+    vecbos::ElectronCollectionPtr output_mva_id();
     /// output for MVA selection - iso only
-    vecbos::ElectronCollection output_mva_iso();
+    vecbos::ElectronCollectionPtr output_mva_iso();
     /// output for MVA selection - conversion rejection only
-    vecbos::ElectronCollection output_mva_convrej();
+    vecbos::ElectronCollectionPtr output_mva_convrej();
     /// output for MVA selection - ip only
-    vecbos::ElectronCollection output_mva_ip();
+    vecbos::ElectronCollectionPtr output_mva_ip();
     /// output for MVA selection - id + iso + conversion rejection + ip
-    vecbos::ElectronCollection output_mva();
+    vecbos::ElectronCollectionPtr output_mva();
 
   };
 

@@ -7,18 +7,18 @@
 
 namespace vecbos {
 
-  class MuonIDSelector : public CollectionSelector<vecbos::Muon> {
+  class MuonIDSelector : public CollectionSelector<vecbos::Muon*> {
   public:
 
     /// default constructor
     MuonIDSelector();
     /// constructor from collection
-    MuonIDSelector(MuonCollection input, float rho, VertexCollection vertices);
+    MuonIDSelector(MuonCollectionPtr input, float rho, VertexCollection vertices);
     /// destructor
     ~MuonIDSelector() { };
 
     /// selected objects according the configured algo and wp
-    vecbos::MuonCollection output();
+    vecbos::MuonCollectionPtr output();
     
     /// set the rho for isolation correction with FastJet
     void setRho(float rho) { rho_ = rho; }
@@ -33,13 +33,13 @@ namespace vecbos {
     vecbos::VertexCollection vertices_;
 
     /// output for cutbased selection - id only
-    vecbos::MuonCollection output_cuts_id();
+    vecbos::MuonCollectionPtr output_cuts_id();
     /// output for cutbased selection - iso only
-    vecbos::MuonCollection output_cuts_iso();
+    vecbos::MuonCollectionPtr output_cuts_iso();
     /// output for cutbased selection - ip only
-    vecbos::MuonCollection output_cuts_ip();
+    vecbos::MuonCollectionPtr output_cuts_ip();
     /// output for cutbased selection - id + iso + conversion rejection + ip
-    vecbos::MuonCollection output_cuts();
+    vecbos::MuonCollectionPtr output_cuts();
 
   };
 
