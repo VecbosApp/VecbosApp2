@@ -90,6 +90,9 @@ int AnalysisBase::loadTree(Long64_t entry) {
   // load the GSF Electron collection
   loadElectronCollection();
 
+  // load the Muon collection
+  loadMuonCollection();
+
   /// load the MET (calomet and pfmet)
   loadMET();
 
