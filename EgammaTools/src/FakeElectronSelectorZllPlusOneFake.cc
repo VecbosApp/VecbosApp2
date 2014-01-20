@@ -77,7 +77,7 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
     Electron *electron = 0;
     float zmass;
 
-    if(dataset_.find("DoubleMuon") != string::npos &&
+    if(dataset_.find("DoubleMu") != string::npos &&
        !doublemu_filter_8TeV->pass(jentry,header.run()) ) continue;
 
     /// ========================================================
