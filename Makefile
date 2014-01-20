@@ -33,8 +33,24 @@ VecbosApp: $(INCLUDEDIR)/Analysis/src/VecbosApp.cc \
 	$(OUTLIB)AnalysisVecbosEventContent.o \
 	$(OUTLIB)AnalysisAnalysisBase.o \
 	$(OUTLIB)DataFormatsEvent.o \
-	$(OUTLIB)AnalysisDYToEESelection.o
+	$(OUTLIB)AnalysisDYToEESelection.o \
+	$(OUTLIB)EgammaToolsFakeElectronSelectorZllPlusOneFake.o
 	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o VecbosApp $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
+
+# Analyzer libs
+$(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc \
+	$(OUTLIB)EgammaToolsElectronIDSelector.o \
+	$(OUTLIB)OutputTreesElectronIDTree.o \
+	$(OUTLIB)ToolsCandidateCombiner.o \
+	$(OUTLIB)ToolsHLTFilter.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisDYToEESelection.o $<
+$(OUTLIB)EgammaToolsFakeElectronSelectorZllPlusOneFake.o: $(INCLUDEDIR)/EgammaTools/src/FakeElectronSelectorZllPlusOneFake.cc \
+	$(OUTLIB)EgammaToolsElectronIDSelector.o \
+	$(OUTLIB)MuonToolsMuonIDSelector.o \
+	$(OUTLIB)ToolsCandidateCombiner.o \
+	$(OUTLIB)ToolsHLTFilter.o \
+	$(OUTLIB)OutputTreesElectronIDTree.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EgammaToolsFakeElectronSelectorZllPlusOneFake.o $<
 
 # Egamma macro executables
 CompareROC: $(INCLUDEDIR)/EgammaTools/macro/CompareROC.C \
@@ -212,13 +228,6 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)EgammaToolsElectronIDSelector.o \
 	$(OUTLIB)MuonToolsMuonIDSelector.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
-
-# Analyzer libs
-$(OUTLIB)AnalysisDYToEESelection.o: $(INCLUDEDIR)/Analysis/src/DYToEESelection.cc \
-	$(OUTLIB)EgammaToolsElectronIDSelector.o \
-	$(OUTLIB)OutputTreesElectronIDTree.o \
-	$(OUTLIB)ToolsCandidateCombiner.o
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisDYToEESelection.o $<
 
 
 clean:
