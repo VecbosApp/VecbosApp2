@@ -46,7 +46,7 @@ void AnalysisBase::BeginJob(JobConfiguration *conf) {
     jetCorrector_ = new FactorizedJetCorrector("L1FastJet:L2Relative:L3Absolute","L1FastJet:L2Relative:L3Absolute","START53_V27","AK5PF");
   }
   else {
-    jetCorrector_ = new FactorizedJetCorrector("L1FastJet:L2L3Residual","L1FastJet:L2L3Residual","FT53_V21A_AN6","AK5PF");
+    jetCorrector_ = new FactorizedJetCorrector("L1FastJet:L2Relative:L3Absolute:L2L3Residual","L1FastJet:L2Relative:L3Absolute:L2L3Residual","FT53_V21A_AN6","AK5PF");
   }
 
 }
