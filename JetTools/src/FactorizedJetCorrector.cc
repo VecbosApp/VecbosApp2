@@ -139,6 +139,8 @@ FactorizedJetCorrector::FactorizedJetCorrector(const std::vector<JetCorrectorPar
       mLevels.push_back(kL2);
     else if (ss == "L3Absolute")
       mLevels.push_back(kL3);
+    else if (ss == "L2L3Residual")
+      mLevels.push_back(kL2L3res);
     else if (ss == "L4EMF")
       mLevels.push_back(kL4);
     else if (ss == "L5Flavor")
@@ -181,6 +183,8 @@ void FactorizedJetCorrector::initCorrectors(const std::string& fLevels, const st
       mLevels.push_back(kL2);
     else if (tmp[i] == "L3Absolute")
       mLevels.push_back(kL3);
+    else if (tmp[i] == "L2L3Residual")
+      mLevels.push_back(kL2L3res);
     else if (tmp[i] == "L4EMF")
       mLevels.push_back(kL4);
     else if (tmp[i] == "L5Flavor")
@@ -206,7 +210,7 @@ void FactorizedJetCorrector::initCorrectors(const std::string& fLevels, const st
   checkConsistency(tmp,Files);  
   //---- Create instances of the requested sub-correctors.
   for(unsigned i=0;i<mLevels.size();i++) {     	    
-    if (mLevels[i]==kL1||mLevels[i]==kL1JPT||mLevels[i]==kL2||mLevels[i]==kL3||mLevels[i]==kL4||mLevels[i]==kL6||mLevels[i]==kL1fj)
+    if (mLevels[i]==kL1||mLevels[i]==kL1JPT||mLevels[i]==kL2||mLevels[i]==kL3||mLevels[i]==kL2L3res||mLevels[i]==kL4||mLevels[i]==kL6||mLevels[i]==kL1fj)
       mCorrectors.push_back(new SimpleJetCorrector(formFilename(Files[i]))); 
     else if (mLevels[i]==kL5 && FlavorOption.length()==0) 
       handleError("FactorizedJetCorrector","must specify flavor option when requesting L5Flavor correction!");
