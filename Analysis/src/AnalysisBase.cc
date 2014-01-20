@@ -587,10 +587,10 @@ void AnalysisBase::loadMuonCollection() {
     Track innerTrack = GeneralTracks[indexInnerTrack];
 
     int indexStandaloneMuonTrack = standAloneTrackIndexMuon[i];
-    Track staTrack = StandaloneMuonTracks[indexStandaloneMuonTrack];
+    Track staTrack = (indexStandaloneMuonTrack >= 0) ? StandaloneMuonTracks[indexStandaloneMuonTrack] : Track();
 
     int indexCombinedTrack = combinedTrackIndexMuon[i];
-    Track combTrack = GlobalMuonTracks[indexCombinedTrack];
+    Track combTrack = (indexCombinedTrack >= 0) ? GlobalMuonTracks[indexCombinedTrack] : Track();
 
     Muon* muon = new Muon(charge,p4Muon,vtx,innerTrack,staTrack,combTrack);
 
