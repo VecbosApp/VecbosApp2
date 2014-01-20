@@ -16,9 +16,11 @@ void FakeElectronSelectorZllPlusOneFake::BeginJob(JobConfiguration *conf) {
   
   /// muon ID selector
   muonid_loose.configure("MuonTools/data/muons_cuts_loose.cfg");
-
   /// electron ID selector
   elid_mva_loose.configure("EgammaTools/data/electrons_mva_loose.cfg");
+
+  /// dataset based on the output file name
+  dataset_ = outputFileName_;
 
   /// HLT selector
   doubleele_filter_8TeV = new HLTFilter(fChain,ismc_);

@@ -21,10 +21,6 @@ namespace vecbos {
     FakeElectronSelectorZllPlusOneFake(TChain *tree=0);
     //! destructor
     virtual ~FakeElectronSelectorZllPlusOneFake() { }
-    
-    //! set the dataset (DoubleMuon or DoubleElectron)
-    void setDataset(std::string dataset) { dataset_ = dataset; }
-    
     //! configure the needed stuff
     void BeginJob(JobConfiguration *conf);
     //! close the needed stuff
