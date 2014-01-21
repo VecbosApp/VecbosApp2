@@ -19,19 +19,15 @@ void FakeElectronSelectorZllPlusOneFake::BeginJob(JobConfiguration *conf) {
   /// electron ID selector
   elid_mva_loose.configure("EgammaTools/data/electrons_mva_loose.cfg");
 
-  /// dataset based on the output file name
-  dataset_ = outputFileName_;
-
   /// HLT selector
-  doubleele_filter_8TeV = new HLTFilter(fChain,ismc_);
-  doublemu_filter_8TeV = new HLTFilter(fChain,ismc_);
+  doublelep_filter_8TeV = new HLTFilter(fChain,ismc_);
   if(ismc_) {
-    doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
-    doublemu_filter_8TeV->configure("Analysis/data/hlt/double_muon_data_2012.txt"); // to be checked if it is really the same as in data
+    doublelep_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
+    doublelep_filter_8TeV->configure("Analysis/data/hlt/double_muon_data_2012.txt"); // to be checked if it is really the same as in data
   }
   else {
-    doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
-    doublemu_filter_8TeV->configure("Analysis/data/hlt/double_muon_data_2012.txt");
+    doublelep_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_2012.txt");
+    doublelep_filter_8TeV->configure("Analysis/data/hlt/double_muon_data_2012.txt");
   }
 
   /// output tree
@@ -68,6 +64,8 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
     output->fillRunInfos(header.run(), header.lumi(), header.event(),
 			 nPU,PrimaryVertices.size(), rhoFastjet, 1);
 
+    if( !doublelep_filter_8TeV->pass(jentry,header.run()) ) continue;
+
     CandidateKinematicFilter eleFilter;
     eleFilter.source(Electrons);
     eleFilter.setPtRange(7,1000); 
@@ -76,9 +74,6 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
 
     Electron *electron = 0;
     float zmass;
-
-    if(dataset_.find("DoubleMu") != string::npos &&
-       !doublemu_filter_8TeV->pass(jentry,header.run()) ) continue;
 
     /// ========================================================
     /// Make the Z => mumu + 1 electron first
@@ -113,8 +108,6 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
     /// ========================================================
     /// Make the Z => ee + 1 electron
     /// ========================================================
-    if(dataset_.find("DoubleElectron") != string::npos &&
-       !doubleele_filter_8TeV->pass(jentry,header.run()) ) continue;
     
     elid_mva_loose.source(AcceptanceElectrons);
     elid_mva_loose.setRho(rhoFastjet);
