@@ -33,9 +33,8 @@ namespace vecbos {
     /// data members
     ElectronIDSelector elid_mva_loose;
     MuonIDSelector muonid_loose;
-    HLTFilter *doubleele_filter_8TeV, *doublemu_filter_8TeV;
+    HLTFilter *doublelep_filter_8TeV;
     ElectronIDTree *output;
-    std::string dataset_;
     
     // fill the tree for the selected Z(ll)+1 electron
     void fillProbe(Electron *electron, float zmass, int zdecay);
