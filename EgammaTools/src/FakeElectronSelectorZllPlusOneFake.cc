@@ -65,7 +65,7 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
     output->fillRunInfos(header.run(), header.lumi(), header.event(),
 			 nPU,PrimaryVertices.size(), rhoFastjet, 1);
 
-    //    if( !doublelep_filter_8TeV->pass(jentry,header.run()) ) continue;
+    if( !doublelep_filter_8TeV->pass(jentry,header.run()) ) continue;
 
     CandidateKinematicFilter eleFilter;
     eleFilter.source(Electrons);
