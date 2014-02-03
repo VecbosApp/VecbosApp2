@@ -29,11 +29,11 @@ OUTLIB               = ./lib/
 .PREFIXES: ./lib/
 
 # the main executable
-FakeRate: $(INCLUDEDIR)/fakerate.cc \
+fakerate: $(INCLUDEDIR)/fakerate.cc \
 	$(OUTLIB)egtree.o \
 	$(OUTLIB)ElectronFakeRateEstimation.o \
 	$(OUTLIB)EfficiencyEvaluator.o
-	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o FakeRate $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
+	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o fakerate $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
 
 # libs
 $(OUTLIB)egtree.o: $(INCLUDEDIR)/egtree.C
