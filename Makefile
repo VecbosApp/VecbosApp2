@@ -56,9 +56,9 @@ $(OUTLIB)EgammaToolsFakeElectronSelectorZllPlusOneFake.o: $(INCLUDEDIR)/EgammaTo
 CompareROC: $(INCLUDEDIR)/EgammaTools/macro/CompareROC.C \
 	$(OUTLIB)ToolsFiguresOfMeritEvaluator.o
 	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o CompareROC $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
-ElectronIDFrienTdree: $(INCLUDEDIR)/OutputTrees/src/ElectronIDFriendTree.cc \
+ElectronIDFriendTree: $(INCLUDEDIR)/OutputTrees/src/ElectronIDFriendTree.cc \
 	$(OUTLIB)EgammaToolsElectronEffectiveArea.o
-	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o ElectronIDFrienTdree $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
+	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o ElectronIDFriendTree $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
 
 # DataFormats libs
 $(OUTLIB)DataFormatsEventHeader.o: $(INCLUDEDIR)/DataFormats/src/EventHeader.cc
