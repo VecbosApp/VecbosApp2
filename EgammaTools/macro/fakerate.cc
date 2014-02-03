@@ -2,11 +2,12 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 #include "TFile.h"
 #include "TTree.h"
-#include "TString.h"
 
 using namespace std;
+using namespace macros;
 
 int main(int argc, char* argv[]) {
 
@@ -27,25 +28,13 @@ int main(int argc, char* argv[]) {
   cout << "   friend file = " << friendfile.str() << "..." << endl;
   TFile *file = TFile::Open(infilename.str().c_str());
   TTree *tree = (TTree*)file->Get("electrons/T1");
-
+  
   ElectronFakeRateEstimation analyzer(tree);
-  analyzer.addFriend(friendfile.str().c_str());
-  TString outfileBias(outname);
-  outfileBias += TString("_trigger");
-  analyzer.Loop(outfileBias);
+  std::string outfileBias(outname);
+  analyzer.SetOutputFileName(outfileBias);
+  analyzer.calculateFakeRates();
   cout << "DONE triggering electrons." << endl;
   file->Close();
-
-  // cout << "run the FR for non triggering electrons..." << endl;
-  // TFile *file2 = TFile::Open("../results_data/fakes-zeeOneFake.root");
-  // TTree *tree2 = (TTree*)file2->Get("eleIDdir/T1");
-  // estimateFakeRate analyzer2(tree2);
-  // analyzer2.addIsoFriend("../results_data/fakes-zeeOneFake_hzzisoFriend.root");
-  // analyzer2.addIdBitsFriend("../results_data/fakes-zeeOneFake_hzzidbitsFriend.root");
-  // TString outfileUnbias(outname);
-  // outfileUnbias += TString("_zee1fake");
-  // analyzer2.Loop(outfileUnbias);
-  // cout << "DONE unbiased electrons." << endl;
 
   return 0;
 }

@@ -13,16 +13,16 @@ namespace macros {
     ElectronFakeRateEstimation(TTree *tree=0) : egtree(tree) { }
     /// destructor
     ~ElectronFakeRateEstimation() { };
-
-    /// attach the friend tree
-    void addFriend(const char *filename) { _friendtree = std::string(filename); }
-
+    
+    /// set the output file name
+    void SetOutputFileName(std::string outfilename) { outname_ = outfilename; }
+    
     /// calculate the fake rate for some 
-    void calculate();
-
+    void calculateFakeRates();
+    
   private:
-    std::string _friendtree;
- };
+    std::string outname_;
+  };
 
 }
 
