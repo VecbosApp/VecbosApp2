@@ -25,11 +25,18 @@ void makeFriend(const char* file, int ismc) {
 
   cout << "===> creating the friend tree for the file " << file << endl;
 
-  // 2012
-  LumiReWeighting LumiWeights( "Tools/data/pileup/puObservedProfile_Summer1253x_Data8TeV.root",
-                               "Tools/data/pileup/puObservedProfile_Summer1253x_Data8TeV.root",
-                               "generated_pu","target_pu");
-
+  // 2012 run-dependent MC
+  LumiReWeighting LumiWeights_Runs190456_To_196531( "Tools/data/pileup/194533-194533-Summer12_DD3_runDep.true.root",
+                                                    "Tools/data/pileup/190456-196531-22Jan_v1.69300.true.root",
+                                                    "pileup","pileup");
+  
+  LumiReWeighting LumiWeights_Runs198022_To_203742( "Tools/data/pileup/200519-200519-Summer12_DD3_runDep.true.root",
+                                                    "Tools/data/pileup/198022-203742-22Jan_v1.69300.true.root",
+                                                    "pileup","pileup");
+  
+  LumiReWeighting LumiWeights_Runs203777_To_208686( "Tools/data/pileup/206859-206859-Summer12_DD3_runDep.true.root",
+                                                    "Tools/data/pileup/203777-208686-22Jan_v1.69300.true.root",
+                                                    "pileup","pileup");
 
   ElectronEffectiveArea EA(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, ElectronEffectiveArea::kEleEAData2012);
 
@@ -40,9 +47,11 @@ void makeFriend(const char* file, int ismc) {
   nF.ReplaceAll(".root","_friend.root");
   TFile *fF = TFile::Open(nF,"recreate");
 
+  UInt_t run;
   Float_t chaPFIso, neuPFIso, phoPFIso, rho, eta[4];
   Float_t trkIso,ecalIso,hcalIso;
   Float_t npu[3];
+  pT->SetBranchAddress("run", &run);
   pT->SetBranchAddress("chaPFIso", &chaPFIso);
   pT->SetBranchAddress("neuPFIso", &neuPFIso);
   pT->SetBranchAddress("phoPFIso", &phoPFIso);
@@ -71,8 +80,15 @@ void makeFriend(const char* file, int ismc) {
      combPfIsoEA = chaPFIso + max<float>(0.,neuPFIso+phoPFIso - eff_area_ganh*rho);
      combDetIso = trkIso + ecalIso + hcalIso;
 
-     // this is only needed in MC
-     if(ismc) puW = LumiWeights.weight(npu[1]);
+     // this is only needed in MC (rundep MC has 3 runs for 3 periods)
+     if(ismc) {
+       if(run == 194533) puW = LumiWeights_Runs190456_To_196531.weight(npu[1]);
+       else if(run == 200519) puW = LumiWeights_Runs198022_To_203742.weight(npu[1]);
+       else if(run == 206859) puW = LumiWeights_Runs203777_To_208686.weight(npu[1]);
+       else cout << "ERROR! This shoould not happen. Not a run of the run-dependent MC" << endl;
+       // remove some unphysical tails
+       if(puW > 2) puW = 2.0;
+     }
      else puW = 1.0;
 
      fT->Fill();
@@ -88,10 +104,10 @@ void makeFriend(const char* file, int ismc) {
 
 int main(int argc, char* argv[]) {
 
-  char files1[500], files2[500], fileb1[500], fileb2[500], fileb3[500], fileb4[500], fileb5[500]; 
+  char files1[5000], files2[5000], fileb1[5000], fileb2[5000], fileb3[5000], fileb4[5000], fileb5[5000]; 
   sprintf(files1,"data/electrons.root");
-  sprintf(files2,"data/electrons_zeemc.root");
-  sprintf(fileb1,"data/fakes-zll1e.root");
+  sprintf(files2,"data/dyeerundep.root");
+  sprintf(fileb1,"data/zll1fake.root");
   // sprintf(fileb2,"data/fakes.root");
   // sprintf(fileb3,"data/fakes-wlnu1e.root");
 
