@@ -134,6 +134,10 @@ void ElectronIDTree::addRunInfos() {
   myTree->Branch("mcmatch",  &myMCMatch,"mcmatch/O");
 }
 
+void ElectronIDTree::addEventInfos() {
+  myTree->Branch("met",  &myMET,   "met/F");
+}
+
 void ElectronIDTree::addAttributesBackground() {
 
   myTree->Branch("qcdDeltaphi",    &myQCDDeltaphi,    "qcdDeltaphi/F");
