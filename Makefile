@@ -201,6 +201,9 @@ $(OUTLIB)JetToolsSimpleJetCorrector.o: $(INCLUDEDIR)/JetTools/src/SimpleJetCorre
 $(OUTLIB)JetToolsFactorizedJetCorrector.o: $(INCLUDEDIR)/JetTools/src/FactorizedJetCorrector.cc \
 	$(OUTLIB)JetToolsSimpleJetCorrector.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsFactorizedJetCorrector.o $<
+$(OUTLIB)JetToolsCorrectedJetProducer.o: $(INCLUDEDIR)/JetTools/src/CorrectedJetProducer.cc \
+	$(OUTLIB)JetToolsFactorizedJetCorrector.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsCorrectedJetProducer.o $<
 
 
 # Output trees libs
@@ -229,7 +232,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)JetToolsFactorizedJetCorrector.o \
 	$(OUTLIB)JetToolsJetCorrectionUncertainty.o \
 	$(OUTLIB)EgammaToolsElectronIDSelector.o \
-	$(OUTLIB)MuonToolsMuonIDSelector.o
+	$(OUTLIB)MuonToolsMuonIDSelector.o \
+	$(OUTLIB)JetToolsCorrectedJetProducer.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 
