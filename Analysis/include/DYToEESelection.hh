@@ -6,6 +6,7 @@
 #include "Tools/include/HLTFilter.hh"
 #include "DataFormats/include/Electron.hh"
 #include "OutputTrees/include/ElectronIDTree.hh"
+#include "JetTools/include/CorrectedJetProducer.hh"
 
 namespace vecbos {
 
@@ -30,6 +31,7 @@ namespace vecbos {
     ElectronIDSelector elid_mva_tight;
     HLTFilter *doubleele_filter_8TeV;
     ElectronIDTree *output;
+    CorrectedJetProducer *CorrJetProducer_;
 
   };
 

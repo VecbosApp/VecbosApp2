@@ -2,6 +2,7 @@
 #define VECBOS_JET_FWD_HH
 
 #include "DataFormats/include/Jet.hh"
+#include "DataFormats/include/CandidateFwd.hh"
 
 namespace vecbos {
 
