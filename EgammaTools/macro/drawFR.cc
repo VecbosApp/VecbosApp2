@@ -94,7 +94,7 @@ void drawOneComparison(vector<TH1F*> histos, vector<TString> descr, TString xaxi
   basename.ReplaceAll("Eff","FR");
   c1->SaveAs(basename+TString(".png"));
   c1->SaveAs(basename+TString(".pdf"));
-
+  c1->SaveAs(basename+TString(".C"));
 }
 
 void drawIDCutWPs() {
