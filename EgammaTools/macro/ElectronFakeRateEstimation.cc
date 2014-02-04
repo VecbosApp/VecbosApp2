@@ -35,21 +35,21 @@ void ElectronFakeRateEstimation::calculateFakeRates() {
   
   std::vector<TH1F*> EleEta;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_Eta",   "HWW BDT ID #eta", 4, LowerEta);
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_Eta",   "selection#eta", 4, LowerEta);
     EleEta.push_back(aHisto);
   }
 
   // eta, high pT
   std::vector<TH1F*> EleEtaHighPt;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_EtaHighPt",   "HWW BDT ID #eta", 4, LowerEta);   
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_EtaHighPt",   "selection#eta", 4, LowerEta);   
     EleEtaHighPt.push_back(aHisto);
   }
 
   // eta, low pT
   std::vector<TH1F*> EleEtaLowPt;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_EtaLowPt",   "HWW BDT ID #eta", 4, LowerEta);  
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_EtaLowPt",   "selection#eta", 4, LowerEta);  
     EleEtaLowPt.push_back(aHisto);
   }
 
@@ -61,13 +61,13 @@ void ElectronFakeRateEstimation::calculateFakeRates() {
 
   std::vector<TH1F*> ElePtBarrel;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PtBarrel", "HWW BDT ID #eta",   10, LowerPt );
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PtBarrel", "selection#eta",   10, LowerPt );
     ElePtBarrel.push_back(aHisto);
   }
 
   std::vector<TH1F*> ElePtEndcap;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PtEndcap", "HWW BDT ID #eta",   10, LowerPt );
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PtEndcap", "selection#eta",   10, LowerPt );
     ElePtEndcap.push_back(aHisto);
   }
 
@@ -92,14 +92,14 @@ void ElectronFakeRateEstimation::calculateFakeRates() {
   // barrel
   std::vector<TH1F*> ElePUBarrel;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PUBarrel", "HWW BDT ID #eta",   10, LowerPU );
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PUBarrel", "selection#eta",   10, LowerPU );
     ElePUBarrel.push_back(aHisto);
   }
 
   // endcap
   std::vector<TH1F*> ElePUEndcap;
   for (int i=0;i<(int)EgammaEleID.size();++i) {
-    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PUEndcap", "HWW BDT ID #eta",   10, LowerPU );
+    TH1F* aHisto = new TH1F( EgammaEleID[i]+"_PUEndcap", "selection#eta",   10, LowerPU );
     ElePUEndcap.push_back(aHisto);
   }
 
@@ -113,6 +113,9 @@ void ElectronFakeRateEstimation::calculateFakeRates() {
     
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     if (jentry%100000 == 0) std::cout << ">>> Processing event # " << jentry << std::endl;
+
+    // to remove WZ events
+    if(met > 25) continue;
 
     // fill the denominator: take only the highest pT denominator candidate
     float etaFake = fabs(eta[1]);

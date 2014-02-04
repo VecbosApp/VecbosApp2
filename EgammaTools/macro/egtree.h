@@ -127,6 +127,7 @@ public :
    Float_t         chaPFIso;
    Float_t         neuPFIso;
    Float_t         phoPFIso;
+   Float_t         met;
 
    // List of branches
    TBranch        *b_Charge;   //!
@@ -234,6 +235,7 @@ public :
    TBranch        *b_chPFIso;   //!
    TBranch        *b_neuPFIso;   //!
    TBranch        *b_phoPFIso;   //!
+   TBranch        *b_met;   //!
 
    egtree(TTree *tree=0);
    virtual ~egtree();
@@ -411,6 +413,7 @@ void egtree::Init(TTree *tree)
    fChain->SetBranchAddress("chaPFIso", &chaPFIso, &b_chPFIso);
    fChain->SetBranchAddress("neuPFIso", &neuPFIso, &b_neuPFIso);
    fChain->SetBranchAddress("phoPFIso", &phoPFIso, &b_phoPFIso);
+   fChain->SetBranchAddress("met", &met, &b_met);
    Notify();
 }
 
