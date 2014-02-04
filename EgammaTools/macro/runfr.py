@@ -20,14 +20,13 @@ if(options.drawonly == False):
         os.system('make fakerate')
         print 'done complining.'
 
-    if(options.electrons == True):
-        os.system('./fakerate fakes-zll1e fr')
-        os.system('hadd -f fakerates_nontrg.root fr-EleMisid*')
-        os.system('rm -f fr-EleMisid*.root')
+    os.system('./fakerate zll1fake fr')
+    os.system('hadd -f fakerates_nontrg.root fr-EleMisid*')
+    os.system('rm -f fr-EleMisid*.root')
 
 from ROOT import gROOT
 gROOT.LoadMacro('drawFR.cc+')
-if(options.electrons == True):
-    from ROOT import drawIdsBiased
-    drawIdsBiased()
-
+from ROOT import drawIDCutWPs
+drawIDCutWPs()
+from ROOT import drawIDmvaWPs
+drawIDmvaWPs()
