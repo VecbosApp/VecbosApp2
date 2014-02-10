@@ -555,6 +555,7 @@ void AnalysisBase::loadElectronCollection() {
     Electron::IDMvaOutput mvas;
     mvas.mvaTriggering = mvaidtrigEle[i];
     mvas.mvaNonTriggering = mvaidnontrigEle[i];
+    mvas.mvaPFlow = pflowMVAEle[i];
 
     electron->setIDMVAs(mvas);
 
