@@ -167,6 +167,7 @@ void ElectronIDTree::addIsolations() {
 void ElectronIDTree::addMVAs() {
   myTree->Branch("bdttrg",     &myBdtTrg,    "bdthww/F");
   myTree->Branch("bdtnontrg",  &myBdtNonTrg, "bdtnontrg/F");
+  myTree->Branch("bdtpf",      &myBdtPflow,  "bdtpf/F");
 }
 
 void ElectronIDTree::addMomenta() {
@@ -257,7 +258,8 @@ void ElectronIDTree::fillElectronInfos(Electron electron) {
 		 electron.dr04pfNeutralHadronSumEt() );
 
   fillMVAs(electron.mvaTriggering(),
-	   electron.mvaNonTriggering() );
+	   electron.mvaNonTriggering(),
+           electron.mvaPFlow());
 
   ElectronIDAlgo algo(myRho,vertices_);
   algo.setElectron(electron);
@@ -411,9 +413,10 @@ void ElectronIDTree::fillCategories(int iecal, int iptbin, int iclass, int nbr) 
   mynbrem=nbr;
 }
 
-void ElectronIDTree::fillMVAs(float bdthww, float bdthzz) {
+void ElectronIDTree::fillMVAs(float bdthww, float bdthzz, float bdtpflow) {
   myBdtTrg=bdthww;
   myBdtNonTrg=bdthzz;
+  myBdtPflow=bdtpflow;
 }
 
 void ElectronIDTree::fillMomenta(Electron electron) {

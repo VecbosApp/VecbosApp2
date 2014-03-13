@@ -81,7 +81,7 @@ namespace vecbos {
 			float chaPFiso, float neuPFiso, float phoPFiso);
 
     //! fill the ID MVAs output
-    void fillMVAs(float bdthww, float bdthzz);
+    void fillMVAs(float bdthww, float bdthzz, float bdtpflow);
 
 
     //! fill the electron ID bits
@@ -138,7 +138,7 @@ namespace vecbos {
 
     float myNVtx;
     float myRho;
-    float myBdtTrg, myBdtNonTrg;
+    float myBdtTrg, myBdtNonTrg, myBdtPflow;
 
     //! [0,1,2,3,4] = calib comb, comb, ECAL, GSF track mean, GSF track mode
     float myElePt[5], myEleEta[5], myElePhi[5];
