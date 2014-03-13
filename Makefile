@@ -56,6 +56,9 @@ $(OUTLIB)EgammaToolsFakeElectronSelectorZllPlusOneFake.o: $(INCLUDEDIR)/EgammaTo
 CompareROC: $(INCLUDEDIR)/EgammaTools/macro/CompareROC.C \
 	$(OUTLIB)ToolsFiguresOfMeritEvaluator.o
 	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o CompareROC $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
+ElectronIDFriendTree: $(INCLUDEDIR)/OutputTrees/src/ElectronIDFriendTree.cc \
+	$(OUTLIB)EgammaToolsElectronEffectiveArea.o
+	$(CXX) $(CXXFLAGS) -I$(INCLUDEDIR) -ldl -o ElectronIDFriendTree $(OUTLIB)/*.o $(GLIBS) $(LDFLAGS) $ $<
 
 # DataFormats libs
 $(OUTLIB)DataFormatsEventHeader.o: $(INCLUDEDIR)/DataFormats/src/EventHeader.cc
@@ -198,9 +201,12 @@ $(OUTLIB)JetToolsSimpleJetCorrector.o: $(INCLUDEDIR)/JetTools/src/SimpleJetCorre
 $(OUTLIB)JetToolsFactorizedJetCorrector.o: $(INCLUDEDIR)/JetTools/src/FactorizedJetCorrector.cc \
 	$(OUTLIB)JetToolsSimpleJetCorrector.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsFactorizedJetCorrector.o $<
+$(OUTLIB)JetToolsCorrectedJetProducer.o: $(INCLUDEDIR)/JetTools/src/CorrectedJetProducer.cc \
+	$(OUTLIB)JetToolsFactorizedJetCorrector.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetToolsCorrectedJetProducer.o $<
 
 
-# Output trees
+# Output trees libs
 $(OUTLIB)OutputTreesElectronIDTree.o: $(INCLUDEDIR)/OutputTrees/src/ElectronIDTree.cc \
 	$(OUTLIB)DataFormatsElectron.o \
 	$(OUTLIB)DataFormatsVertex.o \
@@ -226,7 +232,8 @@ $(OUTLIB)AnalysisAnalysisBase.o: $(INCLUDEDIR)/Analysis/src/AnalysisBase.cc \
 	$(OUTLIB)JetToolsFactorizedJetCorrector.o \
 	$(OUTLIB)JetToolsJetCorrectionUncertainty.o \
 	$(OUTLIB)EgammaToolsElectronIDSelector.o \
-	$(OUTLIB)MuonToolsMuonIDSelector.o
+	$(OUTLIB)MuonToolsMuonIDSelector.o \
+	$(OUTLIB)JetToolsCorrectedJetProducer.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)AnalysisAnalysisBase.o $<
 
 

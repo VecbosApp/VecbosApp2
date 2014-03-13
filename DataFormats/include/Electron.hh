@@ -357,15 +357,17 @@ namespace vecbos {
     {
       float mvaTriggering ;      // trained for electrons that passed the single/double electron trigger
       float mvaNonTriggering ;   // trained on reconstructed electrons 
+      float mvaPFlow ;           // old output of the PFlow electron identification
       IDMvaOutput()
-       : mvaTriggering(-999999999.), mvaNonTriggering(-999999999.)
+        : mvaTriggering(-999999999.), mvaNonTriggering(-999999999.), mvaPFlow(-999999999.)
        {}
      } ;
 
     // acessors
     float mvaTriggering() const { return idMvaOutput_.mvaTriggering ; }
     float mvaNonTriggering() const { return idMvaOutput_.mvaNonTriggering ; }
-    
+    float mvaPFlow() const { return idMvaOutput_.mvaPFlow ; }
+
     // setter
     void setIDMVAs( const IDMvaOutput & mvas ) { idMvaOutput_ = mvas; }
 

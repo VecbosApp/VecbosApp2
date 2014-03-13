@@ -165,9 +165,9 @@ bool ElectronIDAlgo::pass_mva_iso(std::string wp) {
   bool pass=true;
   ElectronEffectiveArea ea;
   if ( (wp.compare("tight")==0 ) &&
-       ea.getRhoCorrectedIsolation03(electron_,rho_)/electron_.pt() > 0.15) pass=false;
+       ea.getRhoCorrectedIsolation04(electron_,rho_)/electron_.pt() > 0.15) pass=false;
   else if ( (wp.compare("loose")==0 ) &&
-       ea.getRhoCorrectedIsolation03(electron_,rho_)/electron_.pt() > 0.40) pass=false;
+       ea.getRhoCorrectedIsolation04(electron_,rho_)/electron_.pt() > 0.40) pass=false;
 
   return pass;
 }

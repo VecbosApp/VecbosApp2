@@ -29,6 +29,10 @@ void DYToEESelection::BeginJob(JobConfiguration *conf) {
   if(ismc_) doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_mc_2012.txt");
   else doubleele_filter_8TeV->configure("Analysis/data/hlt/double_electron_data_tagandprobe_2012.txt");
 
+  /// the jet corrector
+  CorrJetProducer_ = new CorrectedJetProducer(globaltag_,"AK5PF");
+  CorrJetProducer_->setDefaultCorrections();
+
   /// output tree
   output = new ElectronIDTree((outputFileName_+".root").c_str());
   output->addRunInfos();
@@ -93,6 +97,10 @@ void DYToEESelection::Loop() {
        eleID.setElectron(*ele2);	 
        if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele1);       
        output->store();
+       
+       // look for jets and correct 
+       CorrJetProducer_->correctCollection(PfJets,rhoJetsFastJet);
+
      }
    }
 }

@@ -27,6 +27,8 @@ namespace vecbos {
     void addIsolations();
     //! add run,lumi, event number (for data)
     void addRunInfos();
+    //! add some event global variables
+    void addEventInfos();
 
     //! set vertex collection
     void setVertices(vecbos::VertexCollection vertices) { vertices_ = vertices; }
@@ -46,6 +48,10 @@ namespace vecbos {
     //! fill electron attributes + other quantities for background tag and probe
     void fillAttributesBackground(float dphi, float invmass, float met, float pth);
     
+    //! fill event infos (for now just the PF MET)
+    void fillEventInfos(float met) { myMET = met; }
+
+
     //! fill the event in the tree
     void store();
     //! close the TFile
@@ -75,7 +81,7 @@ namespace vecbos {
 			float chaPFiso, float neuPFiso, float phoPFiso);
 
     //! fill the ID MVAs output
-    void fillMVAs(float bdthww, float bdthzz);
+    void fillMVAs(float bdthww, float bdthzz, float bdtpflow);
 
 
     //! fill the electron ID bits
@@ -106,6 +112,7 @@ namespace vecbos {
     bool myEventNumberParity;
     float myZmass, myZDec, myWeight;
     float myGeneratedEnergy,myGeneratedTheta,myGeneratedPhi;
+    float myMET;
 
     int myCutBasedId[4], myCutBasedIdOnlyID[4], myCutBasedIdOnlyIso[4], myCutBasedIdOnlyConv[4];
     int myBDTId[2], myBDTIdOnlyID[2], myBDTIdOnlyIso[2], myBDTIdOnlyConv[2];
@@ -131,10 +138,10 @@ namespace vecbos {
 
     float myNVtx;
     float myRho;
-    float myBdtTrg, myBdtNonTrg;
+    float myBdtTrg, myBdtNonTrg, myBdtPflow;
 
-    //! [0,1,2,3] = calib comb, comb, ECAL, GSF track
-    float myElePt[4], myEleEta[4], myElePhi[4];
+    //! [0,1,2,3,4] = calib comb, comb, ECAL, GSF track mean, GSF track mode
+    float myElePt[5], myEleEta[5], myElePhi[5];
 
     TFile *myFile;
     TTree *myTree;

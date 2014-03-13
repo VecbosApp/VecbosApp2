@@ -39,6 +39,7 @@ void FakeElectronSelectorZllPlusOneFake::BeginJob(JobConfiguration *conf) {
   output->addElectronIdBits();
   output->addDenominatorFakeBits();
   output->addIsolations();
+  output->addEventInfos();
   
 }
 
@@ -147,5 +148,6 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
 void FakeElectronSelectorZllPlusOneFake::fillProbe(Electron *electron, float zmass, int zdecay) {
   output->fillElectronInfos(*electron);
   output->fillAttributesSignal(zmass, zdecay, -1, -1, -1);
+  output->fillEventInfos(PfMet.p());
   output->store();
 }

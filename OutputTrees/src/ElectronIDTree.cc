@@ -134,6 +134,10 @@ void ElectronIDTree::addRunInfos() {
   myTree->Branch("mcmatch",  &myMCMatch,"mcmatch/O");
 }
 
+void ElectronIDTree::addEventInfos() {
+  myTree->Branch("met",  &myMET,   "met/F");
+}
+
 void ElectronIDTree::addAttributesBackground() {
 
   myTree->Branch("qcdDeltaphi",    &myQCDDeltaphi,    "qcdDeltaphi/F");
@@ -163,12 +167,13 @@ void ElectronIDTree::addIsolations() {
 void ElectronIDTree::addMVAs() {
   myTree->Branch("bdttrg",     &myBdtTrg,    "bdthww/F");
   myTree->Branch("bdtnontrg",  &myBdtNonTrg, "bdtnontrg/F");
+  myTree->Branch("bdtpf",      &myBdtPflow,  "bdtpf/F");
 }
 
 void ElectronIDTree::addMomenta() {
-  myTree->Branch("pt",  &myElePt,  "pt[4]/F");
-  myTree->Branch("eta", &myEleEta, "eta[4]/F");
-  myTree->Branch("phi", &myElePhi, "phi[4]/F");
+  myTree->Branch("pt",  &myElePt,  "pt[5]/F");
+  myTree->Branch("eta", &myEleEta, "eta[5]/F");
+  myTree->Branch("phi", &myElePhi, "phi[5]/F");
 }
 
 void ElectronIDTree::store() {
@@ -253,7 +258,8 @@ void ElectronIDTree::fillElectronInfos(Electron electron) {
 		 electron.dr04pfNeutralHadronSumEt() );
 
   fillMVAs(electron.mvaTriggering(),
-	   electron.mvaNonTriggering() );
+	   electron.mvaNonTriggering(),
+           electron.mvaPFlow());
 
   ElectronIDAlgo algo(myRho,vertices_);
   algo.setElectron(electron);
@@ -407,9 +413,10 @@ void ElectronIDTree::fillCategories(int iecal, int iptbin, int iclass, int nbr) 
   mynbrem=nbr;
 }
 
-void ElectronIDTree::fillMVAs(float bdthww, float bdthzz) {
+void ElectronIDTree::fillMVAs(float bdthww, float bdthzz, float bdtpflow) {
   myBdtTrg=bdthww;
   myBdtNonTrg=bdthzz;
+  myBdtPflow=bdtpflow;
 }
 
 void ElectronIDTree::fillMomenta(Electron electron) {
@@ -425,10 +432,14 @@ void ElectronIDTree::fillMomenta(Electron electron) {
   myElePt[2]  = electron.superCluster().et();
   myEleEta[2] = electron.eta();
   myElePhi[2] = electron.phi();
-  /// GSF track momentum
+  /// GSF track momentum (mean)
   myElePt[3]  = electron.gsfTrack().pt();
   myEleEta[3] = electron.gsfTrack().eta();
   myElePhi[3] = electron.gsfTrack().phi();
+  /// GSF track momentum (mode)
+  myElePt[4]  = electron.gsfTrack().momentumMode().Pt();
+  myEleEta[4] = electron.gsfTrack().momentumMode().Eta();
+  myElePhi[4] = electron.gsfTrack().momentumMode().Phi();
 }
 
 void ElectronIDTree::fillFakeRateDenomBits(float leadJetPt, Electron electron) {
