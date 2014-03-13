@@ -140,8 +140,8 @@ namespace vecbos {
     float myRho;
     float myBdtTrg, myBdtNonTrg;
 
-    //! [0,1,2,3] = calib comb, comb, ECAL, GSF track
-    float myElePt[4], myEleEta[4], myElePhi[4];
+    //! [0,1,2,3,4] = calib comb, comb, ECAL, GSF track mean, GSF track mode
+    float myElePt[5], myEleEta[5], myElePhi[5];
 
     TFile *myFile;
     TTree *myTree;

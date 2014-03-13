@@ -170,9 +170,9 @@ void ElectronIDTree::addMVAs() {
 }
 
 void ElectronIDTree::addMomenta() {
-  myTree->Branch("pt",  &myElePt,  "pt[4]/F");
-  myTree->Branch("eta", &myEleEta, "eta[4]/F");
-  myTree->Branch("phi", &myElePhi, "phi[4]/F");
+  myTree->Branch("pt",  &myElePt,  "pt[5]/F");
+  myTree->Branch("eta", &myEleEta, "eta[5]/F");
+  myTree->Branch("phi", &myElePhi, "phi[5]/F");
 }
 
 void ElectronIDTree::store() {
@@ -429,10 +429,14 @@ void ElectronIDTree::fillMomenta(Electron electron) {
   myElePt[2]  = electron.superCluster().et();
   myEleEta[2] = electron.eta();
   myElePhi[2] = electron.phi();
-  /// GSF track momentum
+  /// GSF track momentum (mean)
   myElePt[3]  = electron.gsfTrack().pt();
   myEleEta[3] = electron.gsfTrack().eta();
   myElePhi[3] = electron.gsfTrack().phi();
+  /// GSF track momentum (mode)
+  myElePt[4]  = electron.gsfTrack().momentumMode().Pt();
+  myEleEta[4] = electron.gsfTrack().momentumMode().Eta();
+  myElePhi[4] = electron.gsfTrack().momentumMode().Phi();
 }
 
 void ElectronIDTree::fillFakeRateDenomBits(float leadJetPt, Electron electron) {

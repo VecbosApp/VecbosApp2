@@ -304,12 +304,14 @@ void AnalysisBase::loadGsfTracks() {
   for(int i=0; i<nGsfTrack; ++i) {
 
     Track::Vector momentum(pxGsfTrack[i],pyGsfTrack[i],pzGsfTrack[i]);
+    Track::Vector momentumMode(pxModeGsfTrack[i],pyModeGsfTrack[i],pzModeGsfTrack[i]);
 
     Track track(trackNormalizedChi2GsfTrack[i], firstGoodPV, momentum, chargeGsfTrack[i]);
+    track.setMomentumMode(momentumMode);
 
     Track::Point trackVxt(trackVxGsfTrack[i],trackVyGsfTrack[i],trackVzGsfTrack[i]);
     track.setVertex(trackVxt);
-    
+
     Track::HitPattern pattern;
     pattern.numberOfValidHits = trackValidHitsGsfTrack[i];
     pattern.numberOfLostHits = trackLostHitsGsfTrack[i];

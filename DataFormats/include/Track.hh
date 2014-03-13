@@ -63,6 +63,8 @@ namespace vecbos {
     const Vector & momentum() const { return momentum_; }
     /// track momentum error
     const float ptError() const { return ptErr_; }
+    /// track momentum mode vector (valid only for a GSF track)
+    const Vector & momentumMode() const { return momentumMode_; }
 
     /// Reference point on the track
     const Point & referencePoint() const { return vertex_; }
@@ -83,6 +85,9 @@ namespace vecbos {
     double dz(const Point& myBeamSpot) const { 
       return (vz()-myBeamSpot.z()) - ((vx()-myBeamSpot.x())*px()+(vy()-myBeamSpot.y())*py())/pt() * pz()/pt(); 
     }
+
+    /// set the momentum calculated with the mode
+    void setMomentumMode(Vector mode) { momentumMode_ = mode; }
 
     /// validity of the track
     bool isValid() { return isValid_; }
@@ -157,6 +162,9 @@ namespace vecbos {
     Point vertex_;
     /// momentum vector at innermost point
     Vector momentum_;
+    /// momentum vector at innermost point calculated with the mode
+    /// valid only for the GSF tracks
+    Vector momentumMode_;
     /// momentum error
     float ptErr_;
     /// electric charge
