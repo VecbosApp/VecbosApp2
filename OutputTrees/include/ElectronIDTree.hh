@@ -64,7 +64,7 @@ namespace vecbos {
     //! first set
     void fillVariables(int charge, float eleEoPout, float EoPout, float EoP, float HoE, float Deta, float Dphi, float s9s25, float s1s9, float See, float Spp, float fbrem, 
 		       int nbrems, int nHits, float dcot, float dist, float phiwidth, float etawidth,
-		       float IoEmIoP, float eledeta, float d0, float ip3d, float ip3ds, int kfhits, int kflayers, float kfchi2, float e1x5e5x5, int ecaldriven, bool matchConv,
+		       float IoEmIoP, float eledeta, float d0, float ip3d, float ip3ds, int kfhits, int gsfhits, int kflayers, float kfchi2, float e1x5e5x5, int ecaldriven, bool matchConv,
 		       bool iseb, bool isee);
     //! second set
     void fillVariables2(float detacalo, float dphicalo, float sep, float dz, float gsfchi2, float emaxovere, float etopovere, float ebottomovere, float eleftovere, float erightovere,
@@ -97,7 +97,7 @@ namespace vecbos {
 
     float myEEleoPout, myEseedoPout, myEoP,myHoE,myDeta,myDphi,mys9s25,mys1s9,mySee,mySpp,myFbrem, myPhiWidth, myEtaWidth, myEseedoPin;
     float myIoEoIoP, myEleDeta, myD0, myIP3d, myIP3dSig, myKFChi2, myE1x5E5x5, myPreShowerOverRaw;
-    float myNbrems, myKFHits, myKFLayers, myMissHits;
+    float myNbrems, myKFHits, myGSFHits, myKFLayers, myMissHits;
     bool myMatchConv, myEcalDriven;
     float myDetaCalo, myDphiCalo, mySep, myDZ, myGSFChi2;
     float mySeedEMax,mySeedETop,mySeedEBottom,mySeedELeft,mySeedERight,mySeedE2nd,mySeedE2x5Right,mySeedE2x5Left,mySeedE2x5Top,mySeedE2x5Bottom;

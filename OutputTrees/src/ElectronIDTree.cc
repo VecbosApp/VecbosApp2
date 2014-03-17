@@ -37,6 +37,7 @@ ElectronIDTree::ElectronIDTree(const char *filename) {
   myTree->Branch("ip3d",            &myIP3d,            "ip3d/F");
   myTree->Branch("ip3ds",           &myIP3dSig,         "ip3ds/F");
   myTree->Branch("kfhits",          &myKFHits,          "kfhits/F");
+  myTree->Branch("gsfhits",         &myGSFHits,         "gsfhits/F");
   myTree->Branch("kflayers",        &myKFLayers,        "kflayers/F");
   myTree->Branch("kfchi2",          &myKFChi2,          "kfchi2/F");
   myTree->Branch("gsfchi2",         &myGSFChi2,         "gsfchi2/F");
@@ -213,6 +214,7 @@ void ElectronIDTree::fillElectronInfos(Electron electron) {
 		electron.gsfTrack().ip3D(),
 		electron.gsfTrack().sip3D(),
 		electron.closestTrack().numberOfValidHits(),
+		electron.gsfTrack().numberOfValidHits(),
 		electron.closestTrack().getHitPattern().trackerLayersWithMeasurement,
 		electron.closestTrack().normalizedChi2(),
 		electron.superCluster().e1x5()/electron.superCluster().e5x5(),
@@ -292,7 +294,7 @@ void ElectronIDTree::fillElectronInfos(Electron electron) {
 
 void ElectronIDTree::fillVariables(int charge, float eleEoPout, float EseedoPout, float EoP, float HoE, float Deta, float Dphi, float s9s25, float s1s9, float See, float Spp, float fbrem, 
                                  int nbrems, int nHits, float dcot, float dist, float phiwidth, float etawidth,
-                                 float IoEmIoP, float eledeta, float d0, float ip3d, float ip3ds, int kfhits, int kflayers, float kfchi2, float e1x5e5x5, int ecaldriven, bool matchConv, 
+				   float IoEmIoP, float eledeta, float d0, float ip3d, float ip3ds, int kfhits, int gsfhits, int kflayers, float kfchi2, float e1x5e5x5, int ecaldriven, bool matchConv, 
                                  bool iseb, bool isee) {
   myCharge=charge;
   myEEleoPout=eleEoPout;
@@ -318,6 +320,7 @@ void ElectronIDTree::fillVariables(int charge, float eleEoPout, float EseedoPout
   myIP3d=ip3d;
   myIP3dSig=ip3ds;
   myKFHits=float(kfhits);
+  myGSFHits=float(gsfhits);
   myKFLayers=float(kflayers);
   myKFChi2=kfchi2;
   myE1x5E5x5=e1x5e5x5;
