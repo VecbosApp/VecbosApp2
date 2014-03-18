@@ -38,6 +38,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TMath.h"
+#include "TLegend.h"
 #include "TGraphAsymmErrors.h"
 #include "hzztree.C"
 #include "../../Tools/src/RooHZZStyle.C"
@@ -49,6 +50,12 @@ void makefit(string inputFilename, string outFilename,
 	     double minMass, double maxMass, 
 	     double mean_bw, double gamma_bw, double cutoff_cb, double power_cb,
 	     const char *plotOpt, const int nbins, Int_t isMC);
+
+void makejpsifit(string inputFilename, string outFilename,  
+		 Int_t ptBin, Int_t etaBin,
+		 double minMass, double maxMass, 
+		 double mean_bw, double gamma_bw, double cutoff_cb, double power_cb,
+		 const char *plotOpt, const int nbins, Int_t isMC);
 
 void FitZMassScaleAndResolution(string inputFilename, string outFilename, Int_t ptBin, Int_t etaBin, Int_t R9Bin, Int_t isMC) {
 
@@ -275,15 +282,241 @@ void makefit(string inputFilename, string outFilename,
 }
 
 
-void plotZResolution() {
+
+void FitJPsiMassScaleAndResolution(string inputFilename, string outFilename, Int_t ptBin, Int_t etaBin, Int_t isMC) {
+
+  // Define Fit Inputs and Call Fit
+  double minMass = 1.5;
+  double maxMass = 3.8;
+  double mean_bw = 3.096916;
+  double gamma_bw = 92.9e-6;
+  double cutoff_cb = 1.0;
+//double power_cb = 1.40;		// Use to fix some fits
+  double power_cb = 2.45;
+  const char *plotOpt = "NEU";
+  const int nbins = 40;
+
+  // Call the fitting program and output a workspace with a root file
+  // of the model and data as well as a pdf of the fit
+  makejpsifit(inputFilename, outFilename, ptBin, etaBin, minMass,  maxMass,  mean_bw,  gamma_bw,  cutoff_cb, power_cb, plotOpt, nbins, isMC);
+
+}
+//______________________________________________________________
+
+
+void makejpsifit(string inputFilename, string outFilename, 
+		 Int_t ptBin, Int_t etaBin,
+		 double minMass, double maxMass, 
+		 double mean_bw, double gamma_bw, double cutoff_cb, double power_cb, 
+		 const char* plotOpt, const int nbins, Int_t isMC) {
 
   TStyle *mystyle = RooHZZStyle("ZZ");
   mystyle->cd();
 
-  double binedges[5] = {20,30,40,50,70};
-  TGraphAsymmErrors gReso[2][2];
-  TGraphAsymmErrors gScale[2][2];
+  //Create Data Set
+  RooRealVar mass("zmass","m(e^{+}e^{-})",minMass,maxMass,"GeV/c^{2}");
+
+  // Reading everything from root tree instead
+  TFile *tfile = TFile::Open(inputFilename.c_str());
+  TTree *ttree = (TTree*)tfile->Get("zeetree/probe_tree");
+  hzztree *zeeTree = new hzztree(ttree);
   
+  RooArgSet zMassArgSet(mass);
+  RooDataSet* data = new RooDataSet("data", "ntuple parameters", zMassArgSet);
+
+  for (int i = 0; i < zeeTree->fChain->GetEntries(); i++) {
+    if(i%100000==0) cout << "Processing Event " << i << endl;
+    zeeTree->fChain->GetEntry(i);
+
+    //*************************************************************************
+    //Electron Selection
+    //*************************************************************************
+    // already passed for this tree
+
+    //*************************************************************************
+    //Compute electron four vector;
+    //*************************************************************************
+    double ele1pt = zeeTree->l1pt;
+    double ele2pt = zeeTree->l2pt;
+
+    double ELECTRONMASS = 0.51e-3;
+    TLorentzVector ele1FourVector;
+    ele1FourVector.SetPtEtaPhiM(zeeTree->l1pt, zeeTree->l1eta, zeeTree->l1phi, ELECTRONMASS);
+    TLorentzVector ele2FourVector;
+    ele2FourVector.SetPtEtaPhiM(zeeTree->l2pt, zeeTree->l2eta, zeeTree->l2phi, ELECTRONMASS);
+
+    
+    //*************************************************************************
+    //pt and eta cuts on electron
+    //*************************************************************************
+    if (! (ele1pt > 7 && ele2pt > 7
+           && fabs( zeeTree->l1eta) < 2.5 
+           && fabs( zeeTree->l2eta) < 2.5 )) continue;
+
+    //*************************************************************************
+    //pt bins and eta bins
+    //*************************************************************************
+    Int_t Ele1PtBin = -1;
+    Int_t Ele1EtaBin = -1;
+    Int_t Ele2PtBin = -1;
+    Int_t Ele2EtaBin = -1;
+    if (ele1pt > 7 && ele1pt < 10) Ele1PtBin = 0;
+    else if (ele1pt < 15) Ele1PtBin = 1;
+    else if (ele1pt < 20) Ele1PtBin = 2;
+    else if (ele1pt < 30) Ele1PtBin = 3;
+    else Ele1PtBin = 4;
+    if (ele2pt > 7 && ele2pt < 10) Ele2PtBin = 0;
+    else if (ele2pt < 15) Ele2PtBin = 1;
+    else if (ele2pt < 20) Ele2PtBin = 2;
+    else if (ele2pt < 30) Ele2PtBin = 3;
+    else Ele2PtBin = 4;
+    if (fabs(zeeTree->l1sceta) < 1.479) Ele1EtaBin = 0;
+    else Ele1EtaBin = 1;
+    if (fabs(zeeTree->l2sceta) < 1.479) Ele2EtaBin = 0;
+    else Ele2EtaBin = 1;
+
+    if (!(Ele1PtBin == ptBin || Ele2PtBin == ptBin)) continue; 
+    if (!(Ele1EtaBin == etaBin && Ele2EtaBin == etaBin)) continue; 
+    
+    //*************************************************************************
+    // restrict range of mass
+    //*************************************************************************
+    double zMass = (ele1FourVector+ele2FourVector).M();
+    if (zMass < minMass || zMass > maxMass) continue;
+
+    //*************************************************************************
+    //set mass variable
+    //*************************************************************************
+    zMassArgSet.setRealValue("zmass", zMass);    
+
+    data->add(zMassArgSet);
+  }
+
+  // do binned fit to gain time...
+  mass.setBins(nbins);
+  RooDataHist *bdata = new RooDataHist("data_binned","data_binned", zMassArgSet, *data);
+
+  cout << "dataset size: " << data->numEntries() << endl;
+
+//   // Closing file
+//   treeFile->Close();
+  //====================== Parameters===========================
+
+  //Crystal Ball parameters
+//   RooRealVar cbBias ("#Deltam_{CB}", "CB Bias", -.01, -10, 10, "GeV/c^{2}");
+//   RooRealVar cbSigma("sigma_{CB}", "CB Width", 1.7, 0.8, 5.0, "GeV/c^{2}");
+//   RooRealVar cbCut  ("a_{CB}","CB Cut", 1.05, 1.0, 3.0);
+//   RooRealVar cbPower("n_{CB}","CB Order", 2.45, 0.1, 20.0);
+  RooRealVar cbBias ("#Deltam_{CB}", "CB Bias", -.01, -10, 10, "GeV/c^{2}");
+  RooRealVar cbSigma("#sigma_{CB}", "CB Width", 1.5, 0.05, 5.0, "GeV/c^{2}");
+  RooRealVar cbCut  ("a_{CB}","CB Cut", 1.0, 1.0, 3.0);
+  RooRealVar cbPower("n_{CB}","CB Order", 2.5, 0.1, 20.0);
+  cbCut.setVal(cutoff_cb);
+  cbPower.setVal(power_cb);
+
+  // Just checking
+  //cbCut.Print();
+  //cbPower.Print();
+
+  //Breit_Wigner parameters
+  RooRealVar bwMean("m_{JPsi}","BW Mean", 3.096916, "GeV/c^{2}");
+  bwMean.setVal(mean_bw);
+  RooRealVar bwWidth("#Gamma_{JPsi}", "BW Width", 92.9e-6, "GeV/c^{2}");
+  bwWidth.setVal(gamma_bw);
+
+  // Fix the Breit-Wigner parameters to PDG values
+  bwMean.setConstant(kTRUE);
+  bwWidth.setConstant(kTRUE);
+
+  // Exponential Background parameters
+  RooRealVar expRate("#lambda_{exp}", "Exponential Rate", -0.064, -1, 1);
+  RooRealVar c0("c_{0}", "c0", 1., 0., 50.);
+
+  //Number of Signal and Background events
+  RooRealVar nsig("N_{S}", "# signal events", 524, 0.1, 10000000000.);
+  RooRealVar nbkg("N_{B}", "# background events", 43, 1., 10000000.);
+
+  //============================ P.D.F.s=============================
+
+  // Mass signal for two decay electrons p.d.f.
+  RooBreitWigner bw("bw", "bw", mass, bwMean, bwWidth);
+  RooCBShape  cball("cball", "Crystal Ball", mass, cbBias, cbSigma, cbCut, cbPower);
+  RooFFTConvPdf BWxCB("BWxCB", "bw X crystal ball", mass, bw, cball);
+
+  // Mass background p.d.f.
+  RooExponential bg("bg", "exp. background", mass, expRate);
+
+  // Mass model for signal electrons p.d.f.
+  RooAddPdf model("model", "signal", RooArgList(BWxCB), RooArgList(nsig));
+
+  TStopwatch t ;
+  t.Start() ;
+  double fitmin, fitmax;
+  fitmin = (etaBin==0) ? 2.85 : 2.7;
+  fitmax = (etaBin==0) ? 3.25 : 3.4;
+  RooFitResult *fitres = model.fitTo(*bdata,Range(fitmin,fitmax),Hesse(1),Minos(1),Timer(1),Save(1));
+  fitres->SetName("fitres");
+  t.Print() ;
+
+  TCanvas* c = new TCanvas("c","Unbinned Invariant Mass Fit", 0,0,800,600);
+
+  //========================== Plotting  ============================
+  //Create a frame
+  RooPlot* plot = mass.frame(Range(minMass,maxMass),Bins(nbins));
+  // Add data and model to canvas
+  int col = (isMC ? kAzure+4 : kGreen+1);
+  data->plotOn(plot);
+  model.plotOn(plot,LineColor(col));
+  data->plotOn(plot);
+  model.paramOn(plot, Format(plotOpt, AutoPrecision(1)), Parameters(RooArgSet(cbBias, cbSigma, cbCut, cbPower, bwMean, bwWidth, expRate, nsig, nbkg)), Layout(0.15,0.45,0.80));
+  plot->getAttText()->SetTextSize(.03);
+  plot->SetTitle("");
+  plot->Draw();
+
+  // Print Fit Values
+  TLatex *tex = new TLatex();
+  tex->SetNDC();
+  tex->SetTextSize(.1);
+  tex->SetTextFont(132);
+  //  tex->Draw();
+  tex->SetTextSize(0.057);
+  if(isMC) tex->DrawLatex(0.65, 0.75, "J/#psi #rightarrow e^{+}e^{-} MC");
+  else tex->DrawLatex(0.65, 0.75, "J/#psi #rightarrow e^{+}e^{-} data");
+  tex->SetTextSize(0.030);
+  tex->DrawLatex(0.645, 0.65, Form("BW Mean = %.2f GeV/c^{2}", bwMean.getVal()));
+  tex->DrawLatex(0.645, 0.60, Form("BW #sigma = %.2f GeV/c^{2}", bwWidth.getVal()));
+  c->Update();
+  c->SaveAs((outFilename + ".pdf").c_str());
+  c->SaveAs((outFilename + ".png").c_str());
+
+  // tablefile << Form(Outfile + "& $ %f $ & $ %f $ & $ %f $\\ \hline",cbBias.getVal(), cbSigma.getVal(), cbCut.getVal());
+  // Output workspace with model and data
+
+  RooWorkspace *w = new RooWorkspace("JPsieeMassScaleAndResolutionFit");
+  w->import(model);
+  w->import(*bdata);
+  w->writeToFile((outFilename + ".root").c_str());  
+
+  TFile *tfileo = TFile::Open((outFilename + ".root").c_str(),"update");
+  fitres->Write();
+  tfileo->Close();
+
+}
+
+
+void plotResolution() {
+
+  TStyle *mystyle = RooHZZStyle("ZZ");
+  mystyle->cd();
+
+  double binedgesZ[5] = {20,30,40,50,70};
+  double binedgesJPsi[6] = {7,10,15,20,30,40};
+  TGraphAsymmErrors gScaleZ[2][2];
+  TGraphAsymmErrors gResoZ[2][2];
+  TGraphAsymmErrors gScaleJPsi[2];
+  TGraphAsymmErrors gResoJPsi[2];
+
+  // Z->ee
   for(int ipt=0; ipt<4; ++ipt) {
     for(int ieta=0; ieta<2; ++ieta) {
       for(int ir9=0; ir9<2; ++ir9) {
@@ -314,64 +547,131 @@ void plotZResolution() {
 	cout << "rS = " << rS << endl;
 	float rS_err = rS * sqrt(dataS_err*dataS_err + mcS_err*mcS_err);
 	
-	float bincenter=(binedges[ipt+1]+binedges[ipt])/2.;
+	float bincenter=(binedgesZ[ipt+1]+binedgesZ[ipt])/2.;
 	// add some offset not to overlap points
 	bincenter += (ieta==0) ? 2. : -2.;
 	bincenter += (ir9==0) ? 1. : -1.;
 	
-	float binerrup=binedges[ipt+1]-bincenter;
-	float binerrdn=bincenter-binedges[ipt];
+	float binerrup=binedgesZ[ipt+1]-bincenter;
+	float binerrdn=bincenter-binedgesZ[ipt];
 
-	gScale[ieta][ir9].SetPoint(ipt,bincenter,rM);
-	gScale[ieta][ir9].SetPointError(ipt,binerrdn,binerrup,rM_err,rM_err);
-	gReso[ieta][ir9].SetPoint(ipt,bincenter,rS);
-	gReso[ieta][ir9].SetPointError(ipt,binerrdn,binerrup,rS_err,rS_err);
+	gScaleZ[ieta][ir9].SetPoint(ipt,bincenter,rM);
+	gScaleZ[ieta][ir9].SetPointError(ipt,binerrdn,binerrup,rM_err,rM_err);
+	gResoZ[ieta][ir9].SetPoint(ipt,bincenter,rS);
+	gResoZ[ieta][ir9].SetPointError(ipt,binerrdn,binerrup,rS_err,rS_err);
       }
     }
   }
 
+  // JPsi->ee
+  for(int ipt=0; ipt<4; ++ipt) {
+    for(int ieta=0; ieta<2; ++ieta) {
 
+	cout << "Analyzing pt bin = " << ipt << ", eta bin: " << ieta << endl;
+
+	stringstream mcfile, datafile;
+	mcfile << "mcJPsi2012_PtBin" << ipt << "_EtaBin" << ieta << ".root";
+	datafile << "dataJPsi2012_PtBin" << ipt << "_EtaBin" << ieta << ".root";
+    
+	TFile *tmcfile = TFile::Open(mcfile.str().c_str());
+	RooFitResult *mcfr = (RooFitResult*)tmcfile->Get("fitres");
+	float mcDM = ((RooRealVar*)(mcfr->floatParsFinal().find("#Deltam_{CB}")))->getVal();
+	float mcDM_err = ((RooRealVar*)(mcfr->floatParsFinal().find("#Deltam_{CB}")))->getError();
+	float mcS = ((RooRealVar*)(mcfr->floatParsFinal().find("#sigma_{CB}")))->getVal();
+	float mcS_err = ((RooRealVar*)(mcfr->floatParsFinal().find("#sigma_{CB}")))->getError();
+
+	TFile *tdatafile = TFile::Open(datafile.str().c_str());
+	RooFitResult *datafr = (RooFitResult*)tdatafile->Get("fitres");
+	float dataDM = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getVal();
+	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError();
+	float dataS = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getVal();
+	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError();
+	
+	float rM = (dataDM-mcDM)/(dataDM + 91.19);
+	float rM_err = rM * sqrt(dataDM_err*dataDM_err + mcDM_err*mcDM_err);
+	float rS = (dataS-mcS)/(mcS);
+	cout << "rS = " << rS << endl;
+	float rS_err = rS * sqrt(dataS_err*dataS_err + mcS_err*mcS_err);
+	
+	float bincenter=(binedgesJPsi[ipt+1]+binedgesJPsi[ipt])/2.;
+	// add some offset not to overlap points
+	bincenter += (ieta==0) ? 0.5 : -0.5;
+	
+	std::cout << "bincenter = " << bincenter << std::endl;
+
+	float binerrup=binedgesJPsi[ipt+1]-bincenter;
+	float binerrdn=bincenter-binedgesJPsi[ipt];
+
+	gScaleJPsi[ieta].SetPoint(ipt,bincenter,rM);
+	gScaleJPsi[ieta].SetPointError(ipt,binerrdn,binerrup,rM_err,rM_err);
+	gResoJPsi[ieta].SetPoint(ipt,bincenter,rS);
+	gResoJPsi[ieta].SetPointError(ipt,binerrdn,binerrup,rS_err,rS_err);
+      }
+  }
+  
+  
   TCanvas *c1 = new TCanvas("c1","",600,600);
-
-  gScale[0][0].GetXaxis()->SetTitle("electron p_{T} (GeV)");
-  gScale[0][0].GetYaxis()->SetTitle("#Delta m/m (data - sim.)");
-  gScale[0][0].Draw("AP");
+  
+  gScaleZ[0][0].GetXaxis()->SetTitle("electron p_{T} (GeV)");
+  gScaleZ[0][0].GetYaxis()->SetTitle("#Delta m/m (data - sim.)");
+  gScaleZ[0][0].Draw("AP");
   for(int ieta=0; ieta<2; ++ieta) {
     for(int ir9=0; ir9<2; ++ir9) {
-      if(ieta==0 && ir9==0) gScale[0][0].Draw("AP");
-      else gScale[ieta][ir9].Draw("P");
+      if(ieta==0 && ir9==0) gScaleZ[0][0].Draw("AP");
+      else gScaleZ[ieta][ir9].Draw("P");
     }
   }
   c1->SaveAs("delta-scale.pdf");
   c1->SaveAs("delta-scale.png");
 
   TCanvas *c2 = new TCanvas("c2","",600,600);
-  gReso[0][0].GetXaxis()->SetTitle("electron p_{T} (GeV)");
-  gReso[0][0].GetYaxis()->SetTitle("(#sigma^{data}_{eff}-#sigma^{MC}_{eff})/#sigma^{MC}_{eff}");
-  gReso[0][0].GetYaxis()->SetTitleOffset(2.0);
-
+  gResoZ[0][0].GetXaxis()->SetTitle("electron p_{T} (GeV)");
+  gResoZ[0][0].GetYaxis()->SetTitle("(#sigma^{data}_{eff}-#sigma^{MC}_{eff})/#sigma^{MC}_{eff}");
+  gResoZ[0][0].GetYaxis()->SetTitleOffset(2.0);
+  
   for(int ieta=0; ieta<2; ++ieta) {
     for(int ir9=0; ir9<2; ++ir9) {
-      gReso[ieta][ir9].SetMarkerSize(1.);
-      gReso[ieta][ir9].GetYaxis()->SetRangeUser(-0.20,0.20);
+      gResoZ[ieta][ir9].SetMarkerSize(1.);
+      gResoZ[ieta][ir9].GetYaxis()->SetRangeUser(-0.20,0.20);
+      gResoZ[ieta][ir9].GetXaxis()->SetLimits(0,70);
 
       if(ieta==0) { 
-	gReso[ieta][ir9].SetMarkerColor(kAzure-3);
-	gReso[ieta][ir9].SetLineColor(kAzure-3);
+	gResoZ[ieta][ir9].SetMarkerColor(kAzure-3);
+	gResoZ[ieta][ir9].SetLineColor(kAzure-3);
       }
       if(ieta==1) {
-	gReso[ieta][ir9].SetMarkerColor(kGreen-3);
-	gReso[ieta][ir9].SetLineColor(kGreen-3);
+	gResoZ[ieta][ir9].SetMarkerColor(kGreen-3);
+	gResoZ[ieta][ir9].SetLineColor(kGreen-3);
       }
-      if(ir9==0) gReso[ieta][ir9].SetMarkerStyle(kFullCircle);
-      if(ir9==1) gReso[ieta][ir9].SetMarkerStyle(kFullTriangleUp);
+      if(ir9==0) gResoZ[ieta][ir9].SetMarkerStyle(kFullCircle);
+      if(ir9==1) gResoZ[ieta][ir9].SetMarkerStyle(kOpenTriangleUp);
 
-      if(ieta==0 && ir9==0) gReso[0][0].Draw("AP");
-      else gReso[ieta][ir9].Draw("P");
+      if(ieta==0 && ir9==0) gResoZ[0][0].Draw("AP");
+      else gResoZ[ieta][ir9].Draw("P");
     }
   }
+
+  gResoJPsi[0].SetMarkerColor(kRed-3);
+  gResoJPsi[0].SetLineColor(kRed-3);
+  gResoJPsi[0].SetMarkerSize(1.);
+  gResoJPsi[0].SetMarkerStyle(kOpenSquare);
+  gResoJPsi[0].GetYaxis()->SetRangeUser(-0.20,0.20);
+  gResoJPsi[0].GetXaxis()->SetLimits(0.,70);
+  gResoJPsi[0].Draw("P");
+
+
+  TLegend* leg = new TLegend(0.60,0.70,0.90,0.80);
+  leg->SetFillStyle(0); leg->SetBorderSize(0); leg->SetTextSize(0.03);
+  leg->SetFillColor(0);
+  leg->AddEntry(&gResoZ[0][0],"Z, |#eta|<1.5, golden","pl");
+  leg->AddEntry(&gResoZ[0][1],"Z, |#eta|<1.5, showering","pl");
+  leg->AddEntry(&gResoZ[1][0],"Z, |#eta|>1.5, golden","pl");
+  leg->AddEntry(&gResoZ[1][1],"Z, |#eta|>1.5, showering","pl");
+  leg->AddEntry(&gResoJPsi[0],"J/#psi |#eta|>1.5","pl");
+  leg->Draw();
+
   c2->SaveAs("delta-resolution.pdf");
   c2->SaveAs("delta-resolution.png");
-
+  c2->SaveAs("delta-resolution.C");
 
 }
