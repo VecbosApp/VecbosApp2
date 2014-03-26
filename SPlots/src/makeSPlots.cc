@@ -23,12 +23,17 @@ struct fitbinning {
 
 using namespace reweight;
 
-void makeFriendTree(bool ismc) {
+void makeFriendTree(bool ismc, bool isrundep=false) {
 
   std::string file;
-  if(ismc) file=std::string("zee_mc_rd1.root");
-  else file=std::string("sPlots/z_ptbin0_etabin0.root");
+  if(ismc) file=std::string("/Users/emanuele/Work/data/egamma/jan22/hzzTree_zee.root");
+  else file=std::string("/Users/emanuele/Work/data/egamma/jan22/hzzTree_dataZee_2012_Jan22Rereco.root");
   cout << "===> creating the friend tree for the file " << file << endl;
+  
+  // 2012 Summer12 MC
+  LumiReWeighting LumiWeights( "../Tools/data/pileup/puProfile_Summer12_53X.root",
+			       "../Tools/data/pileup/puProfile_Data_8TeV.root",
+			       "pileup","pileup");
 
   // 2012 run-dependent MC
   LumiReWeighting LumiWeights_Runs190456_To_196531( "../Tools/data/pileup/194533-194533-Summer12_DD3_runDep.true.root",
@@ -43,8 +48,8 @@ void makeFriendTree(bool ismc) {
                                                     "../Tools/data/pileup/203777-208686-22Jan_v1.69300.true.root",
                                                     "pileup","pileup");
 
-  LumiReWeighting ptWeightsZMC( "ptdistr_zee_mc.root", "ptdistr_jpsiee.root", "pt", "pt");
-  LumiReWeighting ptWeightsZDATA( "ptdistr_zee_data.root", "ptdistr_jpsiee.root", "pt", "pt");
+  // LumiReWeighting ptWeightsZMC( "ptdistr_zee_mc.root", "ptdistr_jpsiee.root", "pt", "pt");
+  // LumiReWeighting ptWeightsZDATA( "ptdistr_zee_data.root", "ptdistr_jpsiee.root", "pt", "pt");
 
   TFile *pF = TFile::Open(file.c_str());
   TTree *pT = (TTree*)pF->Get("zeetree/probe_tree");
@@ -74,18 +79,22 @@ void makeFriendTree(bool ismc) {
 
      // this is only needed in MC (rundep MC has 3 runs for 3 periods)
      if(ismc) {
-       if(run == 194533) puW = LumiWeights_Runs190456_To_196531.weight(npu);
-       else if(run == 200519) puW = LumiWeights_Runs198022_To_203742.weight(npu);
-       else if(run == 206859) puW = LumiWeights_Runs203777_To_208686.weight(npu);
-       else cout << "ERROR! This shoould not happen. Not a run of the run-dependent MC" << endl;
+       if(isrundep) {
+	 if(run == 194533) puW = LumiWeights_Runs190456_To_196531.weight(npu);
+	 else if(run == 200519) puW = LumiWeights_Runs198022_To_203742.weight(npu);
+	 else if(run == 206859) puW = LumiWeights_Runs203777_To_208686.weight(npu);
+	 else cout << "ERROR! This shoould not happen. Not a run of the run-dependent MC" << endl;
+       } else {
+	 puW = LumiWeights.weight(npu);
+       }
        // remove some unphysical tails
        if(puW > 2) puW = 2.0;
-       l1ptW = ptWeightsZMC.weight(l1pt);
-       l2ptW = ptWeightsZMC.weight(l2pt);
+       //       l1ptW = ptWeightsZMC.weight(l1pt);
+       //       l2ptW = ptWeightsZMC.weight(l2pt);
      } else {
        puW = 1.;
-       l1ptW = ptWeightsZDATA.weight(l1pt);
-       l2ptW = ptWeightsZDATA.weight(l2pt);
+       //       l1ptW = ptWeightsZDATA.weight(l1pt);
+       //       l2ptW = ptWeightsZDATA.weight(l2pt);
      }
 
      fT->Fill();
@@ -278,7 +287,6 @@ void makeSPlots() {
   drawSPlot(1,0,"phiwidth","#phi width","1",10,0.0,0.3);
   drawSPlot(1,0,"hOverE","H/E","1",10,0.0,2);
   drawSPlot(1,0,"sip","S.I.P.","1",10,0.0,3);
-  drawSPlot(1,0,"bdtID","identification BDT","1",30,-1.,1);
 
 //     drawSPlot(1,ieta,"EoP","E/P_{in}","vertices<10",50,0.0,3.0);
 //     drawSPlot(1,ieta,"HoE","H/E","vertices<10",50,0.0,0.1,1);
