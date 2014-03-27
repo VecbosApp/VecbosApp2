@@ -8,11 +8,12 @@ parser.add_option("-r", "--resonance", dest="resonance", default="Z",
                   help="decide what resonance to fit (implemeted=Z,JPsi; default=Z)")
 (options, args) = parser.parse_args()
 
-inputfdata="/Users/emanuele/Work/data/egamma/jan22/hzzTree_dataZee_2012_Jan22Rereco.root"
 if(options.resonance=="Z"):
+    inputfdata="/Users/emanuele/Work/data/egamma/jan22/hzzTree_dataZee_2012_Jan22Rereco.root"
     inputfmc="/Users/emanuele/Work/data/egamma/jan22/hzzTree_zee.root"
     outputpref="Z2012_"
 elif(options.resonance=="JPsi"):
+    inputfdata="/Users/emanuele/Work/data/egamma/jan22/hzzTree_dataZee_2012_Jan22Rereco_jpsisubset.root"
     inputfmc="/Users/emanuele/Work/data/egamma/jan22/jpsitoee_ptj5GeV_fast53X.root"
     outputpref="JPsi2012_"
 else:
@@ -29,8 +30,8 @@ if(options.resonance=="Z"):
             print "   eta bin = ",etab
             for r9b in range(0,2):
                 print "        r9 bin = ",r9b
-                outputfmc="zmc"+outputpref+"PtBin"+str(ptb)+"_EtaBin"+str(etab)+"_R9Bin"+str(r9b)
-                outputfdata="zdata"+outputpref+"PtBin"+str(ptb)+"_EtaBin"+str(etab)+"_R9Bin"+str(r9b)
+                outputfmc="mc"+outputpref+"PtBin"+str(ptb)+"_EtaBin"+str(etab)+"_R9Bin"+str(r9b)
+                outputfdata="data"+outputpref+"PtBin"+str(ptb)+"_EtaBin"+str(etab)+"_R9Bin"+str(r9b)
                 print "        fitting DATA..."
                 FitZMassScaleAndResolution(inputfdata,outputfdata,ptb,etab,r9b,0)
                 print "        output is in file "+outputfdata
@@ -40,7 +41,7 @@ if(options.resonance=="Z"):
 
 else: 
     from ROOT import FitJPsiMassScaleAndResolution
-    for ptb in range(0,5):
+    for ptb in range(0,3):
         print "pt bin = ",ptb
         for etab in range(0,2):
             print "   eta bin = ",etab
