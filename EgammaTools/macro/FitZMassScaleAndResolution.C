@@ -68,7 +68,8 @@ void FitZMassScaleAndResolution(string inputFilename, string outFilename, Int_t 
 //double power_cb = 1.40;		// Use to fix some fits
   double power_cb = 2.45;
   const char *plotOpt = "NEU";
-  const int nbins = 40;
+  int nbins = 40;
+  if(ptBin==0 && etaBin==1 && R9Bin==0) nbins = 25; // unique low stat sample
 
   // Call the fitting program and output a workspace with a root file
   // of the model and data as well as a pdf of the fit
@@ -90,15 +91,22 @@ void makefit(string inputFilename, string outFilename,
 
   //Create Data Set
   RooRealVar mass("zmass","m(e^{+}e^{-})",minMass,maxMass,"GeV/c^{2}");
+  RooRealVar puw("puW","pileup weight",0.,2.);
   //  mass.setRange(80,100);
 
   // Reading everything from root tree instead
   TFile *tfile = TFile::Open(inputFilename.c_str());
   TTree *ttree = (TTree*)tfile->Get("zeetree/probe_tree");
   hzztree *zeeTree = new hzztree(ttree);
+
+  TString nF(inputFilename.c_str());
+  nF.ReplaceAll(".root","_friend.root");
+  ttree->AddFriend("puweights=zeetree/probe_tree",nF.Data());
+  float puW;
+  ttree->SetBranchAddress("puW",&puW);
   
-  RooArgSet zMassArgSet(mass);
-  RooDataSet* data = new RooDataSet("data", "ntuple parameters", zMassArgSet);
+  RooArgSet zMassArgSet(mass,puw);
+  RooDataSet* data = new RooDataSet("data", "ntuple parameters", zMassArgSet, RooFit::WeightVar("puW"));
 
   for (int i = 0; i < zeeTree->fChain->GetEntries(); i++) {
     if(i%100000==0) cout << "Processing Event " << i << endl;
@@ -169,13 +177,15 @@ void makefit(string inputFilename, string outFilename,
     //set mass variable
     //*************************************************************************
     zMassArgSet.setRealValue("zmass", zMass);    
-
-    data->add(zMassArgSet);
+    
+    data->add(zMassArgSet,puW);
   }
+  cout << "data->isWeighted() = " << data->isWeighted() << endl;
 
   // do binned fit to gain time...
   mass.setBins(nbins);
   RooDataHist *bdata = new RooDataHist("data_binned","data_binned", zMassArgSet, *data);
+  cout << "bdata->isWeighted() = " << bdata->isWeighted() << endl;
 
   cout << "dataset size: " << data->numEntries() << endl;
 
@@ -194,6 +204,10 @@ void makefit(string inputFilename, string outFilename,
   RooRealVar cbPower("n_{CB}","CB Order", 2.5, 0.1, 20.0);
   cbCut.setVal(cutoff_cb);
   cbPower.setVal(power_cb);
+  //  if(!isMC && !(ptBin==0 && etaBin==1 && R9Bin==0)) {
+  //    cbCut.setConstant(kTRUE);
+  //    cbPower.setConstant(kTRUE);
+  //  }
 
   // Just checking
   //cbCut.Print();
@@ -232,7 +246,7 @@ void makefit(string inputFilename, string outFilename,
 
   TStopwatch t ;
   t.Start() ;
-  RooFitResult *fitres = model.fitTo(*bdata,Range(minMass,100.),Hesse(1),Minos(1),Timer(1),Save(1));
+  RooFitResult *fitres = model.fitTo(*bdata,Hesse(1),Minos(1),Timer(1),Save(1));
   fitres->SetName("fitres");
   t.Print() ;
 
@@ -286,15 +300,17 @@ void makefit(string inputFilename, string outFilename,
 void FitJPsiMassScaleAndResolution(string inputFilename, string outFilename, Int_t ptBin, Int_t etaBin, Int_t isMC) {
 
   // Define Fit Inputs and Call Fit
-  double minMass = 1.5;
-  double maxMass = 3.8;
+  double minMass = 2.6;
+  double maxMass = 3.6;
   double mean_bw = 3.096916;
   double gamma_bw = 92.9e-6;
-  double cutoff_cb = 1.0;
-//double power_cb = 1.40;		// Use to fix some fits
-  double power_cb = 2.45;
+  double cutoff_cb = 1.8;
+  double power_cb = 2.0;
   const char *plotOpt = "NEU";
-  const int nbins = 40;
+  int nbins = 50;
+  if(ptBin==2) nbins = 60;
+  // very low stat in data
+  if(ptBin==3) nbins = (isMC) ? 25 : 22;
 
   // Call the fitting program and output a workspace with a root file
   // of the model and data as well as a pdf of the fit
@@ -320,7 +336,7 @@ void makejpsifit(string inputFilename, string outFilename,
   TFile *tfile = TFile::Open(inputFilename.c_str());
   TTree *ttree = (TTree*)tfile->Get("zeetree/probe_tree");
   hzztree *zeeTree = new hzztree(ttree);
-  
+
   RooArgSet zMassArgSet(mass);
   RooDataSet* data = new RooDataSet("data", "ntuple parameters", zMassArgSet);
 
@@ -361,15 +377,13 @@ void makejpsifit(string inputFilename, string outFilename,
     Int_t Ele2PtBin = -1;
     Int_t Ele2EtaBin = -1;
     if (ele1pt > 7 && ele1pt < 10) Ele1PtBin = 0;
-    else if (ele1pt < 15) Ele1PtBin = 1;
-    else if (ele1pt < 20) Ele1PtBin = 2;
-    else if (ele1pt < 30) Ele1PtBin = 3;
-    else Ele1PtBin = 4;
+    else if (ele1pt < 20) Ele1PtBin = 1;
+    else if(ele1pt < 30) Ele1PtBin = 2;
+    else Ele1PtBin = 3;
     if (ele2pt > 7 && ele2pt < 10) Ele2PtBin = 0;
-    else if (ele2pt < 15) Ele2PtBin = 1;
-    else if (ele2pt < 20) Ele2PtBin = 2;
-    else if (ele2pt < 30) Ele2PtBin = 3;
-    else Ele2PtBin = 4;
+    else if (ele2pt < 20) Ele2PtBin = 1;
+    else if(ele2pt < 30) Ele2PtBin = 2;
+    else Ele2PtBin = 3;
     if (fabs(zeeTree->l1sceta) < 1.479) Ele1EtaBin = 0;
     else Ele1EtaBin = 1;
     if (fabs(zeeTree->l2sceta) < 1.479) Ele2EtaBin = 0;
@@ -408,7 +422,7 @@ void makejpsifit(string inputFilename, string outFilename,
 //   RooRealVar cbCut  ("a_{CB}","CB Cut", 1.05, 1.0, 3.0);
 //   RooRealVar cbPower("n_{CB}","CB Order", 2.45, 0.1, 20.0);
   RooRealVar cbBias ("#Deltam_{CB}", "CB Bias", -.01, -10, 10, "GeV/c^{2}");
-  RooRealVar cbSigma("#sigma_{CB}", "CB Width", 1.5, 0.05, 5.0, "GeV/c^{2}");
+  RooRealVar cbSigma("#sigma_{CB}", "CB Width", 1.5, 0.01, 5.0, "GeV/c^{2}");
   RooRealVar cbCut  ("a_{CB}","CB Cut", 1.0, 1.0, 3.0);
   RooRealVar cbPower("n_{CB}","CB Order", 2.5, 0.1, 20.0);
   cbCut.setVal(cutoff_cb);
@@ -452,8 +466,13 @@ void makejpsifit(string inputFilename, string outFilename,
   TStopwatch t ;
   t.Start() ;
   double fitmin, fitmax;
-  fitmin = (etaBin==0) ? 2.85 : 2.7;
-  fitmax = (etaBin==0) ? 3.25 : 3.4;
+  if(isMC) {
+    fitmin = (etaBin==0) ? 3.00 : 2.7;
+    fitmax = (etaBin==0) ? 3.20 : 3.4;
+  } else {
+    fitmin = (etaBin==0) ? ( (ptBin>=2) ? 3.01 : 3.02 ) : 2.7;
+    fitmax = (etaBin==0) ? ( (ptBin==3) ? 3.23 : 3.22 ) : 3.4;
+  }
   RooFitResult *fitres = model.fitTo(*bdata,Range(fitmin,fitmax),Hesse(1),Minos(1),Timer(1),Save(1));
   fitres->SetName("fitres");
   t.Print() ;
@@ -510,7 +529,7 @@ void plotResolution() {
   mystyle->cd();
 
   double binedgesZ[5] = {20,30,40,50,70};
-  double binedgesJPsi[6] = {7,10,15,20,30,40};
+  double binedgesJPsi[5] = {7,10,20,30,50};
   TGraphAsymmErrors gScaleZ[2][2];
   TGraphAsymmErrors gResoZ[2][2];
   TGraphAsymmErrors gScaleJPsi[2];
@@ -524,8 +543,8 @@ void plotResolution() {
 	cout << "Analyzing pt bin = " << ipt << ", eta bin: " << ieta << "  and r9 bin: " << ir9 << endl;
 
 	stringstream mcfile, datafile;
-	mcfile << "mc2012_Jan22_PtBin" << ipt << "_EtaBin" << ieta << "_R9Bin" << ir9 << ".root";
-	datafile << "data2012_Jan22_PtBin" << ipt << "_EtaBin" << ieta << "_R9Bin" << ir9 << ".root";
+	mcfile << "mcZ2012_PtBin" << ipt << "_EtaBin" << ieta << "_R9Bin" << ir9 << ".root";
+	datafile << "dataZ2012_PtBin" << ipt << "_EtaBin" << ieta << "_R9Bin" << ir9 << ".root";
     
 	TFile *tmcfile = TFile::Open(mcfile.str().c_str());
 	RooFitResult *mcfr = (RooFitResult*)tmcfile->Get("fitres");
@@ -537,15 +556,17 @@ void plotResolution() {
 	TFile *tdatafile = TFile::Open(datafile.str().c_str());
 	RooFitResult *datafr = (RooFitResult*)tdatafile->Get("fitres");
 	float dataDM = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getVal();
-	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError();
+	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError()/dataDM;
 	float dataS = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getVal();
-	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError();
+	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError()/dataS;
 	
 	float rM = (dataDM-mcDM)/(dataDM + 91.19);
 	float rM_err = rM * sqrt(dataDM_err*dataDM_err + mcDM_err*mcDM_err);
-	float rS = (dataS-mcS)/(mcS);
+	float delta = dataS-mcS;
+	float delta_err = sqrt(dataS_err*dataS_err+mcS_err*mcS_err);
+	float rS = delta/(mcS);
 	cout << "rS = " << rS << endl;
-	float rS_err = rS * sqrt(dataS_err*dataS_err + mcS_err*mcS_err);
+	float rS_err = fabs(rS) * sqrt(delta_err*delta_err + mcS_err*mcS_err);
 	
 	float bincenter=(binedgesZ[ipt+1]+binedgesZ[ipt])/2.;
 	// add some offset not to overlap points
@@ -565,7 +586,7 @@ void plotResolution() {
 
   // JPsi->ee
   for(int ipt=0; ipt<4; ++ipt) {
-    for(int ieta=0; ieta<2; ++ieta) {
+    for(int ieta=0; ieta<1; ++ieta) {
 
 	cout << "Analyzing pt bin = " << ipt << ", eta bin: " << ieta << endl;
 
@@ -583,15 +604,18 @@ void plotResolution() {
 	TFile *tdatafile = TFile::Open(datafile.str().c_str());
 	RooFitResult *datafr = (RooFitResult*)tdatafile->Get("fitres");
 	float dataDM = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getVal();
-	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError();
+	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError()/dataDM;
 	float dataS = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getVal();
-	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError();
+	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError()/dataS;
 	
-	float rM = (dataDM-mcDM)/(dataDM + 91.19);
+	float rM = (dataDM-mcDM)/(dataDM + 3.096);
 	float rM_err = rM * sqrt(dataDM_err*dataDM_err + mcDM_err*mcDM_err);
-	float rS = (dataS-mcS)/(mcS);
+	float delta = dataS-mcS;
+	float delta_err = sqrt(dataS_err*dataS_err+mcS_err*mcS_err);
+	float rS = delta/mcS;
 	cout << "rS = " << rS << endl;
-	float rS_err = rS * sqrt(dataS_err*dataS_err + mcS_err*mcS_err);
+	float rS_err = fabs(rS) * sqrt(delta_err*delta_err + mcS_err*mcS_err);
+	cout << "rS_err = " << rS_err << endl;
 	
 	float bincenter=(binedgesJPsi[ipt+1]+binedgesJPsi[ipt])/2.;
 	// add some offset not to overlap points
@@ -632,8 +656,8 @@ void plotResolution() {
   for(int ieta=0; ieta<2; ++ieta) {
     for(int ir9=0; ir9<2; ++ir9) {
       gResoZ[ieta][ir9].SetMarkerSize(1.);
-      gResoZ[ieta][ir9].GetYaxis()->SetRangeUser(-0.20,0.20);
-      gResoZ[ieta][ir9].GetXaxis()->SetLimits(0,70);
+      gResoZ[ieta][ir9].GetYaxis()->SetRangeUser(-0.05,0.15);
+      gResoZ[ieta][ir9].GetXaxis()->SetLimits(0,80);
 
       if(ieta==0) { 
 	gResoZ[ieta][ir9].SetMarkerColor(kAzure-3);
@@ -655,13 +679,14 @@ void plotResolution() {
   gResoJPsi[0].SetLineColor(kRed-3);
   gResoJPsi[0].SetMarkerSize(1.);
   gResoJPsi[0].SetMarkerStyle(kOpenSquare);
-  gResoJPsi[0].GetYaxis()->SetRangeUser(-0.20,0.20);
-  gResoJPsi[0].GetXaxis()->SetLimits(0.,70);
+  gResoJPsi[0].GetYaxis()->SetRangeUser(-0.05,0.15);
+  gResoJPsi[0].GetXaxis()->SetLimits(0.,80);
   gResoJPsi[0].Draw("P");
 
 
-  TLegend* leg = new TLegend(0.60,0.70,0.90,0.80);
+  TLegend* leg = new TLegend(0.60,0.70,0.90,0.90);
   leg->SetFillStyle(0); leg->SetBorderSize(0); leg->SetTextSize(0.03);
+  leg->SetTextFont(42);
   leg->SetFillColor(0);
   leg->AddEntry(&gResoZ[0][0],"Z, |#eta|<1.5, golden","pl");
   leg->AddEntry(&gResoZ[0][1],"Z, |#eta|<1.5, showering","pl");
