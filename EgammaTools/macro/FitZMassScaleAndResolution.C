@@ -39,7 +39,9 @@
 #include "TTree.h"
 #include "TMath.h"
 #include "TLegend.h"
+#include "TPaveText.h"
 #include "TGraphAsymmErrors.h"
+#include "TLine.h"
 #include "hzztree.C"
 #include "../../Tools/src/RooHZZStyle.C"
  
@@ -378,12 +380,10 @@ void makejpsifit(string inputFilename, string outFilename,
     Int_t Ele2EtaBin = -1;
     if (ele1pt > 7 && ele1pt < 10) Ele1PtBin = 0;
     else if (ele1pt < 20) Ele1PtBin = 1;
-    else if(ele1pt < 30) Ele1PtBin = 2;
-    else Ele1PtBin = 3;
+    else Ele1PtBin = 2;
     if (ele2pt > 7 && ele2pt < 10) Ele2PtBin = 0;
     else if (ele2pt < 20) Ele2PtBin = 1;
-    else if(ele2pt < 30) Ele2PtBin = 2;
-    else Ele2PtBin = 3;
+    else Ele2PtBin = 2;
     if (fabs(zeeTree->l1sceta) < 1.479) Ele1EtaBin = 0;
     else Ele1EtaBin = 1;
     if (fabs(zeeTree->l2sceta) < 1.479) Ele2EtaBin = 0;
@@ -529,7 +529,7 @@ void plotResolution() {
   mystyle->cd();
 
   double binedgesZ[5] = {20,30,40,50,70};
-  double binedgesJPsi[5] = {7,10,20,30,50};
+  double binedgesJPsi[4] = {7,10,20,40};
   TGraphAsymmErrors gScaleZ[2][2];
   TGraphAsymmErrors gResoZ[2][2];
   TGraphAsymmErrors gScaleJPsi[2];
@@ -556,9 +556,9 @@ void plotResolution() {
 	TFile *tdatafile = TFile::Open(datafile.str().c_str());
 	RooFitResult *datafr = (RooFitResult*)tdatafile->Get("fitres");
 	float dataDM = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getVal();
-	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError()/dataDM;
+	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError();
 	float dataS = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getVal();
-	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError()/dataS;
+	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError();
 	
 	float rM = (dataDM-mcDM)/(dataDM + 91.19);
 	float rM_err = rM * sqrt(dataDM_err*dataDM_err + mcDM_err*mcDM_err);
@@ -566,7 +566,7 @@ void plotResolution() {
 	float delta_err = sqrt(dataS_err*dataS_err+mcS_err*mcS_err);
 	float rS = delta/(mcS);
 	cout << "rS = " << rS << endl;
-	float rS_err = fabs(rS) * sqrt(delta_err*delta_err + mcS_err*mcS_err);
+	float rS_err = fabs(rS) * sqrt(pow(delta_err/delta,2) + pow(mcS_err/mcS,2));
 	
 	float bincenter=(binedgesZ[ipt+1]+binedgesZ[ipt])/2.;
 	// add some offset not to overlap points
@@ -585,7 +585,7 @@ void plotResolution() {
   }
 
   // JPsi->ee
-  for(int ipt=0; ipt<4; ++ipt) {
+  for(int ipt=0; ipt<3; ++ipt) {
     for(int ieta=0; ieta<1; ++ieta) {
 
 	cout << "Analyzing pt bin = " << ipt << ", eta bin: " << ieta << endl;
@@ -604,18 +604,17 @@ void plotResolution() {
 	TFile *tdatafile = TFile::Open(datafile.str().c_str());
 	RooFitResult *datafr = (RooFitResult*)tdatafile->Get("fitres");
 	float dataDM = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getVal();
-	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError()/dataDM;
+	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError();
 	float dataS = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getVal();
-	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError()/dataS;
+	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError();
 	
 	float rM = (dataDM-mcDM)/(dataDM + 3.096);
 	float rM_err = rM * sqrt(dataDM_err*dataDM_err + mcDM_err*mcDM_err);
 	float delta = dataS-mcS;
 	float delta_err = sqrt(dataS_err*dataS_err+mcS_err*mcS_err);
-	float rS = delta/mcS;
+	float rS = delta/(mcS);
 	cout << "rS = " << rS << endl;
-	float rS_err = fabs(rS) * sqrt(delta_err*delta_err + mcS_err*mcS_err);
-	cout << "rS_err = " << rS_err << endl;
+	float rS_err = fabs(rS) * sqrt(pow(delta_err/delta,2) + pow(mcS_err/mcS,2));
 	
 	float bincenter=(binedgesJPsi[ipt+1]+binedgesJPsi[ipt])/2.;
 	// add some offset not to overlap points
@@ -649,14 +648,18 @@ void plotResolution() {
   c1->SaveAs("delta-scale.png");
 
   TCanvas *c2 = new TCanvas("c2","",600,600);
+  c2->SetLeftMargin(0.20);
+  c2->SetBottomMargin(0.20); 
+  c2->SetTopMargin(0.10); 
   gResoZ[0][0].GetXaxis()->SetTitle("electron p_{T} (GeV)");
   gResoZ[0][0].GetYaxis()->SetTitle("(#sigma^{data}_{eff}-#sigma^{MC}_{eff})/#sigma^{MC}_{eff}");
-  gResoZ[0][0].GetYaxis()->SetTitleOffset(2.0);
+  gResoZ[0][0].GetYaxis()->SetTitleOffset(1.8);
+  gResoZ[0][0].GetXaxis()->SetTitleOffset(1.5);
   
   for(int ieta=0; ieta<2; ++ieta) {
     for(int ir9=0; ir9<2; ++ir9) {
       gResoZ[ieta][ir9].SetMarkerSize(1.);
-      gResoZ[ieta][ir9].GetYaxis()->SetRangeUser(-0.05,0.15);
+      gResoZ[ieta][ir9].GetYaxis()->SetRangeUser(-0.30,0.30);
       gResoZ[ieta][ir9].GetXaxis()->SetLimits(0,80);
 
       if(ieta==0) { 
@@ -679,24 +682,38 @@ void plotResolution() {
   gResoJPsi[0].SetLineColor(kRed-3);
   gResoJPsi[0].SetMarkerSize(1.);
   gResoJPsi[0].SetMarkerStyle(kOpenSquare);
-  gResoJPsi[0].GetYaxis()->SetRangeUser(-0.05,0.15);
+  gResoJPsi[0].GetYaxis()->SetRangeUser(-0.30,0.30);
   gResoJPsi[0].GetXaxis()->SetLimits(0.,80);
   gResoJPsi[0].Draw("P");
 
 
-  TLegend* leg = new TLegend(0.60,0.70,0.90,0.90);
+  TLegend* leg = new TLegend(0.50,0.20,0.90,0.50);
   leg->SetFillStyle(0); leg->SetBorderSize(0); leg->SetTextSize(0.03);
   leg->SetTextFont(42);
   leg->SetFillColor(0);
-  leg->AddEntry(&gResoZ[0][0],"Z, |#eta|<1.5, golden","pl");
-  leg->AddEntry(&gResoZ[0][1],"Z, |#eta|<1.5, showering","pl");
-  leg->AddEntry(&gResoZ[1][0],"Z, |#eta|>1.5, golden","pl");
-  leg->AddEntry(&gResoZ[1][1],"Z, |#eta|>1.5, showering","pl");
-  leg->AddEntry(&gResoJPsi[0],"J/#psi |#eta|>1.5","pl");
+  leg->AddEntry(&gResoZ[0][0],"Z,    |#eta|<1.5, golden","pl");
+  leg->AddEntry(&gResoZ[0][1],"Z,    |#eta|<1.5, showering","pl");
+  leg->AddEntry(&gResoZ[1][0],"Z,    |#eta|>1.5, golden","pl");
+  leg->AddEntry(&gResoZ[1][1],"Z,    |#eta|>1.5, showering","pl");
+  leg->AddEntry(&gResoJPsi[0],"J/#psi , |#eta|<1.5","pl");
   leg->Draw();
 
-  c2->SaveAs("delta-resolution.pdf");
-  c2->SaveAs("delta-resolution.png");
-  c2->SaveAs("delta-resolution.C");
+  TPaveText *pt = new TPaveText(-3,0.32,70,0.35,"br");
+   pt->SetBorderSize(0);
+   pt->SetFillStyle(0);
+   pt->SetTextAlign(12);
+   pt->SetTextFont(42);
+   pt->SetTextSize(0.04);
+   pt->AddText("CMS, #sqrt{s} = 8 TeV,              #intL dt = 19.6 fb^{-1}");
+   pt->Draw();
+
+   TLine *zero = new TLine(0,0,80,0);
+   zero->SetLineColor(kGray+2);
+   zero->SetLineWidth(1);
+   zero->Draw();
+
+   c2->SaveAs("delta-resolution.pdf");
+   c2->SaveAs("delta-resolution.png");
+   c2->SaveAs("delta-resolution.C");
 
 }
