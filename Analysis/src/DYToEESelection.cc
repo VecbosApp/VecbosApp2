@@ -57,6 +57,9 @@ void DYToEESelection::Loop() {
   Long64_t nentries = fChain->GetEntries();
   
   Long64_t nbytes = 0, nb = 0;
+  Int_t cachesize = 30000000; //30 MBytes
+  fChain->SetCacheSize(cachesize);
+  fChain->SetCacheLearnEntries(5);
   std::cout << "The chain contains " << nentries << " entries " << endl;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     Long64_t ientry = loadTree(jentry);
@@ -93,9 +96,11 @@ void DYToEESelection::Loop() {
 
        ElectronIDAlgo eleID(rhoFastjet,PrimaryVertices);
        eleID.setElectron(*ele1);	 
-       if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele2);
+       //if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele2);
+       fillProbe(Zee.mass(), ele2);
        eleID.setElectron(*ele2);	 
-       if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele1);       
+       //if( eleID.pass_mva("mva","loose") ) fillProbe(Zee.mass(), ele1);       
+       fillProbe(Zee.mass(), ele1);
        output->store();
        
        // look for jets and correct 
