@@ -136,5 +136,10 @@ void refinePlot() {
   can->SaveAs("spectrum_refined.pdf");
   can->SaveAs("spectrum_refined.png");
   can->SaveAs("spectrum_refined.C");
+  can->SaveAs("spectrum_refined.root");
+
+  TFile *fileh = TFile::Open("spectrum_refined.root","update");
+  spectrum->Write();
+  fileh->Close();
 
 }
