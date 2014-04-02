@@ -55,6 +55,9 @@ void FakeElectronSelectorZllPlusOneFake::Loop() {
 
   math::PhysConstants physconst;
 
+  Int_t cachesize = 30000000; //30 MBytes
+  fChain->SetCacheSize(cachesize);
+  fChain->SetCacheLearnEntries(5);
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     Long64_t ientry = loadTree(jentry);
     if (ientry < 0) break;
