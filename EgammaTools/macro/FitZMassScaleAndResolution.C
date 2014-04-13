@@ -5,6 +5,10 @@
 // Roofit Macro for Unbinned fit to Z peak                 //
 //======================================================== //
 
+// run:
+// gInterpreter->AddIncludePath("../../");
+// .L FitZMassScaleAndResolution.C+
+
 #ifndef __CINT__
 #include<stdio.h>
 #include<string>
@@ -32,6 +36,7 @@
 #include "TLorentzVector.h"
 #include "TCanvas.h"
 #include "TROOT.h"
+#include "TInterpreter.h"
 #include "TStopwatch.h"
 #include "TStyle.h"
 #include "TLatex.h"
@@ -44,8 +49,64 @@
 #include "TLine.h"
 #include "hzztree.C"
 #include "../../Tools/src/RooHZZStyle.C"
+#include "../../Math/src/HistogramTools.cc"
  
 using namespace RooFit;
+
+double effRmsFromSigmaCB(double meanCB, double meanCB_err, double sigmaCB, double sigmaCB_err) {
+
+  RooRealVar mass("zmass","m(e^{+}e^{-})",75,105,"GeV/c^{2}");
+
+  float zwidth=2.4952;
+  RooRealVar bwMean("m_{Z}","BW Mean", 91.1876, "GeV/c^{2}");
+  RooRealVar bwWidth("#Gamma_{Z}", "BW Width", zwidth, "GeV/c^{2}");
+
+  RooRealVar cbBias ("#Deltam_{CB}", "CB Bias", 0.00, -10, 10, "GeV/c^{2}"); // typical value
+  RooRealVar cbSigma("#sigma_{CB}", "CB Width", 1.5, 0.8, 5.0, "GeV/c^{2}");
+  RooRealVar cbCut  ("a_{CB}","CB Cut", 1.0, 1.0, 3.0); // typical value
+  RooRealVar cbPower("n_{CB}","CB Order", 2.5, 0.1, 20.0); // typical value
+
+  float mean_lo = meanCB - meanCB_err;
+  float mean_hi = meanCB + meanCB_err;
+  float sigma_lo = sigmaCB - sigmaCB_err;
+  float sigma_hi = sigmaCB + sigmaCB_err;
+
+  int nstep_mean = 10;
+  int nstep_sigma = 10;
+  
+  float step_mean = 2*meanCB_err/float(nstep_mean);
+  float step_sigma = 2*sigmaCB_err/float(nstep_sigma);
+
+  double max_rms = 0.0;
+  double min_rms = 999.;
+  
+  RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
+
+  int nsteps=0;
+  for(float mean=mean_lo; mean<mean_hi; mean+=step_mean) {
+    for(float sigma=sigma_lo; sigma<sigma_hi; sigma+=step_sigma) {
+
+      cbBias.setVal(meanCB);
+      cbSigma.setVal(sigma);
+
+      RooBreitWigner bw("bw", "bw", mass, bwMean, bwWidth);
+      RooCBShape  cball("cball", "Crystal Ball", mass, cbBias, cbSigma, cbCut, cbPower);
+      RooFFTConvPdf BWxCB("BWxCB", "bw X crystal ball", mass, bw, cball);
+      
+      RooDataSet *gendata = BWxCB.generate(mass,1000);
+      TH1D *genh = (TH1D*) gendata->createHistogram("genh",mass,RooFit::Binning(100,75,105));
+      
+      math::HistogramTools ht(genh);
+      double rms = ht.effectiveSigma();
+      rms = sqrt(pow(rms,2)-pow(zwidth,2));
+      if(rms > max_rms) max_rms=rms;
+      if(rms < min_rms) min_rms=rms;
+      delete genh;
+      nsteps++;
+    }
+  }
+  return (max_rms-min_rms)/sqrt(12)/sqrt(nsteps);
+}
 
 void makefit(string inputFilename, string outFilename,  
 	     Int_t ptBin, Int_t etaBin, Int_t R9Bin,
@@ -552,6 +613,8 @@ void plotResolution() {
 	float mcDM_err = ((RooRealVar*)(mcfr->floatParsFinal().find("#Deltam_{CB}")))->getError();
 	float mcS = ((RooRealVar*)(mcfr->floatParsFinal().find("#sigma_{CB}")))->getVal();
 	float mcS_err = ((RooRealVar*)(mcfr->floatParsFinal().find("#sigma_{CB}")))->getError();
+	mcS_err = effRmsFromSigmaCB(mcDM,mcDM_err,mcS,mcS_err);
+	
 
 	TFile *tdatafile = TFile::Open(datafile.str().c_str());
 	RooFitResult *datafr = (RooFitResult*)tdatafile->Get("fitres");
@@ -559,6 +622,7 @@ void plotResolution() {
 	float dataDM_err = ((RooRealVar*)(datafr->floatParsFinal().find("#Deltam_{CB}")))->getError();
 	float dataS = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getVal();
 	float dataS_err = ((RooRealVar*)(datafr->floatParsFinal().find("#sigma_{CB}")))->getError();
+	dataS_err = effRmsFromSigmaCB(dataDM,dataDM_err,dataS,dataS_err);
 	
 	float rM = (dataDM-mcDM)/(dataDM + 91.19);
 	float rM_err = rM * sqrt(dataDM_err*dataDM_err + mcDM_err*mcDM_err);
@@ -717,3 +781,4 @@ void plotResolution() {
    c2->SaveAs("delta-resolution.C");
 
 }
+
