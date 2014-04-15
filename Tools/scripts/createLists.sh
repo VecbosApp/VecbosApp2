@@ -20,7 +20,7 @@ while getopts "s:t:d:h" opt; do
   esac
 done
 
-if [ "$site" == 'UCSD' ]; then 
+if [ "$site" == 'UCSD' ] || [ "$site" == 'Caltech' ]; then
     echo "listing $t2dir"
     ls -l $t2dir | awk '{print $9}' > datasets.txt
     ls -l $t2dir | awk '{print "'"$t2dir"'" "/" $9}' | xargs -i echo "ls -l " {} " | grep -v \" 0 \" | awk '{print \"{}/\" \$9}'" > commands.txt 
@@ -62,6 +62,13 @@ if [ "$site" == 'UCSD' ]; then
     done
 fi
 
+if [ "$site" == 'Caltech' ]; then
+    for ((i=1;i<$N+1;i++)); do
+        echo ${namescommand[${i}]} " | grep default | awk '{print \"root://xrootd.unl.edu/\" \$1}' >" $maindir"/"${names[${i}]}".list" >> finalcommand.sh
+    done
+fi
+
+
 if [ "$site" == 'Rome' ]; then
     for ((i=1;i<$N+1;i++)); do
 	echo ${namescommand[${i}]} " | grep default | awk '{print \"root://cmsrm-xrootd02.roma1.infn.it:7070//\" \$1}' >" $maindir"/"${names[${i}]}".list" >> finalcommand.sh
@@ -81,5 +88,14 @@ source finalcommand.sh
 rm -f datasets.txt
 rm -f commands.txt
 rm -f finalcommand.sh
+
+echo "cleaning..."
+if [ "$site" == 'Caltech' ]; then
+    files=`ls $maindir/`
+    for file in $files
+      do
+        sed -i 's|/mnt/tier2||g' $maindir/$file
+      done
+fi
 
 echo "LISTS are done in dir $maindir."
