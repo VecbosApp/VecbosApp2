@@ -20,6 +20,9 @@
 #if Application == 2
 #include "EgammaTools/include/FakeElectronSelectorZllPlusOneFake.hh"
 #endif
+#if Application == 3
+#include "Analysis/include/DYToEESameSignSelection.hh"
+#endif
 
 using namespace std;
 using namespace vecbos;
@@ -75,6 +78,16 @@ int main(int argc, char* argv[]) {
 #if Application == 2
 
   FakeElectronSelectorZllPlusOneFake selection(theChain);
+  selection.setOutputFile(outputFileName);
+  selection.BeginJob(conf);
+  selection.Loop();
+  selection.EndJob();
+
+#endif
+
+#if Application == 3
+
+  DYToEESameSignSelection selection(theChain);
   selection.setOutputFile(outputFileName);
   selection.BeginJob(conf);
   selection.Loop();
