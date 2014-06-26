@@ -82,23 +82,17 @@ void DYToEESameSignSelection::Loop() {
        Electron *ele1 = dynamic_cast<Electron*>(Zee->daughter(0));
        Electron *ele2 = dynamic_cast<Electron*>(Zee->daughter(1));
 
-       if(ele1->charge() * ele2->charge() > 0 || 
-          ele1->gsfTrack().charge() * ele2->gsfTrack().charge() > 0 || 
-          ele1->closestTrack().charge() * ele2->closestTrack().charge() > 0 ||
-          ele1->scPixCharge() * ele2->scPixCharge() > 0 ) {
-                
-         ElectronIDAlgo eleID(rhoFastjet,PrimaryVertices);
-         eleID.setElectron(*ele1);	 
-         bool ele1ID = eleID.pass_mva("mva","loose");
-         eleID.setElectron(*ele2);	 
-         bool ele2ID = eleID.pass_mva("mva","loose");
-         if( ele1ID && ele2ID ) {
-           ElectronCollectionPtr ele_pair;
-           ele_pair.push_back(ele1);
-           ele_pair.push_back(ele2);
-           output->fillElectronInfos(ele_pair);
-           output->store();
-         }
+       ElectronIDAlgo eleID(rhoFastjet,PrimaryVertices);
+       eleID.setElectron(*ele1);	 
+       bool ele1ID = eleID.pass_mva("mva","loose");
+       eleID.setElectron(*ele2);	 
+       bool ele2ID = eleID.pass_mva("mva","loose");
+       if( ele1ID && ele2ID ) {
+         ElectronCollectionPtr ele_pair;
+         ele_pair.push_back(ele1);
+         ele_pair.push_back(ele2);
+         output->fillElectronInfos(ele_pair);
+         output->store();
        }
      }
   } // loop on events
