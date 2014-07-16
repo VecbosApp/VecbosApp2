@@ -42,7 +42,7 @@ void DYToEESameSignSelection::EndJob() {
 void DYToEESameSignSelection::Loop() {
 
   if (fChain == 0) return;
-
+  
   Long64_t nentries = fChain->GetEntries();
   
   Long64_t nbytes = 0, nb = 0;
@@ -73,11 +73,13 @@ void DYToEESameSignSelection::Loop() {
      CandidateSorter sorter(zeeUnsorted,"sumpt");
      CompositeCandidateCollection ZeeSorted = sorter.output();
 
+     output->setVerticesAndRho(PrimaryVertices,rhoFastjet);
+
      /// keep only the Z->ee with SS electrons (with any charge estimation)
      for(CompositeCandidateCollection::iterator Zee=ZeeSorted.begin(); Zee<ZeeSorted.end(); ++Zee) {
 
        output->fillRunInfos(Zee->mass(), header.run(), header.lumi(), header.event(),
-                            nPU,PrimaryVertices.size(), rhoFastjet);
+                            nPU,PrimaryVertices.size());
 
        Electron *ele1 = dynamic_cast<Electron*>(Zee->daughter(0));
        Electron *ele2 = dynamic_cast<Electron*>(Zee->daughter(1));
@@ -92,6 +94,18 @@ void DYToEESameSignSelection::Loop() {
          ele_pair.push_back(ele1);
          ele_pair.push_back(ele2);
          output->fillElectronInfos(ele_pair);
+         
+         GenParticleCandidateMatch mcMatch(GenParticles);
+         mcMatch.setDeltaR(0.4);
+         mcMatch.checkStatus(1);
+         GenParticle *matchedEle1 = mcMatch.overlap(ele1,11);
+         GenParticle *matchedEle2 = mcMatch.overlap(ele2,11);
+         
+         float deltaR1(100.), deltaR2(100.);
+         if(matchedEle1) deltaR1 = matchedEle1->momentum().DeltaR( ele1->momentum() );
+         if(matchedEle2) deltaR2 = matchedEle2->momentum().DeltaR( ele2->momentum() );
+         output->fillGenMatch(deltaR1,deltaR2);
+         
          output->store();
        }
      }
