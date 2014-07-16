@@ -42,8 +42,8 @@ public :
    Double_t        beamSpotY;
    Double_t        beamSpotZ;
    Int_t           nBX;
-   Int_t           nPU[3];   //[nBX]
-   Int_t           bxPU[3];   //[nBX]
+   Int_t           nPU[8];   //[nBX]
+   Int_t           bxPU[8];   //[nBX]
    Int_t           nMc;
    Float_t         pMc[101];   //[nMc]
    Float_t         thetaMc[101];   //[nMc]
